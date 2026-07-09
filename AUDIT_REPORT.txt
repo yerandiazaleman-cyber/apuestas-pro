@@ -1,0 +1,214 @@
+
+function limitScanRowsV304(rows, maxRows = 22) {
+  if (!Array.isArray(rows)) return [];
+  return rows.filter(Boolean).sort((a,b)=>Number(b.score||0)-Number(a.score||0)).slice(0,maxRows).map(r=>({
+    game:r.game, selection:r.selection||r.pick, market:r.market||r.family, family:r.family, price:r.price,
+    prob:r.prob||r.fairCtx, ev:r.ev, books:r.books, proScore:r.proScore, teamScore:r.teamScore,
+    score:r.score, grade:r.grade, alerts:Array.isArray(r.alerts)?r.alerts.slice(0,4):[], signals:Array.isArray(r.signals)?r.signals.slice(0,3):[]
+  }));
+}
+
+export const maxDuration = 120;
+
+
+async function quickOpenAITestV305(apiKey, model) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 18000);
+  try {
+    const payload = { model, input: 'Return only JSON: {"ok":true}', max_output_tokens: 30 };
+    const r = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    const raw = await r.text();
+    let data; try { data = JSON.parse(raw); } catch { data = { raw }; }
+    if (!r.ok) throw new Error(data?.error?.message || raw.slice(0,400) || 'OpenAI test failed');
+    return { ok: true, message: 'OpenAI respondió correctamente', model, mode: 'test-lite' };
+  } finally { clearTimeout(timer); }
+}
+
+export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) return res.status(500).json({ error: "Falta OPENAI_API_KEY en Vercel. Añádela y haz Redeploy." });
+  let body = req.body || {};
+    if (body.scan_results) body.scan_results = limitScanRowsV304(body.scan_results);
+  if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
+  
+  if (body.mode === "daily-scan" && (!Array.isArray(body.scan_results) || body.scan_results.length === 0)) {
+    return res.status(400).json({ error: "Primero corre el Scan Pro V30.5. Falta scan_results del Scan V30.5 para que la IA no invente." });
+  }
+
+  if (body.mode === 'test-lite' || body.mode === 'test') {
+    const model = process.env.OPENAI_MODEL || 'gpt-5-mini';
+    const result = await quickOpenAITestV305(process.env.OPENAI_API_KEY, model);
+    return res.status(200).json(result);
+  }
+
+  const compact = {
+    sport: body.sport, date: body.date,
+    events: (body.events || []).slice(0, 40),
+    visible_pick_cards: (body.visible_pick_cards || []).slice(0, 30),
+    scan_results: (body.scan_results || []).slice(0, 40),
+    rules: body.rules || {}
+  };
+  const system = `Eres PickSharp AI. Analista deportivo de riesgo. No prometas ganancias. No digas segura. No inventes datos que no estén en el payload. Prioriza NO JUGAR antes que forzar. No parlays. No picks de juegos en vivo como pregame. Una jugada por partido. NO recomendar dinero real; usar solo PAPER PICK. Debes diversificar mercados: REGLA DURA: máximo 1 pick de +1.5 full game/run line/handicap en toda la respuesta. Si ya elegiste un +1.5, no puedes poner otro +1.5 en VIP ni posibles. Si no hay otros mercados buenos, escribe NO HAY. En MLB compara +1.5 full game, F5 +0.5, moneyline fuerte, team totals y full game totals. En soccer compara Double Chance, DNB/Push if Tied, team totals y Under/Over protegido. Responde SOLO JSON válido con: resumen, exclusiva, vip, posibles, malas. En cada pick incluye market_family.`;
+  const user = `Escanea el día usando scan_results como fuente principal cuando exista. Clasifica por familias de mercado. No repitas picks del mismo tipo. Máximo 1 MLB +1.5 full game. Debes llenar posibles con familias diferentes: F5 +0.5, ML fuerte, team total, total juego; en soccer Double Chance, DNB, team total, under/over. Si no hay mercado diferente con base, escribe NO HAY en vez de repetir +1.5. Da Candidato IA #1 PAPER, Candidato IA #2 PAPER, Observar IA y No Bet/puede ganar pero no valor. Si no hay buena, escribe NO HAY. Datos: ${JSON.stringify(compact).slice(0,90000)}`;
+  try {
+    const modelName = process.env.OPENAI_MODEL || "gpt-5-mini";
+    async function callOpenAI(useJsonFormat=true){
+      const payload = {
+        model: modelName,
+        input: [{ role: "system", content: system }, { role: "user", content: user }]
+      };
+      if (useJsonFormat) payload.text = { format: { type: "json_object" } };
+      const controller = new AbortController(); const timer = setTimeout(()=>controller.abort(), 90000);
+      return fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: { "content-type": "application/json", "authorization": `Bearer ${key}` },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      }).finally(()=>clearTimeout(timer));
+    }
+    let r = await callOpenAI(true);
+    let raw = await r.text();
+    if (!r.ok && (r.status === 400 || raw.includes("json_object") || raw.includes("format"))) {
+      r = await callOpenAI(false);
+      raw = await r.text();
+    }
+    if (!r.ok) return res.status(r.status).json({ error: `OpenAI error ${r.status}: ${raw.slice(0,500)}` });
+    let data; try { data = JSON.parse(raw); } catch { data = { raw }; }
+    let output = data.output_text || "";
+    if (!output && data.output) output = data.output.flatMap(x => x.content || []).map(c => c.text || "").join("");
+    let result; try { result = JSON.parse(output); } catch { result = { resumen: output || "IA respondió sin JSON válido.", exclusiva: null, vip: null, posibles: [], malas: [] }; }
+    const usage = data.usage || {};
+    const model = (typeof modelName !== "undefined" ? modelName : (process.env.OPENAI_MODEL || "gpt-5-mini"));
+    function priceForModel(m){
+      m=String(m||"").toLowerCase();
+      if(m.includes("gpt-5.5")) return {in:5,out:30};
+      if(m.includes("gpt-5.4-mini")) return {in:.75,out:4.5};
+      if(m.includes("gpt-5-mini")) return {in:.25,out:2};
+      if(m.includes("gpt-5-nano")) return {in:.05,out:.4};
+      if(m.includes("gpt-4.1-mini")) return {in:.4,out:1.6};
+      if(m.includes("gpt-4o-mini")) return {in:.15,out:.6};
+      return {in:.25,out:2};
+    }
+    const pr = priceForModel(model);
+    const inputTokens = Number(usage.input_tokens || usage.prompt_tokens || 0);
+    const outputTokens = Number(usage.output_tokens || usage.completion_tokens || 0);
+    const usage_estimated_cost = (inputTokens/1000000*pr.in)+(outputTokens/1000000*pr.out);
+    
+
+    function normText(x){
+      return String(x||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9+.\- ]/g," ").replace(/\s+/g," ").trim();
+    }
+    function overlap(a,b){
+      const A=new Set(normText(a).split(" ").filter(x=>x.length>2));
+      const B=new Set(normText(b).split(" ").filter(x=>x.length>2));
+      let n=0; for(const x of A){ if(B.has(x)) n++; }
+      return n;
+    }
+    function candidateText(p){
+      if(!p) return "";
+      if(typeof p==="string") return p;
+      return [p.pick,p.jugada,p.selection,p.market,p.mercado,p.game,p.partido].filter(Boolean).join(" ");
+    }
+    function scanMatch(p, allowed){
+      const txt=normText(candidateText(p));
+      const rows=Array.isArray(compact.scan_results)?compact.scan_results:[];
+      if(!txt) return null;
+      for(const r of rows){
+        const grade=String(r.grade||"");
+        if(!allowed.some(g=>grade.includes(g))) continue;
+        const sel=normText(r.selection);
+        const game=normText(r.game);
+        const market=normText([r.market,r.family].filter(Boolean).join(" "));
+        const selectionOk=!!sel && (txt.includes(sel) || sel.includes(txt) || overlap(txt,sel)>=2);
+        const contextOk=(!!game && (txt.includes(game) || overlap(txt,game)>=2)) || (!!market && overlap(txt,market)>=1) || overlap(txt,sel)>=2;
+        if(selectionOk && contextOk) return r;
+      }
+      return null;
+    }
+    function validateAgainstScan(result){
+      result = result || {};
+      result.malas = Array.isArray(result.malas) ? result.malas : [];
+      function demote(key, allowed, reason){
+        if(!result[key]) return;
+        if(typeof result[key] === "string" && normText(result[key]).includes("no hay")) return;
+        if(!scanMatch(result[key], allowed)){
+          result.malas.unshift({
+            pick: typeof result[key] === "string" ? result[key] : (result[key].pick || result[key].jugada || result[key].selection || "Pick IA no validado"),
+            market: typeof result[key] === "object" ? (result[key].market || result[key].mercado || "") : "",
+            grade: "NO BET",
+            reason,
+            risk: "Servidor V30.5: la IA no coincidió con un pick validado por el motor local.",
+            stake: "$0 real / solo papel"
+          });
+          result[key] = null;
+        }
+      }
+      demote("exclusiva", ["PAPER FUERTE"], "Demovido por servidor: no aparece como PAPER FUERTE local.");
+      demote("exclusive", ["PAPER FUERTE"], "Demovido por servidor: no aparece como PAPER FUERTE local.");
+      demote("vip", ["PAPER FUERTE"], "Demovido por servidor: VIP no aparece como PAPER FUERTE local.");
+      let arr = result.posibles || result.possible || result.jugadas_posibles || [];
+      if(!Array.isArray(arr)) arr=[arr].filter(Boolean);
+      const clean=[];
+      for(const p of arr){
+        if(scanMatch(p, ["PAPER FUERTE","OBSERVAR"])) clean.push(p);
+        else result.malas.unshift({pick: typeof p === "string" ? p : (p.pick || p.jugada || p.selection || "Observación IA no validada"), market: typeof p === "object" ? (p.market || p.mercado || "") : "", grade:"NO BET", reason:"Demovido por servidor: no aparece como OBSERVAR/PAPER FUERTE local.", risk:"Puede ganar, pero V30.5 no lo valida.", stake:"$0 real / solo papel"});
+      }
+      result.posibles=clean;
+      return result;
+    }
+
+    function isPlus15(obj){
+      const s=JSON.stringify(obj||{}).toLowerCase();
+      return (s.includes("+1.5") || s.includes("+ 1.5")) && (s.includes("spread") || s.includes("run line") || s.includes("handicap") || s.includes("full game") || s.includes("juego completo"));
+    }
+    function noRepeatPlus15(result){
+      let used=false;
+      result.malas = Array.isArray(result.malas) ? result.malas : [];
+      for (const k of ["exclusiva","exclusive","vip"]) {
+        if (result[k] && isPlus15(result[k])) {
+          if (used) {
+            result.malas.push({...result[k], grade:"NO BET", reason:"Bloqueada por V30.5: segundo +1.5 full game repetido."});
+            result[k] = {pick:"NO HAY", market:"No repetir +1.5", grade:"NO HAY", reason:"V30.5 bloqueó esta opción porque ya había un +1.5.", risk:"No forzar"};
+          } else used=true;
+        }
+      }
+      let arr = result.posibles || result.possible || result.jugadas_posibles || [];
+      if (!Array.isArray(arr)) arr=[arr].filter(Boolean);
+      const clean=[];
+      for (const p of arr) {
+        if (isPlus15(p)) {
+          if (used) {
+            result.malas.push({...p, grade:"NO BET", reason:"Bloqueada por V30.5: +1.5 repetido."});
+            continue;
+          }
+          used=true;
+        }
+        clean.push(p);
+      }
+      result.posibles=clean;
+      return result;
+    }
+
+    result = validateAgainstScan(noRepeatPlus15(result));
+    return res.status(200).json({ model, result, usage, usage_estimated_cost });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || "AI scan failed" });
+  }
+}
+
+
+// V30.5 rule note:
+// Do not call a pick strong unless it passes strict filters: probability >=74%, positive EV,
+// Pro Score >=72, enough books, market safety, team/matchup, price not too expensive.
+// A NO BET can still win; explain that it is not a value/confidence pick.
+
+// V30.5 QA rule:
+// The client validates every AI candidate against scan_results.
+// If the candidate was not PAPER FUERTE/OBSERVAR locally, it is demoted to NO BET.

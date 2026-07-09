@@ -1,0 +1,1 @@
+V30.4 corrige timeout de IA: payload Lite top 22, cliente 95s, servidor OpenAI 90s, maxDuration 120. Si Probar IA funciona pero Resumen IA falla, usa scan local y reintenta.

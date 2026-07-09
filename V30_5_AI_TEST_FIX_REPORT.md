@@ -1,0 +1,1 @@
+V30.5 corrige Probar IA pegado: test-lite real con OpenAI, timeout 25s cliente/18s servidor y limpieza del aviso.
