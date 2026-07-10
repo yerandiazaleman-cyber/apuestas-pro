@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070714">
-<meta name="description" content="PickSharp Pro V30.7: panel profesional de análisis deportivo en modo paper-only con control de riesgo, QA y validación IA/local.">
-<title>PickSharp Pro V30.7 MLB Simple + Pitcher Stats</title>
+<meta name="description" content="PickSharp Pro V30.8 SOLO MLB: panel profesional de análisis deportivo en modo paper-only con control de riesgo, QA y validación IA/local.">
+<title>PickSharp Pro V30.8 SOLO MLB MLB Simple + Pitcher Stats</title>
 <style>
 :root{
   color-scheme: dark;
@@ -504,7 +504,7 @@ button[aria-busy="true"]{cursor:progress;opacity:.78}
 @media(max-width:680px){.tzbox{grid-template-columns:1fr}}
 
 
-/* V30.7 button/action fix */
+/* V30.8 button/action fix */
 .actionToast{
   position:sticky;
   top:72px;
@@ -537,7 +537,7 @@ button.busyBtn:after{
 }
 
 
-/* V30.7 balanced paper ranking */
+/* V30.8 balanced paper ranking */
 .finalDecision{
   border:1px solid rgba(56,189,248,.38);
   background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(15,23,42,.72));
@@ -568,7 +568,7 @@ button.busyBtn:after{
 }
 
 
-/* V30.7 MLB Simple + Pitcher Stats */
+/* V30.8 MLB Simple + Pitcher Stats */
 .aiCenter{
   border:1px solid rgba(139,92,246,.38);
   background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(56,189,248,.12));
@@ -599,7 +599,7 @@ button.busyBtn:after{
 
 .aiTimeoutBox{border:1px solid rgba(245,158,11,.36);background:rgba(245,158,11,.13);color:#fde68a;border-radius:18px;padding:12px 14px;margin:12px 0;font-weight:900;line-height:1.45}
 
-/* V30.7 MLB Simple + Pitcher Stats */
+/* V30.8 MLB Simple + Pitcher Stats */
 .mlbSimplePanel,.pitcherPanel{
   border:1px solid rgba(56,189,248,.34);
   background:linear-gradient(135deg,rgba(56,189,248,.13),rgba(15,23,42,.70));
@@ -636,7 +636,12 @@ button.busyBtn:after{
 </head>
 <body>
 <div class="app">
-<div class="header"><div><h1>PickSharp Pro V30.7</h1><p style="margin:5px 0 0">EV Feed · Line Movement · Hard Rock Check · Paper Mode</p></div><div class="pill">MLB SIMPLE + PITCHER STATS V30.7</div></div>
+<div class="header"><div><h1>PickSharp Pro V30.8 SOLO MLB</h1><p style="margin:5px 0 0">EV Feed · Line Movement · Hard Rock Check · Paper Mode</p></div><div class="pill">SOLO MLB 3 MERCADOS V30.8</div></div>
+
+<div class="ok" style="font-size:15px;border-color:rgba(34,197,94,.55)">
+<b>✅ V30.8 ACTIVO:</b> este archivo solo debe analizar <b>Ganador</b>, <b>Total carreras</b> y <b>Carreras por equipo</b>. 
+Si ves <b>Spread / +1.5</b>, Vercel o Safari todavía está mostrando el archivo viejo.
+</div>
 
 <div class="card hero">
 <h2>Panel profesional de análisis y control de riesgo</h2>
@@ -645,7 +650,7 @@ button.busyBtn:after{
 
 
 <div class="ok">
-<b>Modo prueba MLB V30.7:</b> por ahora la app solo escanea 3 tipos de jugadas para probar: 
+<b>Modo prueba MLB V30.8:</b> por ahora la app solo escanea 3 tipos de jugadas para probar: 
 <b>ganador del juego</b>, <b>total de carreras entre los dos equipos</b> y <b>carreras individuales por equipo</b>. 
 También compara abridor vs abridor con W-L, ERA, WHIP, K, BB, K/BB, IP y Quality Starts cuando SportsDataIO/MLB StatsAPI lo devuelvan.
 </div>
@@ -712,10 +717,10 @@ También compara abridor vs abridor con W-L, ERA, WHIP, K, BB, K/BB, IP y Qualit
 <b>Soccer Hard Rock:</b> analiza mercados principales que puedan venir por The Odds API y NO escanea tiros/tiros a puerta de jugadores. 
 Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Rock.
 </div>
-<div class="notice" style="margin-top:12px"><b>Comandos Pro V30.7:</b> Solo MLB MVP: ganador, total carreras y team totals.  Scan auditado, rotación de mercados, máximo 1 +1.5, IA segura, diagnóstico completo y créditos IA estimados.</div>
+<div class="notice" style="margin-top:12px"><b>Comandos Pro V30.8:</b> Solo MLB MVP: ganador, total carreras y team totals.  Scan auditado, rotación de mercados, máximo 1 +1.5, IA segura, diagnóstico completo y créditos IA estimados.</div>
 <button class="secondary" onclick="usarFechaTelefono()">Usar fecha/hora de mi teléfono</button>
 <div class="error" style="margin-top:12px"><b>Regla anti-pérdida:</b> si hoy vas perdiendo, la app debe usarse solo para revisar, no para perseguir. Modo Ganar Primero Realista muestra jugadas pequeñas y bloquea lo flojo. Si dice “NO HAY JUGADA”, se pasa.</div>
-<div class="ok" style="margin-top:12px"><b>IA segura V30.7:</b> NO pegues tu llave aquí. Guárdala en Vercel como <b>OPENAI_API_KEY</b>. La app usa <b>/api/ai-scan</b> para que la llave no se vea. Ahora diversifica mercados y estima créditos IA usados.</div>
+<div class="ok" style="margin-top:12px"><b>IA segura V30.8:</b> NO pegues tu llave aquí. Guárdala en Vercel como <b>OPENAI_API_KEY</b>. La app usa <b>/api/ai-scan</b> para que la llave no se vea. Ahora diversifica mercados y estima créditos IA usados.</div>
 <button class="safe" onclick="loadCalendar()">1) Cargar calendario</button>
 <button class="secondary" onclick="diagnose()">Diagnóstico</button>
 </div>
@@ -723,8 +728,8 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
 <div id="status" class="notice hidden"></div>
 
 <div class="aiCenter">
-  <h3>Centro IA V30.7</h3>
-  <p>La IA no reemplaza el motor local. V30.7 usa Resumen IA Lite: envía menos datos, responde más rápido y evita timeout.</p>
+  <h3>Centro IA V30.8</h3>
+  <p>La IA no reemplaza el motor local. V30.8 usa Resumen IA Lite: envía menos datos, responde más rápido y evita timeout.</p>
   <div class="aiSteps">
     <button type="button" class="safe" onclick="loadCalendar()">1) Cargar calendario</button>
     <button type="button" onclick="scanDay()">2) Scan día local</button>
@@ -732,10 +737,10 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
   </div>
   <div class="aiSteps" style="margin-top:10px">
     <button type="button" class="secondary" onclick="testAI()">Probar IA</button>
-    <button type="button" class="secondary" onclick="runAuditCheck()">Diagnóstico V30.7</button>
+    <button type="button" class="secondary" onclick="runAuditCheck()">Diagnóstico V30.8</button>
     <button type="button" class="secondary" onclick="showTab('scan')">Ver Scan / IA</button>
   </div>
-  <div class="aiExplain"><b>Orden correcto:</b> cargar calendario → scan día local → resumen IA. Si no hay PAPER FUERTE, no se juega. El ranking es solo papel.<br><b>IA Lite V30.7:</b> reduce el payload para evitar “Timeout conectando con el servidor”.</div>
+  <div class="aiExplain"><b>Orden correcto:</b> cargar calendario → scan día local → resumen IA. Si no hay PAPER FUERTE, no se juega. El ranking es solo papel.<br><b>IA Lite V30.8:</b> reduce el payload para evitar “Timeout conectando con el servidor”.</div>
 </div>
 
 <div class="stats">
@@ -761,8 +766,8 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
 
 <section id="calendar" class="screen active"><div class="card"><h2>Calendario</h2><div id="calendarBox" class="loading">Carga el calendario y escoge 1 partido, o usa Scan Día para escanear todos.</div></div></section>
 
-<section id="scan" class="screen"><div class="card"><h2>Scan Día Pro V30.7</h2>
-<div class="error"><b>Auditoría V30.7:</b> antes el botón de Scan Día seguía usando el motor local viejo y por eso repetía +1.5. Ahora este botón usa rotación real de mercados: máximo 1 +1.5 y obliga otras familias cuando existan.</div>
+<section id="scan" class="screen"><div class="card"><h2>Scan Día Pro V30.8</h2>
+<div class="error"><b>Auditoría V30.8:</b> antes el botón de Scan Día seguía usando el motor local viejo y por eso repetía +1.5. Ahora este botón usa rotación real de mercados: no usa Spread/+1.5 por ahora; solo ganador, total carreras y team totals.</div>
 <div class="creditBox">
   <h3>Créditos IA estimados</h3>
   <p class="small">El scan local no gasta IA. El botón “Resumen IA OpenAI” sí gasta poco crédito. El saldo real se revisa en OpenAI Billing.</p>
@@ -779,7 +784,7 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
 </div>
 
 <div class="ok" style="margin-top:12px">
-<b>Full Audit Fix V30.7:</b> corregido: el resumen IA ahora recibe los resultados reales del Scan Pro. También agregué prueba de diagnóstico para verificar eventos cargados, scan local, IA y créditos.
+<b>Full Audit Fix V30.8:</b> corregido: el resumen IA ahora recibe los resultados reales del Scan Pro. También agregué prueba de diagnóstico para verificar eventos cargados, scan local, IA y créditos.
 </div>
 
 
@@ -790,22 +795,22 @@ Si una jugada tiene alerta seria, queda como <b>NO BET</b>. Puede ganar, pero la
 
 
 <div class="qaClean">
-<b>V30.7 MLB Simple + Pitcher Stats:</b> además del motor anti-falsas buenas, ahora el resumen IA se valida contra el scan local.
+<b>V30.8 MLB Simple + Pitcher Stats:</b> además del motor anti-falsas buenas, ahora el resumen IA se valida contra el scan local.
 Si la IA propone algo que el motor local no marcó como PAPER FUERTE/OBSERVAR, se mueve a NO BET.
 </div>
 
 <div class="actions">
-  <button class="safe" onclick="scanDay()">Escanear V30.7</button>
+  <button class="safe" onclick="scanDay()">Escanear V30.8</button>
   <button onclick="runDailyAIScan()">Resumen IA OpenAI del scan</button>
   <button onclick="testAI()">Probar IA</button>
-  <button onclick="runAuditCheck()">Diagnóstico V30.7</button>
+  <button onclick="runAuditCheck()">Diagnóstico V30.8</button>
   <button onclick="showTab('calendar')">Volver al calendario</button>
 </div>
 
 <div class="error"><b>Modo seguridad:</b> esta versión NO deja pedir resumen IA si primero no corriste el Scan Pro. Eso evita que la IA invente picks sin datos.</div>
 
-<div id="aiStatus" class="notice">Primero toca “Escanear V30.7”. Después corre “Diagnóstico V30.7”. Si todo sale ✅, puedes pedir “Resumen IA OpenAI”.</div>
-<div id="scanBox" class="loading">Carga el calendario y toca “Escanear V30.7”.</div>
+<div id="aiStatus" class="notice">Primero toca “Escanear V30.8”. Después corre “Diagnóstico V30.8”. Si todo sale ✅, puedes pedir “Resumen IA OpenAI”.</div>
+<div id="scanBox" class="loading">Carga el calendario y toca “Escanear V30.8”.</div>
 <div id="aiScanBox"></div>
 </div></section>
 <section id="best" class="screen"><div class="card"><h2>Jugadas recomendadas</h2><div id="bestBox" class="loading">Escoge un juego y analiza.</div></div></section>
@@ -822,9 +827,9 @@ const $=id=>document.getElementById(id);
 let MODE="mlb", EVENTS=[], SELECTED=null, LASTMETA={remaining:"?",used:"?",last:"?"};
 const SPORT_MLB="baseball_mlb";
 const MLB_MARKETS_CORE=["h2h","totals","team_totals"];
-const MLB_MARKETS_F5=["h2h_1st_5_innings","spreads_1st_5_innings","totals_1st_5_innings"];
-const MLB_MARKETS_PLAYERS=["batter_hits","batter_home_runs","batter_total_bases","batter_rbis","batter_runs_scored","batter_hits_runs_rbis","batter_walks","batter_strikeouts","batter_stolen_bases","pitcher_strikeouts","pitcher_outs","pitcher_hits_allowed","pitcher_walks","pitcher_earned_runs","pitcher_to_record_a_win"];
-const MLB_MARKETS_SAFE_PLAYERS=["pitcher_strikeouts","pitcher_outs","pitcher_hits_allowed","pitcher_walks","pitcher_earned_runs","pitcher_to_record_a_win","batter_home_runs","batter_walks","batter_strikeouts","batter_stolen_bases"];
+const MLB_MARKETS_F5=[];
+const MLB_MARKETS_PLAYERS=[];
+const MLB_MARKETS_SAFE_PLAYERS=[];
 const SOCCER_MARKETS_CORE=[
  "h2h","h2h_3_way","spreads","totals","btts","draw_no_bet","double_chance","team_totals"
 ];
@@ -881,7 +886,7 @@ h2h_1st_5_innings:"Ganador primeras 5",spreads_1st_5_innings:"Run Line primeras 
 };
 
 
-const APP_VERSION="V30.7";
+const APP_VERSION="V30.8";
 let SERVER_HEALTH=null;
 const API_TIMEOUT_MS=25000;
 function safeStorageGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
@@ -1319,6 +1324,15 @@ function simpleWinnerSummaryHtml(picks,ctx){
   return html;
 }
 
+
+function isAllowedTestMarketV308(m){
+  if(MODE==="mlb") return ["h2h","totals","team_totals"].includes(String(m||""));
+  return ["h2h","h2h_3_way","totals","team_totals"].includes(String(m||""));
+}
+function filterTestMarketsV308(picks){
+  return (Array.isArray(picks)?picks:[]).filter(p=>isAllowedTestMarketV308(p.market));
+}
+
 function eventStateForScan(e){
  const t=new Date(e?.commence_time||e?.commence||0).getTime();
  const now=Date.now();
@@ -1422,7 +1436,7 @@ function v29Label(grade){
 function aiDeepGrade(p,ctx,e){
  const eg=edgeGrade(p), rr=realisticReasons(p), te=teamEdgeForPick(p);
  let score=eg.score;
- // V30.7: motor anti-falsas buenas. Prefiere dejar pasar antes que vender picks flojos como fuertes.
+ // V30.8: motor anti-falsas buenas. Prefiere dejar pasar antes que vender picks flojos como fuertes.
  score += Math.max(-12, Math.min(12, (te.score-50)*0.30));
  score += Math.max(-8, Math.min(8, ((eg.safety?.score||50)-50)*0.22));
  if((p.fairCtx||0)>=0.76) score+=8; else if((p.fairCtx||0)>=0.74) score+=5; else if((p.fairCtx||0)<0.70) score-=14;
@@ -1440,7 +1454,7 @@ function aiDeepGrade(p,ctx,e){
  if(te.score>=64) good.unshift("matchup/equipo aceptable "+te.score+"/99");
  if(te.score<62) bad.unshift("equipo/matchup no alcanza 62: "+te.score+"/99");
  if(gr.alerts?.length) bad.unshift(...gr.alerts);
- if(score<78) bad.unshift("no alcanza filtro fuerte V30.7: "+score+"/99");
+ if(score<78) bad.unshift("no alcanza filtro fuerte V30.8: "+score+"/99");
  if(eventStateForScan(e).started) bad.unshift("bloqueado: juego en vivo/iniciado");
  return {score,grade:gr.grade,bettable:false,good:[...new Set(good)].slice(0,6),bad:[...new Set(bad)].slice(0,9),teamScore:te.score,marketSafety:eg.safety?.score||50,state:eventStateForScan(e).state,falsePositiveAlerts:gr.alerts};
 }
@@ -1543,7 +1557,7 @@ function renderDailyScan(results,errors){
  window.LAST_DAILY_SCAN=results;
  const rot=rotateScanResults(results);
  const ranked=(results||[]).filter(r=>r.ai?.state!=="LIVE_OR_STARTED").sort((a,b)=>(b.ai?.score||0)-(a.ai?.score||0)).slice(0,5);
- let html=`<div class="edgeBox"><h3>Resultado del Scan V30.7</h3><p>Escaneados: ${results.length} picks analizados. <b>Modo anti-falsas buenas:</b> si no cumple filtros duros, queda NO BET. Si no hay fuerte, se muestra ranking solo papel.</p>${scanMarketMixHtml(results)}</div>`;
+ let html=`<div class="edgeBox"><h3>Resultado del Scan V30.8</h3><p>Escaneados: ${results.length} picks analizados. <b>Modo anti-falsas buenas:</b> si no cumple filtros duros, queda NO BET. Si no hay fuerte, se muestra ranking solo papel.</p>${scanMarketMixHtml(results)}</div>`;
  if(errors?.length) html+=`<div class="error">Errores en ${errors.length} eventos: ${esc(errors.slice(0,4).join(" | "))}</div>`;
  html+=`<div class="noRealMoney">Regla: no jugar dinero real hasta validar mínimo 30 picks en papel.</div>`;
  html+=`<div class="probox"><h3>Candidatos PAPER fuertes</h3>${rot.strong.length?rot.strong.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay candidato fuerte real hoy. Eso puede ser correcto: pasar.</div>'}</div>`;
@@ -1553,7 +1567,7 @@ function renderDailyScan(results,errors){
  }
  html+=`<div class="strictBox"><h3>En vivo / Bloqueado</h3>${rot.live.length?rot.live.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay juegos en vivo bloqueados.</div>'}</div>`;
  html+=`<div class="strictBox"><h3>No bet / Puede ganar pero no valor</h3>${rot.noBet.length?rot.noBet.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay no-bets listados.</div>'}</div>`;
- html+=`<div class="error"><b>Lectura correcta:</b> una jugada en NO BET puede ganar. Eso no la convierte en buena. V30.7 solo llama fuerte a jugadas que pasan filtros completos.</div>`;
+ html+=`<div class="error"><b>Lectura correcta:</b> una jugada en NO BET puede ganar. Eso no la convierte en buena. V30.8 solo llama fuerte a jugadas que pasan filtros completos.</div>`;
  $("scanBox").innerHTML=html;
  clearActionToastSoon();
  refreshAICredits();
@@ -1579,7 +1593,7 @@ async function scanDay(){
    try{
      let oddsData=await fetchEventOdds(sportKey(),e.id,markets);
      let context=MODE==="mlb"?await mlbContext(e):soccerContext(e);
-     let picks=analyzeOdds(oddsData,context).filter(p=>MODE!=="mlb" || mlbSimpleMarketAllowed(p.market));
+     let picks=filterTestMarketsV308(analyzeOdds(oddsData,context));
      window.TEAM_MODEL=buildTeamModel(picks,context);
 
      const categories=["h2h","totals","team_totals"];
@@ -1613,7 +1627,7 @@ async function scanDay(){
  }
  SELECTED=oldSelected;
  renderDailyScan(results,errors);
- status("Scan V30.7 terminado. Solo ganador, total carreras y carreras por equipo.");
+ status("Scan V30.8 terminado. Solo ganador, total carreras y carreras por equipo.");
 }
 
 async function selectGame(i, btn=null){
@@ -1645,9 +1659,9 @@ async function selectGame(i, btn=null){
      throw new Error("The Odds API no devolvió cuotas para este juego/mercados. Prueba otro juego o cambia mercados.");
    }
    let context= MODE==="mlb" ? await mlbContext(SELECTED) : soccerContext(SELECTED);
-   let picks=analyzeOdds(oddsData,context);
+   let picks=filterTestMarketsV308(analyzeOdds(oddsData,context));
    if(!picks.length){
-     setBox("bestBox",'<div class="notice">No hay picks válidos para este juego con los filtros V30.7 Decisión correcta: pasar.</div>');
+     setBox("bestBox",'<div class="notice">No hay picks válidos para este juego con los filtros V30.8 Decisión correcta: pasar.</div>');
      renderContext(context);
      renderMarkets([]);
      status("Sin picks válidos para este juego. No se fuerza jugada."); clearActionToastSoon();
@@ -1669,13 +1683,11 @@ async function selectGame(i, btn=null){
  }
 }
 function buildMarkets(){
- // V30.7 modo prueba: solo mercados principales.
- // MLB: ganador del juego, carreras totales y carreras por equipo.
- // Soccer se deja simple también, pero el enfoque de esta versión es MLB.
  if(MODE==="mlb") return ["h2h","totals","team_totals"];
  return ["h2h","h2h_3_way","totals","team_totals"];
 }
 async function fetchEventOdds(sport,eventId,markets){
+ if(MODE==="mlb") markets=["h2h","totals","team_totals"]; // V30.8 strict
  async function call(ms){return await oddsAPI(`/v4/sports/${sport}/events/${eventId}/odds`,{regions:"us",oddsFormat:"american",markets:ms.join(",")})}
  if(MODE==="soccer"){
    let base={bookmakers:[],_unavailable:[],_availableMarkets:[],_blockedMarkets:[...SOCCER_BLOCKED]};
@@ -1735,6 +1747,7 @@ function analyzeOdds(data,ctx){
  const groups=new Map();
  for(const b of data.bookmakers||[]){
    for(const m of b.markets||[]){
+     if(!isAllowedTestMarketV308(m.key)) continue; // V30.8 strict
      if(MODE==="mlb" && !mlbSimpleMarketAllowed(m.key)) continue;
      const outs=(m.outcomes||[]).filter(o=>typeof o.price==="number");
      if(!outs.length) continue;
@@ -2257,7 +2270,7 @@ function renderPicks(picks,ctx){
  $("stPicks").textContent=strong.length;
  $("stWatch").textContent=observe.length;
 
- let html=simpleWinnerSummaryHtml(original,ctx)+pitcherPanelHtml(ctx)+`<div class="edgeBox"><h3>V30.7 Lectura profesional</h3><p>La app no fuerza jugadas. Por ahora solo analiza ganador, total de carreras y carreras por equipo.</p></div>`;
+ let html=simpleWinnerSummaryHtml(original,ctx)+pitcherPanelHtml(ctx)+`<div class="edgeBox"><h3>V30.8 Lectura profesional</h3><p>La app no fuerza jugadas. Por ahora solo analiza ganador, total de carreras y carreras por equipo.</p></div>`;
  if(strong.length){
    html+=finalDecisionBox("paper","DECISIÓN FINAL: HAY CANDIDATO PAPER FUERTE","Aun así se valida en papel. No dinero real hasta completar 30 picks registrados.");
  }else{
@@ -2297,7 +2310,7 @@ function pickCard(p){
  <div class="metric"><small>Categoría</small><b>${esc(p.category||pickCategoryV307(p))}</b></div>
  <div class="metric"><small>Paper Track</small><b>$0 real</b></div>
  </div>
- <div class="proFlags">${flags.map(f=>`<span class="flag ${f.c}">${esc(f.t)}</span>`).join("")}<span class="flag ${hr.cls}">${esc(hr.txt)}</span><span class="flag ${st==="PAPER FUERTE"?"green":st==="NO BET"?"red":"yellow"}">V30.7: ${esc(st)}</span></div>
+ <div class="proFlags">${flags.map(f=>`<span class="flag ${f.c}">${esc(f.t)}</span>`).join("")}<span class="flag ${hr.cls}">${esc(hr.txt)}</span><span class="flag ${st==="PAPER FUERTE"?"green":st==="NO BET"?"red":"yellow"}">V30.8: ${esc(st)}</span></div>
  ${pitcherHtml}${alerts.length?`<ul class="reasonList">${alerts.slice(0,6).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
  ${((p.realGood&&p.realGood.length)||(p.realBad&&p.realBad.length))?`<ul class="reasonList">${(p.realGood||[]).slice(0,3).map(x=>`<li class="good">${esc(x)}</li>`).join("")}${(p.realBad||[]).slice(0,3).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
  <p class="small">Mejor casa: ${esc(p.best.book)} · Cuota justa aprox: ${fmtOdds(p.fairOdds)} · Para valor +1%, buscar ${fmtOdds(p.needOdds)} o mejor. Verifica Hard Rock: mismo partido, mercado exacto y línea exacta. Top: ${esc(p.top.map(x=>x.book+" "+fmtOdds(x.price)).join(" · "))}</p></div>`;
@@ -2502,7 +2515,7 @@ window.addEventListener("error", function(e){
   try {
     const box = document.querySelector("#bestBox") || document.body;
     if (String(e.message || "").includes("proScore")) {
-      box.insertAdjacentHTML("afterbegin", '<div class="error">Error interno corregible: proScore no cargó. Usa V30.7 o recarga la página.</div>');
+      box.insertAdjacentHTML("afterbegin", '<div class="error">Error interno corregible: proScore no cargó. Usa V30.8 o recarga la página.</div>');
     }
   } catch(_){}
 });
@@ -2510,7 +2523,7 @@ window.addEventListener("error", function(e){
 
 
 async function testAI(){
- showActionToast("Probando conexión IA OpenAI V30.7...");
+ showActionToast("Probando conexión IA OpenAI V30.8...");
  const box=$("aiStatus")||$("aiScanBox")||$("scanBox")||$("diagBox");
  try{
    if(box) box.innerHTML='<div class="notice">Probando IA rápida. Esto no usa el scan completo...</div>';
@@ -2539,7 +2552,7 @@ function summarizeCurrentPicksForAI(){
  return cards;
 }
 async function runDailyAIScan(){
- showScanCenter("Corriendo Resumen IA Lite V30.7...");
+ showScanCenter("Corriendo Resumen IA Lite V30.8...");
  const box=$("aiScanBox")||$("scanBox")||$("bestBox");
  if(!Array.isArray(window.LAST_DAILY_SCAN) || !window.LAST_DAILY_SCAN.length){
    const html='<div class="error"><b>Primero toca “2) Scan día local”.</b> Después usa “3) Resumen IA OpenAI”. La IA necesita datos reales para no inventar.</div>';
@@ -2549,7 +2562,7 @@ async function runDailyAIScan(){
  }
  try{
    if(box) box.innerHTML='<div class="loading">IA Lite analizando top picks del scan local. Puede tardar 20-60 segundos...</div><div class="aiTimeoutBox">Si tarda, no significa que las keys estén mal. Significa que OpenAI está demorando o el servidor está frío.</div>';
-   const payload={mode:"daily-scan-lite",version:"V30.7",sport:MODE,date:$("date")?.value||today(),rules:{money_real:"NO",stake:"$0 real / solo papel"},scan_results:compactScanForAIClient(window.LAST_DAILY_SCAN,22)};
+   const payload={mode:"daily-scan-lite",version:"V30.8",sport:MODE,date:$("date")?.value||today(),rules:{money_real:"NO",stake:"$0 real / solo papel"},scan_results:compactScanForAIClient(window.LAST_DAILY_SCAN,22)};
    const r=await fetchWithTimeout("/api/ai-scan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)},95000);
    const j=await readJsonSafe(r);
    if(!r.ok) throw new Error(j.error||"Error IA");
@@ -2559,7 +2572,7 @@ async function runDailyAIScan(){
    const msg=String(e.message||e);
    let html='<div class="error"><b>Error IA:</b> '+esc(msg)+'</div>';
    if(msg.toLowerCase().includes("timeout")){
-     html+='<div class="aiTimeoutBox"><b>Qué significa:</b> las keys pueden estar bien, pero OpenAI tardó más que el límite. Usa el scan local y vuelve a intentar. V30.7 manda menos datos para reducir este problema.</div>';
+     html+='<div class="aiTimeoutBox"><b>Qué significa:</b> las keys pueden estar bien, pero OpenAI tardó más que el límite. Usa el scan local y vuelve a intentar. V30.8 manda menos datos para reducir este problema.</div>';
    }else{
      html+='<div class="notice">Si “Probar IA” funciona, fue demora temporal del resumen. Si “Probar IA” falla, revisa billing/créditos de OpenAI.</div>';
    }
@@ -2816,7 +2829,7 @@ function enforceNoRepeatPlus15(data){
        pick:x.pick||x.jugada||x.selection||"Pick +1.5 repetido",
        market:x.market||"Spread +1.5",
        grade:"NO TOCAR",
-       reason:"Ocultada por V30.7: ya había un +1.5 full game. La app no puede repetir el mismo tipo de mercado.",
+       reason:"Ocultada por V30.8: ya había un +1.5 full game. La app no puede repetir el mismo tipo de mercado.",
        risk:"No jugar por repetición de mercado"
      }))];
    }
@@ -2838,7 +2851,7 @@ function enforceNoRepeatPlus15(data){
 
 async function runAuditCheck(){
  const box=$("aiStatus")||$("scanBox");
- if(box) box.innerHTML='<div class="notice">Corriendo diagnóstico V30.7...</div>';
+ if(box) box.innerHTML='<div class="notice">Corriendo diagnóstico V30.8...</div>';
  const checks=[];
  checks.push({name:"Eventos cargados",ok:typeof EVENTS!=="undefined" && EVENTS.length>0,detail:(typeof EVENTS!=="undefined"?EVENTS.length:0)+" juegos"});
  checks.push({name:"Último scan local",ok:Array.isArray(window.LAST_DAILY_SCAN)&&window.LAST_DAILY_SCAN.length>0,detail:(window.LAST_DAILY_SCAN?.length||0)+" picks"});
@@ -2861,11 +2874,11 @@ async function runAuditCheck(){
    healthDetail=`Odds:${h.oddsEnv?"✅":"❌"} SDIO:${h.sdioEnv?"✅":"❌"} OpenAI:${h.openaiEnv?"✅":"❌"}`;
  }catch(e){healthDetail=e.message}
  checks.push({name:"Vercel env",ok:healthOK,detail:healthDetail});
- let html='<div class="edgeBox"><h3>Diagnóstico V30.7</h3>';
+ let html='<div class="edgeBox"><h3>Diagnóstico V30.8</h3>';
  for(const c of checks){
    html+=`<p class="${c.ok?'good':'bad'}"><b>${c.ok?'✅':'❌'} ${esc(c.name)}:</b> ${esc(c.detail)}</p>`;
  }
- html+='<p class="small">Orden correcto: Cargar calendario → Escanear V30.7 → Diagnóstico V30.7 → Resumen IA OpenAI solo si hace falta.</p></div>';
+ html+='<p class="small">Orden correcto: Cargar calendario → Escanear V30.8 → Diagnóstico V30.8 → Resumen IA OpenAI solo si hace falta.</p></div>';
  if(box) box.innerHTML=html;
 }
 
