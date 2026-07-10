@@ -1512,11 +1512,43 @@ maxDog=Number($("maxDog").value||120), minEV=Number($("minEV").value||-3)/99;
    let strongMinEV = MODE==="soccer" ? Math.max(minEV,0.01) : Math.max(minEV,0.005);
    let fuerte=quality==="HIGH" && fairCtx>=minProb && bookCount>=minBooks && ev>=strongMinEV && priceOk && !ctx?.pitcherMismatch;
    let revisar=(quality==="MED"||quality==="HIGH") && fairCtx>=Math.max(.52,minProb-.05) && ev>-0.04 && priceOk && !ctx?.pitcherMismatch;
-   let verdict=fuerte?"FUERTE":(revisar?"REVISAR":"NO JUGAR");
-   let obj={market:g.market,label:marketLabel(g.market),selection:g.name,best,top:g.prices.slice(0,5),fairMarket,fairCtx,ev,bookCount,quality,qText,completeness,spread,adj,verdict};
-   obj.proScore=proScore(obj);
-   obj.fairOdds=fairAmerican(fairCtx);
-   obj.needOdds=minPlayableOdds(fairCtx,0.01);
+ 
+let verdict=fuerte?"FUERTE":(revisar?"REVISAR":"NO JUGAR");
+ let obj={market:g.market,label:marketLabel(g.market),selection:g.name,best,top:g.prices.slice(0,5),fairMarket,fairCtx,ev,bookCount,quality,qText,completeness,spread,adj,verdict};
+ obj.proScore=proScore(obj);
+
+ // NUEVO BLOQUE PRO 2: Inteligencia de Lanzadores (Bonus/Castigo matemático)
+ if (MODE === "mlb" && ctx && ctx.pitcherStats && (g.market === "h2h" || g.market.includes("spreads"))) {
+     let side = teamNameSide(g.name);
+     let myPitcherName = side === "away" ? ctx.awayPitcherName : side === "home" ? ctx.homePitcherName : null;
+     let oppPitcherName = side === "away" ? ctx.homePitcherName : side === "home" ? ctx.awayPitcherName : null;
+
+     let findP = (name) => {
+         if(!name) return null;
+         let n = String(name).toLowerCase().split(" ").pop(); // Busca por apellido
+         return ctx.pitcherStats.find(p => String(p.Name||"").toLowerCase().includes(n) || String(p.FirstName+" "+p.LastName).toLowerCase().includes(n));
+     };
+
+     let myP = findP(myPitcherName);
+     let oppP = findP(oppPitcherName);
+
+     if (myP) {
+         let whip = myP.WalksAndHitsPerInningPitched;
+         let era = myP.EarnedRunAverage;
+         if (whip > 0 && whip < 1.20) obj.proScore += 15;
+         if (era > 0 && era < 3.50) obj.proScore += 10;
+     }
+     if (oppP) {
+         let whip = oppP.WalksAndHitsPerInningPitched;
+         let era = oppP.EarnedRunAverage;
+         if (whip > 0 && whip < 1.20) obj.proScore -= 15;
+         if (era > 0 && era < 3.50) obj.proScore -= 10;
+     }
+     obj.proScore = Math.max(0, Math.min(99, obj.proScore)); // Limita el score máximo a 99
+ }
+
+ obj.fairOdds=fairAmerican(fairCtx);
+ obj.needOdds=minPlayableOdds(fairCtx,0.01);
    obj.premium=verdict==="FUERTE" && obj.proScore>=68 && ev>=0.01 && fairCtx>=0.58 && bookCount>=4;
    arr.push(obj);
  }
@@ -2036,9 +2068,10 @@ function renderMarkets(picks){
  $("marketsBox").innerHTML=html+dedupePicks(picks).slice(0,150).map(pickCard).join("");
 }
 async function mlbContext(ev){
- let ctx={title:"MLB API Restore HR Soccer Context",items:[],raw:[],pitchersConfirmed:false,lineupsConfirmed:false,injuriesConcern:false,weatherLean:"neutral",pitcherMismatch:false};
+ let ctx={title:"MLB API Restore HR Soccer Context",items:[],raw:[],pitchersConfirmed:false,lineupsConfirmed:false,injuriesConcern:false,weatherLean:"neutral",pitcherMismatch:false,awayPitcherName:null,homePitcherName:null,pitcherStats:[]};
  let date=$("date").value || String(ev.commence_time||today()).slice(0,10);
  ctx.items.push(["Fecha usada",date+" (fecha seleccionada, no UTC)"]);
+
  // SportsDataIO professional context
  try{
    let sdioDate=toSdioDate(date);
@@ -2050,9 +2083,15 @@ async function mlbContext(ev){
      ctx.items.push(["Estadio/clima SDIO",`${gm.StadiumDetails?.Name||gm.Stadium||gm.StadiumID||"pendiente"} · ${weatherText(gm)}`]);
      if((gm.AwayTeamProbablePitcher||gm.AwayStartingPitcher||gm.AwayStartingPitcherID) && (gm.HomeTeamProbablePitcher||gm.HomeStartingPitcher||gm.HomeStartingPitcherID)) ctx.pitchersConfirmed=true;
      if(weatherText(gm).toLowerCase().includes("wind")) ctx.weatherLean="neutral";
+     
+     // Guardamos los nombres para el motor de probabilidad
+     ctx.awayPitcherName = gm.AwayTeamProbablePitcher || gm.AwayStartingPitcher || null;
+     ctx.homePitcherName = gm.HomeTeamProbablePitcher || gm.HomeStartingPitcher || null;
+     
      ctx.raw.push(JSON.stringify(gm,null,2).slice(0,4000));
    } else ctx.items.push(["SportsDataIO game","No pude empatar juego exacto en GamesByDate."]);
  }catch(e){ctx.items.push(["SportsDataIO GamesByDate","No disponible en tu trial/feed o error: "+e.message])}
+
  try{
    let sdioDate=toSdioDate(date);
    let proj=await trySdio([`/v3/mlb/projections/json/PlayerGameProjectionStatsByDate/${sdioDate}`,`/v3/mlb/projections/json/ProjectedPlayerGameStatsByDate/${sdioDate}`,`/v3/mlb/stats/json/PlayerGameStatsByDate/${sdioDate}`]);
@@ -2061,6 +2100,7 @@ async function mlbContext(ev){
    ctx.items.push(["Lineups/Projected stats SDIO",`${count} registros · confirmados: ${confirmed?"sí":"no/pendiente"}`]);
    ctx.lineupsConfirmed=confirmed;
  }catch(e){ctx.items.push(["Lineups SDIO","No disponible en tu trial/feed: "+e.message])}
+
  try{
    let season=new Date(date).getFullYear();
    let injuries=await trySdio([`/v3/mlb/scores/json/Injuries/${season}`,`/v3/mlb/scores/json/Injuries`]);
@@ -2068,16 +2108,36 @@ async function mlbContext(ev){
    ctx.items.push(["Lesiones SDIO",`${count} registros devueltos. Revisa si afectan jugadores clave.`]);
    ctx.injuriesConcern=false;
  }catch(e){ctx.items.push(["Lesiones SDIO","No disponible o no incluido en trial: "+e.message])}
+
+ // NUEVO BLOQUE PRO 1: Descargar estadísticas completas de los pitchers
+ try{
+   let season=new Date(date).getFullYear();
+   let stats=await trySdio([`/v3/mlb/stats/json/PlayerSeasonStats/${season}`]);
+   ctx.pitcherStats = Array.isArray(stats) ? stats : [];
+   ctx.items.push(["Pitcher Stats PRO", `${ctx.pitcherStats.length} jugadores cargados para análisis de élite.`]);
+ }catch(e){ctx.items.push(["Pitcher Stats PRO","No disponible: "+e.message])}
+
  // MLB public fallback
  try{
    let schedResp=await fetchWithTimeout(`https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${date}&hydrate=probablePitcher,team,venue`,{},30000); let sched=await readJsonSafe(schedResp);
    let games=((sched.dates||[])[0]?.games)||[]; let m=matchMLB(games,ev);
-   if(m){ctx.items.push(["MLB StatsAPI pitchers",`${m.teams.away.team.name}: ${m.teams.away.probablePitcher?.fullName||"pendiente"} | ${m.teams.home.team.name}: ${m.teams.home.probablePitcher?.fullName||"pendiente"}`]);ctx.items.push(["MLB StatsAPI estadio",m.venue?.name||"pendiente"]);if(m.teams.away.probablePitcher&&m.teams.home.probablePitcher)ctx.pitchersConfirmed=true;}
-   else ctx.items.push(["MLB StatsAPI","No encontró match exacto visitante/local."]);
+   if(m){
+     ctx.items.push(["MLB StatsAPI pitchers",`${m.teams.away.team.name}: ${m.teams.away.probablePitcher?.fullName||"pendiente"} | ${m.teams.home.team.name}: ${m.teams.home.probablePitcher?.fullName||"pendiente"}`]);
+     ctx.items.push(["MLB StatsAPI estadio",m.venue?.name||"pendiente"]);
+     if(m.teams.away.probablePitcher&&m.teams.home.probablePitcher)ctx.pitchersConfirmed=true;
+     
+     // Respaldo de nombres
+     if(!ctx.awayPitcherName) ctx.awayPitcherName = m.teams.away.probablePitcher?.fullName;
+     if(!ctx.homePitcherName) ctx.homePitcherName = m.teams.home.probablePitcher?.fullName;
+   } else ctx.items.push(["MLB StatsAPI","No encontró match exacto visitante/local."]);
  }catch(e){ctx.items.push(["MLB StatsAPI","Error: "+e.message])}
+
  ctx.items.push(["Bullpen","SportsDataIO puede ayudar si tu feed incluye boxscores/player game stats; si no, revisar uso de relevistas últimas 2 noches."]);
  ctx.items.push(["Bateador vs pitcher","No se inventa. Si tu feed no lo incluye, queda pendiente manual."]);
  return ctx;
+}
+
+
 }
 function weatherText(g){let parts=[];["ForecastTempLow","ForecastTempHigh","ForecastDescription","ForecastWindChill","ForecastWindSpeed","ForecastWindDirection","Weather","Temperature","Humidity"].forEach(k=>{if(g[k]!==undefined&&g[k]!==null)parts.push(k+":"+g[k])});return parts.join(" · ")||"clima pendiente"}
 async function trySdio(paths){let last; for(const p of paths){try{return await sdioAPI(p)}catch(e){last=e}} throw last}
@@ -2469,5 +2529,3 @@ Object.assign(window,{loadCalendar,selectGame,setMode,usePhoneDate,runAuditCheck
 </script>
 </body>
 </html>
-
-
