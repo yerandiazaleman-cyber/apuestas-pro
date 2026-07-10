@@ -2139,6 +2139,56 @@ async function mlbContext(ev){
 
 
 }
+async function loadCalendar(){
+ showTab("calendar");
+ setBox("calendarBox",'<div class="loading">Cargando calendario con hora local del teléfono...</div>');
+ EVENTS=[];SELECTED=null;
+ try{
+   let all=await oddsAPI(`/v4/sports/${sportKey()}/events`,{});
+   all=Array.isArray(all)?all:[];
+   let d=$("date").value || today();
+   let q=$("teamSearch")?.value||"";
+   let mode=$("timeFilter")?.value||"upcoming";
+   let limitVal=$("eventLimit").value||"99";
+   let limit=limitVal==="99"?999:Number(limitVal||999);
+
+   let base=all.filter(e=>teamMatches(e,q));
+   let exact=base.filter(e=>sameLocalDay(e.commence_time,d));
+
+   let filtered;
+   if(mode==="all"){
+     filtered=base;
+   }else if(mode==="today"){
+     filtered=exact;
+   }else{
+     filtered=exact.filter(e=>isUpcomingByPhone(e.commence_time));
+     if(!filtered.length) filtered=base.filter(e=>isUpcomingByPhone(e.commence_time));
+   }
+
+   filtered=sortEventsByTime(filtered);
+   EVENTS=filtered.slice(0,limit);
+
+   $("stGames").textContent=EVENTS.length;
+   $("stSel").textContent=0;
+   $("stPicks").textContent=0;
+   $("stWatch").textContent=0;
+
+   let msg=phoneTimeBox();
+   msg+=`<div class="caltools"><span>Filtro: ${esc(mode)}</span><span>Eventos API total: ${all.length}</span><span>Coinciden fecha local: ${exact.length}</span><span>Mostrando: ${EVENTS.length}</span>${q?`<span>Búsqueda: ${esc(q)}</span>`:""}</div>`;
+   if(!EVENTS.length && all.length){
+     msg+=`<div class="notice">No encontré juegos con ese filtro. Cambia “Filtro tiempo” a “Todos los de esta fecha” o “Todo lo que traiga API”.</div>`;
+   }
+   setBox("calendarBox", EVENTS.length?msg+EVENTS.map((e,i)=>gameCard(e,i)).join(""):msg+'<div class="notice">No encontré juegos para esa fecha/equipo en The Odds API.</div>');
+   status("Calendario cargado usando fecha/hora del teléfono. Verifica la hora local que sale arriba.");
+ }catch(e){
+   let msg=e.message;
+   if(msg.includes("HTTP 404")) msg+=" · Puede ser sport key no activo/no disponible en The Odds API o proxy /api faltante.";
+   setBox("calendarBox",'<div class="error">'+esc(msg)+'</div>');
+   status(msg,true);
+ }
+}
+
+
 function weatherText(g){let parts=[];["ForecastTempLow","ForecastTempHigh","ForecastDescription","ForecastWindChill","ForecastWindSpeed","ForecastWindDirection","Weather","Temperature","Humidity"].forEach(k=>{if(g[k]!==undefined&&g[k]!==null)parts.push(k+":"+g[k])});return parts.join(" · ")||"clima pendiente"}
 async function trySdio(paths){let last; for(const p of paths){try{return await sdioAPI(p)}catch(e){last=e}} throw last}
 function toSdioDate(iso){let d=new Date(iso+"T12:00:00");let months=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];return `${d.getFullYear()}-${months[d.getMonth()]}-${String(d.getDate()).padStart(2,"0")}`}
