@@ -4,2578 +4,368 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070714">
-<meta name="description" content="PickSharp Pro V30.4: panel profesional de análisis deportivo en modo paper-only con control de riesgo, QA y validación IA/local.">
-<title>PickSharp Pro V30.4 AI Lite Timeout Fix</title>
+<meta name="description" content="PickSharp Pro V30.4: panel profesional con filtros optimizados y stats de lanzadores.">
+<title>PickSharp Pro V30.4 (Filtros Ajustados)</title>
 <style>
 :root{
-  color-scheme: dark;
-  --bg:#070A12;
-  --bg2:#0B1020;
-  --surface:#111827;
-  --surface2:#172033;
-  --card:rgba(17,24,39,.78);
-  --cardSolid:#111827;
-  --panel:rgba(15,23,42,.86);
-  --line:rgba(148,163,184,.18);
-  --line2:rgba(148,163,184,.30);
-  --txt:#F8FAFC;
-  --muted:#94A3B8;
-  --muted2:#CBD5E1;
-  --green:#22C55E;
-  --greenSoft:rgba(34,197,94,.14);
-  --red:#EF4444;
-  --redSoft:rgba(239,68,68,.14);
-  --yellow:#F59E0B;
-  --yellowSoft:rgba(245,158,11,.14);
-  --blue:#38BDF8;
-  --blueSoft:rgba(56,189,248,.14);
-  --violet:#8B5CF6;
-  --violetSoft:rgba(139,92,246,.18);
-  --pink:#EC4899;
-  --shadow:0 22px 70px rgba(0,0,0,.34);
-  --shadowSoft:0 12px 34px rgba(0,0,0,.22);
-  --radius:24px;
-  --radiusSm:16px;
-  --focus:0 0 0 4px rgba(56,189,248,.18);
+  color-scheme: dark; --bg:#070A12; --bg2:#0B1020; --surface:#111827; --surface2:#172033;
+  --line:rgba(148,163,184,.18); --line2:rgba(148,163,184,.30); --txt:#F8FAFC; --muted:#94A3B8; --muted2:#CBD5E1;
+  --green:#22C55E; --greenSoft:rgba(34,197,94,.14); --red:#EF4444; --redSoft:rgba(239,68,68,.14);
+  --yellow:#F59E0B; --yellowSoft:rgba(245,158,11,.14); --blue:#38BDF8; --blueSoft:rgba(56,189,248,.14);
+  --radius:24px; --radiusSm:16px; --focus:0 0 0 4px rgba(56,189,248,.18); --shadowSoft:0 12px 34px rgba(0,0,0,.22);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{
-  margin:0;
-  min-height:100svh;
-  color:var(--txt);
+  margin:0; min-height:100svh; color:var(--txt);
   font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:
-    radial-gradient(circle at 8% -10%, rgba(56,189,248,.22), transparent 36%),
-    radial-gradient(circle at 92% 0%, rgba(139,92,246,.26), transparent 34%),
-    radial-gradient(circle at 50% 110%, rgba(34,197,94,.10), transparent 34%),
-    linear-gradient(135deg,var(--bg),var(--bg2) 48%,#050814);
-  background-attachment:fixed;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
+  background:radial-gradient(circle at 8% -10%, rgba(56,189,248,.22), transparent 36%),
+             radial-gradient(circle at 92% 0%, rgba(139,92,246,.26), transparent 34%),
+             linear-gradient(135deg,var(--bg),var(--bg2) 48%,#050814);
+  background-attachment:fixed; -webkit-font-smoothing:antialiased;
 }
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-  background-size:42px 42px;
-  mask-image:linear-gradient(to bottom, rgba(0,0,0,.75), transparent 82%);
-}
-.app{
-  width:min(1180px,100%);
-  margin:0 auto;
-  padding:clamp(16px,2.8vw,34px) max(14px,env(safe-area-inset-left)) calc(64px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-right));
-}
-h1,h2,h3{color:var(--txt);letter-spacing:-.035em}
-h1{font-size:clamp(30px,5vw,52px);line-height:.96;margin:0;font-weight:950}
-h2{font-size:clamp(20px,3vw,28px);line-height:1.08;margin:0 0 12px;font-weight:900}
-h3{font-size:clamp(16px,2vw,19px);line-height:1.15;margin:0 0 10px;font-weight:900}
+.app{width:min(1180px,100%); margin:0 auto; padding:clamp(16px,2.8vw,34px) 14px 64px;}
+h1,h2,h3{color:var(--txt);letter-spacing:-.035em;margin:0}
+h1{font-size:clamp(30px,5vw,52px);line-height:.96;font-weight:950}
+h2{font-size:clamp(20px,3vw,28px);margin-bottom:12px;font-weight:900}
+h3{font-size:18px;margin-bottom:10px;font-weight:900}
 p{color:var(--muted2);line-height:1.55;margin:8px 0}
-.small{font-size:12.5px;color:var(--muted);line-height:1.45}
+.small{font-size:12.5px;color:var(--muted)}
 .hidden{display:none!important}
-
-.header{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:18px;
-  margin:4px 0 18px;
+.header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:4px 0 18px;}
+.pill{padding:10px 14px;font-size:12px;font-weight:950;border-radius:999px;color:#BAE6FD;background:rgba(56,189,248,.18);border:1px solid rgba(125,211,252,.35);}
+.card,.game,.pick,.ctx,.stat,.edgeBox,.probox,.strictBox,.aiProBox{
+  border:1px solid var(--line);background:rgba(17,24,39,.82);box-shadow:var(--shadowSoft);border-radius:var(--radius);padding:20px;margin-bottom:16px;
 }
-.header p{font-size:14px;color:var(--muted);margin-top:8px!important}
-.pill{
-  flex:0 0 auto;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border-radius:999px;
-  padding:10px 14px;
-  font-size:12px;
-  font-weight:950;
-  letter-spacing:.05em;
-  text-transform:uppercase;
-  color:#BAE6FD;
-  background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(139,92,246,.18));
-  border:1px solid rgba(125,211,252,.35);
-  box-shadow:0 10px 30px rgba(56,189,248,.10);
-}
-.pill:before{content:"";width:8px;height:8px;border-radius:999px;background:var(--green);box-shadow:0 0 0 5px rgba(34,197,94,.14)}
-
-.card,.game,.pick,.ctx,.stat,.teamCard,.teamBox,.edgeBox,.probox,.strictBox,.aiProBox,.creditBox,.tzbox{
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(17,24,39,.82),rgba(15,23,42,.72));
-  box-shadow:var(--shadowSoft);
-  backdrop-filter:blur(18px);
-}
-.card{
-  border-radius:var(--radius);
-  padding:clamp(16px,2.4vw,24px);
-  margin-bottom:16px;
-}
-.hero{
-  position:relative;
-  overflow:hidden;
-  background:
-    linear-gradient(135deg,rgba(56,189,248,.18),rgba(139,92,246,.19) 52%,rgba(236,72,153,.10)),
-    rgba(15,23,42,.70);
-  border-color:rgba(125,211,252,.28);
-  box-shadow:var(--shadow);
-}
-.hero:after{
-  content:"";
-  position:absolute;
-  width:260px;height:260px;
-  right:-90px;top:-110px;
-  border-radius:999px;
-  background:radial-gradient(circle,rgba(56,189,248,.24),transparent 66%);
-}
-.hero>*{position:relative;z-index:1}
-
-.row,.row3,.row4,.grid,.metrics,.stats,.teamGrid,.checks,.caltools{
-  display:grid;
-  gap:12px;
-}
+.row,.row3,.row4,.grid,.metrics,.stats{display:grid;gap:12px;}
 .row{grid-template-columns:repeat(2,minmax(0,1fr))}
 .row3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .row4{grid-template-columns:repeat(4,minmax(0,1fr))}
-.grid{grid-template-columns:repeat(6,minmax(0,1fr))}
-.metrics{grid-template-columns:repeat(5,minmax(0,1fr));margin-top:14px}
-.stats{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:16px}
-.teamGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.checks{grid-template-columns:repeat(2,minmax(0,1fr))}
-.caltools{grid-template-columns:repeat(2,minmax(0,1fr))}
-
-label{
-  display:block;
-  margin:10px 0 7px;
-  color:var(--muted);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-input,select,textarea{
-  width:100%;
-  min-height:48px;
-  border:1px solid var(--line);
-  border-radius:var(--radiusSm);
-  background:rgba(2,6,23,.62);
-  color:var(--txt);
-  font-size:16px;
-  font-weight:650;
-  padding:12px 14px;
-  outline:none;
-  transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
-}
-textarea{min-height:96px;resize:vertical}
-input::placeholder,textarea::placeholder{color:#64748B}
-input:focus,select:focus,textarea:focus{
-  border-color:rgba(56,189,248,.72);
-  box-shadow:var(--focus);
-  background:rgba(2,6,23,.82);
-}
-button{
-  width:100%;
-  min-height:48px;
-  border:0;
-  border-radius:18px;
-  margin-top:12px;
-  padding:14px 16px;
-  color:#fff;
-  font-size:15px;
-  font-weight:950;
-  letter-spacing:-.01em;
-  cursor:pointer;
-  background:linear-gradient(135deg,#7C3AED,#2563EB);
-  box-shadow:0 14px 30px rgba(37,99,235,.22);
-  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease, border-color .18s ease, background .18s ease;
-}
-button.secondary{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.055);
-  box-shadow:none;
-  color:var(--muted2);
-}
-button.safe{background:linear-gradient(135deg,#16A34A,#0284C7);box-shadow:0 14px 30px rgba(34,197,94,.18)}
-button.warn{background:linear-gradient(135deg,#F59E0B,#EF4444);box-shadow:0 14px 30px rgba(239,68,68,.18)}
-button:focus-visible{outline:none;box-shadow:var(--focus),0 14px 30px rgba(37,99,235,.20)}
-button:disabled{opacity:.55;cursor:not-allowed;filter:grayscale(.3)}
-
-.modeButtons{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-  padding:6px;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:rgba(2,6,23,.38);
-}
-.modeButtons button{
-  margin:0;
-  box-shadow:none;
-  border:1px solid transparent;
-  background:transparent;
-  color:var(--muted2);
-}
-.modeButtons button.active{
-  color:#E0F2FE;
-  border-color:rgba(56,189,248,.42);
-  background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(139,92,246,.16));
-}
-
-.tabs{
-  position:sticky;
-  top:0;
-  z-index:20;
-  display:grid;
-  grid-template-columns:repeat(9,minmax(0,1fr));
-  gap:8px;
-  margin:0 0 16px;
-  padding:10px 0;
-  background:linear-gradient(180deg,rgba(7,10,18,.96),rgba(7,10,18,.76));
-  backdrop-filter:blur(18px);
-}
-.tabs button{
-  margin:0;
-  min-height:44px;
-  padding:11px 8px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  font-size:12.5px;
-  box-shadow:none;
-  background:rgba(255,255,255,.055);
-  color:var(--muted2);
-}
-.tabs button.active{
-  color:#E0F2FE;
-  border-color:rgba(56,189,248,.55);
-  background:linear-gradient(135deg,rgba(56,189,248,.20),rgba(139,92,246,.16));
-}
-
+.grid,.metrics,.stats{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
+label{display:block;margin:10px 0 7px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;}
+input,select{width:100%;min-height:48px;border:1px solid var(--line);border-radius:var(--radiusSm);background:rgba(2,6,23,.62);color:var(--txt);font-size:16px;padding:12px;}
+button{width:100%;min-height:48px;border:0;border-radius:18px;margin-top:12px;color:#fff;font-weight:950;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#2563EB);}
+button.secondary{background:rgba(255,255,255,.055);border:1px solid var(--line);color:var(--muted2);}
+button.safe{background:linear-gradient(135deg,#16A34A,#0284C7);}
+.modeButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px;border:1px solid var(--line);border-radius:22px;background:rgba(2,6,23,.38);}
+.modeButtons button{margin:0;background:transparent;border:1px solid transparent;color:var(--muted2);}
+.modeButtons button.active{color:#E0F2FE;border-color:rgba(56,189,248,.42);background:rgba(56,189,248,.18);}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 0;margin-bottom:16px;scrollbar-width:none;}
+.tabs button{min-width:110px;margin:0;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:16px;}
+.tabs button.active{background:rgba(56,189,248,.20);color:#E0F2FE;border-color:rgba(56,189,248,.55);}
 .screen{display:none;animation:fadeUp .22s ease both}
 .screen.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-.notice,.ok,.error,.qaClean,.noRealMoney{
-  border-radius:20px;
-  padding:14px 15px;
-  margin:12px 0;
-  font-size:13.5px;
-  line-height:1.5;
-  border:1px solid var(--line);
-}
-.notice{background:var(--yellowSoft);border-color:rgba(245,158,11,.30);color:#FDE68A}
-.ok,.qaClean{background:var(--greenSoft);border-color:rgba(34,197,94,.32);color:#BBF7D0}
-.error,.noRealMoney{background:var(--redSoft);border-color:rgba(239,68,68,.34);color:#FECACA;font-weight:850}
-
-.stat{
-  border-radius:20px;
-  padding:14px;
-  min-height:84px;
-}
-.stat small,.metric small{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.045em;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-.stat b{font-size:clamp(18px,2vw,24px);font-weight:950;color:#fff}
-.game,.pick,.ctx,.teamCard{
-  border-radius:22px;
-  padding:16px;
-  margin:12px 0;
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-}
-.game.selected{
-  border-color:rgba(34,197,94,.62);
-  background:linear-gradient(135deg,rgba(34,197,94,.13),rgba(15,23,42,.72));
-  box-shadow:0 18px 44px rgba(34,197,94,.12);
-}
-.top,.scanHead{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:14px;
-}
-.title{font-size:17px;font-weight:950;letter-spacing:-.02em;color:#fff}
-.sub{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.35}
-
-.badge,.flag,.scanTag,.mixTag,.aiTag,.v29Gate,.paperTag{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:999px;
-  padding:7px 10px;
-  font-size:12px;
-  font-weight:950;
-  line-height:1;
-  border:1px solid transparent;
-  white-space:nowrap;
-}
-.HIGH,.exclusive{background:var(--greenSoft);color:#BBF7D0;border-color:rgba(34,197,94,.35)}
-.MED,.possible{background:var(--yellowSoft);color:#FDE68A;border-color:rgba(245,158,11,.35)}
-.LOW,.bad{background:var(--redSoft);color:#FECACA;border-color:rgba(239,68,68,.35)}
-.badge{align-self:flex-start}
-
-.metric{
-  border:1px solid var(--line);
-  background:rgba(2,6,23,.42);
-  border-radius:18px;
-  padding:13px;
-  min-width:0;
-}
-.metric b{
-  display:block;
-  font-size:clamp(15px,1.6vw,20px);
-  color:#fff;
-  overflow-wrap:anywhere;
-}
-.good{color:#86EFAC!important}
-.bad{color:#FCA5A5!important}
-.warnTxt{color:#FDE68A!important}
-.green{background:var(--greenSoft);color:#BBF7D0;border-color:rgba(34,197,94,.35)}
-.red{background:var(--redSoft);color:#FECACA;border-color:rgba(239,68,68,.35)}
-.yellow{background:var(--yellowSoft);color:#FDE68A;border-color:rgba(245,158,11,.35)}
-.blue{background:var(--blueSoft);color:#BAE6FD;border-color:rgba(56,189,248,.35)}
-
-.proFlags{
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:7px;
-  margin:14px 0 8px;
-}
-.reasonList{
-  margin:12px 0 0;
-  padding:0;
-  list-style:none;
-  display:grid;
-  gap:8px;
-}
-.reasonList li{
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:rgba(2,6,23,.34);
-  padding:9px 10px;
-  font-size:13px;
-  line-height:1.35;
-}
-.edgeBox,.probox,.strictBox,.aiProBox,.creditBox,.tzbox{
-  border-radius:var(--radius);
-  padding:clamp(15px,2vw,20px);
-  margin:14px 0;
-}
-.edgeBox{border-color:rgba(56,189,248,.28);background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(15,23,42,.78))}
-.probox{border-color:rgba(34,197,94,.24)}
-.strictBox{border-color:rgba(239,68,68,.25)}
-.scanPick,.aiPick{
-  border:1px solid var(--line);
-  background:rgba(2,6,23,.36);
-  border-radius:22px;
-  padding:16px;
-  margin:12px 0;
-  transition:transform .18s ease, border-color .18s ease, background .18s ease;
-}
-.scanPick.exclusive{border-color:rgba(34,197,94,.34);background:linear-gradient(135deg,rgba(34,197,94,.11),rgba(2,6,23,.36))}
-.scanPick.possible{border-color:rgba(245,158,11,.30);background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(2,6,23,.36))}
-.scanPick.bad{border-color:rgba(239,68,68,.30);background:linear-gradient(135deg,rgba(239,68,68,.10),rgba(2,6,23,.36))}
-.scanScore{
-  flex:0 0 auto;
-  min-width:72px;
-  text-align:center;
-  border-radius:18px;
-  padding:10px 12px;
-  background:rgba(2,6,23,.54);
-  border:1px solid var(--line);
-  font-size:20px;
-  font-weight:950;
-}
-.aiNote{font-size:13px;color:var(--muted2);margin:10px 0 0}
-.marketMix{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.mixTag{background:rgba(255,255,255,.055);border-color:var(--line);color:var(--muted2)}
-.teamScore{
-  width:72px;height:72px;
-  border-radius:22px;
-  display:grid;
-  place-items:center;
-  font-size:20px;
-  font-weight:950;
-  background:rgba(2,6,23,.45);
-  border:1px solid var(--line);
-}
-.code{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  font-size:12px;
-  color:#BAE6FD;
-  background:rgba(2,6,23,.62);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  overflow:auto;
-}
-.loading{
-  position:relative;
-  pointer-events:none;
-  opacity:.75;
-}
-.loading:after{
-  content:"";
-  width:18px;height:18px;
-  border-radius:999px;
-  border:2px solid rgba(255,255,255,.24);
-  border-top-color:#fff;
-  display:inline-block;
-  margin-left:8px;
-  vertical-align:-4px;
-  animation:spin .7s linear infinite;
-}
+.notice,.ok,.error{border-radius:20px;padding:14px;margin:12px 0;font-size:13.5px;border:1px solid var(--line);}
+.notice{background:var(--yellowSoft);color:#FDE68A;}
+.ok{background:var(--greenSoft);color:#BBF7D0;}
+.error{background:var(--redSoft);color:#FECACA;}
+.stat{min-height:84px;padding:14px;border-radius:20px;}
+.stat b,.metric b{display:block;font-size:20px;font-weight:950;}
+.game{padding:16px;border-radius:22px;}
+.game.selected{border-color:rgba(34,197,94,.62);background:rgba(34,197,94,.13);}
+.badge{display:inline-flex;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:950;}
+.HIGH{background:var(--greenSoft);color:#BBF7D0;} .MED{background:var(--yellowSoft);color:#FDE68A;} .LOW{background:var(--redSoft);color:#FECACA;}
+.metric{background:rgba(2,6,23,.42);border:1px solid var(--line);border-radius:18px;padding:13px;}
+.good{color:#86EFAC!important} .bad{color:#FCA5A5!important} .warnTxt{color:#FDE68A!important}
+.proFlags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 8px;}
+.flag{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:950;}
+.flag.green{background:var(--greenSoft);color:#BBF7D0;} .flag.yellow{background:var(--yellowSoft);color:#FDE68A;} .flag.red{background:var(--redSoft);color:#FECACA;}
+.reasonList li{border:1px solid var(--line);border-radius:14px;background:rgba(2,6,23,.34);padding:8px;font-size:12px;margin-top:6px;}
+.loading:after{content:"";width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;display:inline-block;margin-left:8px;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-@media (hover:hover){
-  button:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 18px 38px rgba(37,99,235,.28)}
-  button.secondary:hover{box-shadow:none;background:rgba(255,255,255,.085);border-color:var(--line2)}
-  .card:hover,.game:hover,.pick:hover,.scanPick:hover,.aiPick:hover{border-color:var(--line2);box-shadow:var(--shadowSoft);transform:translateY(-1px)}
-}
-
-@media (max-width:980px){
-  .row4{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .row3{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .tabs{
-    display:flex;
-    overflow-x:auto;
-    overscroll-behavior-x:contain;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .tabs::-webkit-scrollbar{display:none}
-  .tabs button{flex:0 0 auto;min-width:120px}
-}
-@media (max-width:680px){
-  .app{padding-top:14px}
-  .header{align-items:stretch;flex-direction:column}
-  .pill{width:max-content}
-  .card{border-radius:22px;padding:16px}
-  .row,.row3,.row4,.teamGrid,.checks,.caltools{grid-template-columns:1fr}
-  .grid,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .modeButtons{grid-template-columns:1fr}
-  .top,.scanHead{gap:10px}
-  .top{flex-direction:column}
-  .badge{width:max-content;max-width:100%;white-space:normal;text-align:left}
-  .scanHead{align-items:stretch}
-  .scanScore{min-width:62px;font-size:18px}
-  input,select,textarea{font-size:16px}
-  button{min-height:50px}
-}
-@media (max-width:430px){
-  .grid,.metrics,.stats{grid-template-columns:1fr}
-  .scanHead{flex-direction:column}
-  .scanScore{width:max-content}
-  .proFlags{gap:6px}
-  .flag,.scanTag,.mixTag,.v29Gate,.paperTag{white-space:normal;text-align:left;justify-content:flex-start}
-}
-
-/* V30 Production polish */
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}
-}
-.card,.pick,.game,.scanPick,.aiPick,.probox,.strictBox,.edgeBox{content-visibility:auto;contain-intrinsic-size:auto 260px}
-button,input,select,textarea{touch-action:manipulation}
-button[aria-busy="true"]{cursor:progress;opacity:.78}
-.tabs{box-shadow:0 18px 34px rgba(0,0,0,.20)}
-.card.hero{isolation:isolate}
-.app{max-width:1180px}
-.metric,.stat{overflow:hidden}
-.metric b,.stat b{font-variant-numeric:tabular-nums}
-.aiPick h4{margin:0 0 10px;font-size:16px;letter-spacing:-.02em}
-.check,.caltools span{border:1px solid var(--line);background:rgba(2,6,23,.32);border-radius:16px;padding:10px 12px;color:var(--muted2);font-size:13px}
-.tzbox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.tzbox div{border:1px solid var(--line);background:rgba(2,6,23,.32);border-radius:16px;padding:12px;color:var(--muted2);font-size:13px}
-.tzbox b{display:block;color:#fff;margin-bottom:4px}
-@media(max-width:680px){.tzbox{grid-template-columns:1fr}}
-
-
-/* V30.4 button/action fix */
-.actionToast{
-  position:sticky;
-  top:72px;
-  z-index:30;
-  border:1px solid rgba(56,189,248,.35);
-  background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(139,92,246,.16));
-  color:#E0F2FE;
-  border-radius:18px;
-  padding:12px 14px;
-  margin:12px 0;
-  font-weight:900;
-  box-shadow:0 16px 40px rgba(0,0,0,.26);
-}
-button.busyBtn{
-  opacity:.72;
-  pointer-events:none;
-  filter:grayscale(.15);
-}
-button.busyBtn:after{
-  content:"";
-  width:15px;
-  height:15px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.35);
-  border-top-color:#fff;
-  display:inline-block;
-  margin-left:8px;
-  vertical-align:-2px;
-  animation:spin .75s linear infinite;
-}
-
-
-/* V30.4 balanced paper ranking */
-.finalDecision{
-  border:1px solid rgba(56,189,248,.38);
-  background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(15,23,42,.72));
-  border-radius:22px;
-  padding:16px;
-  margin:14px 0;
-  box-shadow:0 16px 42px rgba(0,0,0,.22);
-}
-.finalDecision .big{
-  font-size:clamp(20px,4vw,30px);
-  font-weight:950;
-  letter-spacing:-.04em;
-  color:#fff;
-  margin-bottom:6px;
-}
-.finalDecision.no{border-color:rgba(239,68,68,.35);background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(15,23,42,.72))}
-.finalDecision.paper{border-color:rgba(245,158,11,.36);background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(15,23,42,.72))}
-.rankBadge{
-  display:inline-flex;
-  border:1px solid rgba(56,189,248,.32);
-  background:rgba(56,189,248,.12);
-  color:#BAE6FD;
-  border-radius:999px;
-  padding:7px 10px;
-  margin:4px 6px 4px 0;
-  font-size:12px;
-  font-weight:950;
-}
-
-
-/* V30.4 AI Lite Timeout Fix */
-.aiCenter{
-  border:1px solid rgba(139,92,246,.38);
-  background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(56,189,248,.12));
-  border-radius:24px;
-  padding:16px;
-  margin:14px 0;
-  box-shadow:0 18px 44px rgba(0,0,0,.24);
-}
-.aiCenter h3{margin-bottom:8px}
-.aiSteps{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin-top:12px;
-}
-.aiSteps button{margin:0;min-height:54px}
-.aiExplain{
-  border:1px solid rgba(56,189,248,.30);
-  background:rgba(2,6,23,.35);
-  border-radius:18px;
-  padding:12px;
-  margin-top:12px;
-  color:var(--muted2);
-  font-size:13px;
-  line-height:1.45;
-}
-@media(max-width:760px){.aiSteps{grid-template-columns:1fr}}
-
-.aiTimeoutBox{border:1px solid rgba(245,158,11,.36);background:rgba(245,158,11,.13);color:#fde68a;border-radius:18px;padding:12px 14px;margin:12px 0;font-weight:900;line-height:1.45}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="header"><div><h1>PickSharp Pro V30.4</h1><p style="margin:5px 0 0">EV Feed · Line Movement · Hard Rock Check · Paper Mode</p></div><div class="pill">AI LITE TIMEOUT FIX V30.4</div></div>
-
-<div class="card hero">
-<h2>Panel profesional de análisis y control de riesgo</h2>
-<p>V30 castiga fuerte las falsas buenas: si hay dudas serias, la jugada queda NO BET aunque después pueda ganar.</p>
-</div>
-
-<div class="qaClean">
-<b>Modo profesional:</b> navega por pestañas, carga calendario, corre el scan y revisa solo “PAPER FUERTE”. Si no aparece, la decisión profesional es pasar.
-</div>
+<div class="header"><div><h1>PickSharp Pro V30.4</h1><p>Filtros Relajados + Stats de Lanzadores Activas</p></div><div class="pill">PRO SCORE AJUSTADO</div></div>
 
 <div class="card">
-<h2>Llaves</h2>
-<div class="notice">
-<b>Producción:</b> usa Vercel → Settings → Environment Variables: <b>ODDS_API_KEY</b>, <b>SPORTSDATAIO_KEY</b> y <b>OPENAI_API_KEY</b>. Las llaves locales quedan solo como modo emergencia y el servidor las rechaza salvo que actives <b>ALLOW_CLIENT_KEYS=true</b>.
-</div>
+<h2>Configuración</h2>
 <div class="row">
-<div><label>The Odds API Key</label><input id="oddsKey" type="password" autocomplete="off" placeholder="The Odds API Key"></div>
-<div><label>SportsDataIO Key</label><input id="sdioKey" type="password" autocomplete="off" placeholder="SportsDataIO Key"></div>
+<div><label>The Odds API Key</label><input id="oddsKey" type="password" placeholder="Key"></div>
+<div><label>SportsDataIO Key</label><input id="sdioKey" type="password" placeholder="Key"></div>
 </div>
-<button onclick="saveKeys()">Guardar llaves localmente</button>
-<button class="secondary" onclick="clearKeys()">Borrar llaves locales</button>
-<div id="keyBox" class="notice" style="margin-top:12px">Cargando...</div>
+<button class="secondary" onclick="saveKeys()">Guardar llaves</button>
+<div id="keyBox" class="notice">Verificando...</div>
 </div>
 
 <div class="card">
-<h2>Comandos</h2>
+<h2>Comandos Principales</h2>
 <div class="modeButtons">
 <button id="modeMLB" class="active" onclick="setMode('mlb')">MLB Exact Pro</button>
 <button id="modeSOC" onclick="setMode('soccer')">Soccer Majors</button>
 </div>
 <div class="row4" style="margin-top:12px">
 <div><label>Fecha</label><input id="date" type="date"></div>
-<div><label>Soccer Major</label><select id="soccerSport">
-<option value="soccer_fifa_world_cup">World Cup</option>
-<option value="soccer_epl">Premier League</option>
-<option value="soccer_spain_la_liga">LaLiga</option>
-<option value="soccer_italy_serie_a">Serie A</option>
-<option value="soccer_germany_bundesliga">Bundesliga</option>
-<option value="soccer_france_ligue_one">Ligue 1</option>
-<option value="soccer_usa_mls">MLS</option>
-<option value="soccer_mexico_ligamx">Liga MX</option>
-<option value="soccer_uefa_champs_league">Champions League</option>
-</select></div>
-<div><label>Eventos máximos</label><select id="eventLimit"><option>1</option><option>2</option><option>4</option><option>8</option><option value="99" selected>Todos</option></select></div>
-<div><label>Buscar equipo</label><input id="teamSearch" type="text" placeholder="Ej: Angels, Texas"></div>
-<div><label>Filtro tiempo</label><select id="timeFilter"><option value="upcoming" selected>Solo próximos según mi teléfono</option><option value="today">Todos los de esta fecha</option><option value="all">Todo lo que traiga API</option></select></div>
-<div><label>Stake $</label><input id="stake" type="number" value="5" min="1"></div>
+<div><label>Soccer Major</label><select id="soccerSport"><option value="soccer_epl">Premier League</option></select></div>
+<div><label>Buscar equipo</label><input id="teamSearch" type="text" placeholder="Ej: Yankees"></div>
+<div><label>Stake $</label><input id="stake" type="number" value="5"></div>
 </div>
 <div class="row4">
-<div><label>Prob. mínima %</label><input id="minProb" type="number" value="64"></div>
-<div><label>Mínimo casas</label><input id="minBooks" type="number" value="5"></div>
-<div><label>No más caro que</label><input id="maxFav" type="number" value="-300"></div>
-<div><label>No más underdog que</label><input id="maxDog" type="number" value="120"></div>
+<div><label>Prob. mínima %</label><input id="minProb" type="number" value="60"></div>
+<div><label>Mínimo casas</label><input id="minBooks" type="number" value="4"></div>
+<div><label>No más caro que</label><input id="maxFav" type="number" value="-250"></div>
+<div><label>No más underdog que</label><input id="maxDog" type="number" value="130"></div>
 </div>
 <div class="row3">
-<div><label>EV mínimo %</label><input id="minEV" type="number" value="-3"></div>
-<div><label>Jugadores/props</label><select id="usePlayers"><option value="no" selected>No, solo equipos</option><option value="safe">Solo pitchers/goles sin hits</option><option value="yes">Sí, todos</option></select></div>
-<div><label>Experimental</label><select id="useExperimental"><option value="no" selected>No</option><option value="yes">Sí</option></select></div>
+<div><label>EV mínimo %</label><input id="minEV" type="number" value="-2"></div>
+<div><label>Pro Score mínimo</label><input id="minProScore" type="number" value="50"></div>
+<div><label>Filtro tiempo</label><select id="timeFilter"><option value="upcoming" selected>Próximos</option><option value="today">Todos hoy</option></select></div>
 </div>
-<div class="row3">
-<div><label>Modo Pro</label><select id="proMode"><option value="realistic" selected>Producción Paper Lock</option></select></div>
-<div><label>Pro Score mínimo</label><input id="minProScore" type="number" value="58"></div>
-<div><label>Hard Rock Odds</label><input id="hrOdds" type="number" placeholder="Ej: -155 o +125"></div>
-</div>
-<div class="notice" style="margin-top:12px">
-<b>Soccer Hard Rock:</b> analiza mercados principales que puedan venir por The Odds API y NO escanea tiros/tiros a puerta de jugadores. 
-Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Rock.
-</div>
-<div class="notice" style="margin-top:12px"><b>Comandos Pro V30.4:</b> Scan auditado, rotación de mercados, máximo 1 +1.5, IA segura, diagnóstico completo y créditos IA estimados.</div>
-<button class="secondary" onclick="usarFechaTelefono()">Usar fecha/hora de mi teléfono</button>
-<div class="error" style="margin-top:12px"><b>Regla anti-pérdida:</b> si hoy vas perdiendo, la app debe usarse solo para revisar, no para perseguir. Modo Ganar Primero Realista muestra jugadas pequeñas y bloquea lo flojo. Si dice “NO HAY JUGADA”, se pasa.</div>
-<div class="ok" style="margin-top:12px"><b>IA segura V30:</b> NO pegues tu llave aquí. Guárdala en Vercel como <b>OPENAI_API_KEY</b>. La app usa <b>/api/ai-scan</b> para que la llave no se vea. Ahora diversifica mercados y estima créditos IA usados.</div>
 <button class="safe" onclick="loadCalendar()">1) Cargar calendario</button>
-<button class="secondary" onclick="diagnose()">Diagnóstico</button>
 </div>
 
 <div id="status" class="notice hidden"></div>
-
-<div class="aiCenter">
-  <h3>Centro IA V30.4</h3>
-  <p>La IA no reemplaza el motor local. V30.4 usa Resumen IA Lite: envía menos datos, responde más rápido y evita timeout.</p>
-  <div class="aiSteps">
-    <button type="button" class="safe" onclick="loadCalendar()">1) Cargar calendario</button>
-    <button type="button" onclick="scanDay()">2) Scan día local</button>
-    <button type="button" onclick="runDailyAIScan()">3) Resumen IA OpenAI</button>
-  </div>
-  <div class="aiSteps" style="margin-top:10px">
-    <button type="button" class="secondary" onclick="testAI()">Probar IA</button>
-    <button type="button" class="secondary" onclick="runAuditCheck()">Diagnóstico V30.4</button>
-    <button type="button" class="secondary" onclick="showTab('scan')">Ver Scan / IA</button>
-  </div>
-  <div class="aiExplain"><b>Orden correcto:</b> cargar calendario → scan día local → resumen IA. Si no hay PAPER FUERTE, no se juega. El ranking es solo papel.<div class="aiExplain"><b>IA Lite V30.4:</b> reduce el payload para evitar “Timeout conectando con el servidor”.</div></div>
-</div>
 
 <div class="stats">
 <div class="stat"><small>Juegos</small><b id="stGames">0</b></div>
 <div class="stat"><small>Seleccionado</small><b id="stSel">0</b></div>
 <div class="stat"><small>Picks</small><b id="stPicks">0</b></div>
 <div class="stat"><small>Revisar</small><b id="stWatch">0</b></div>
-<div class="stat"><small>Odds API</small><b id="stCredits">?</b></div>
-<div class="stat"><small>IA $</small><b id="stAICredits">10.00</b></div>
 </div>
 
 <div class="tabs">
 <button id="tabCalendar" class="active" onclick="showTab('calendar')">Calendario</button>
 <button id="tabBest" onclick="showTab('best')">Picks</button>
 <button id="tabScan" onclick="showTab('scan')">Scan Día</button>
-<button id="tabContext" onclick="showTab('context')">Contexto</button>
-<button id="tabTeam" onclick="showTab('team')">Equipos</button>
-<button id="tabMarkets" onclick="showTab('markets')">Mercados</button>
-<button id="tabManual" onclick="showTab('manual')">Checklist</button>
-<button id="tabPro" onclick="showTab('pro')">Pro</button>
-<button id="tabDiag" onclick="showTab('diag')">Diagnóstico</button>
+<button id="tabPro" onclick="showTab('pro')">Pro Panel</button>
 </div>
 
-<section id="calendar" class="screen active"><div class="card"><h2>Calendario</h2><div id="calendarBox" class="loading">Carga el calendario y escoge 1 partido, o usa Scan Día para escanear todos.</div></div></section>
+<section id="calendar" class="screen active"><div class="card"><h2>Calendario</h2><div id="calendarBox" class="loading">Espera...</div></div></section>
+<section id="scan" class="screen"><div class="card"><h2>Scan Día</h2><button class="safe" onclick="scanDay()">Escanear Todos V30.4</button><div id="scanBox" style="margin-top:16px"></div></div></section>
+<section id="best" class="screen"><div class="card"><h2>Jugadas del partido</h2><div id="bestBox">Selecciona un juego primero.</div></div></section>
+<section id="pro" class="screen"><div class="card"><h2>Pro Panel</h2><div id="proBox">Selecciona un juego primero.</div></div></section>
 
-<section id="scan" class="screen"><div class="card"><h2>Scan Día Pro V29</h2>
-<div class="error"><b>Auditoría V30:</b> antes el botón de Scan Día seguía usando el motor local viejo y por eso repetía +1.5. Ahora este botón usa rotación real de mercados: máximo 1 +1.5 y obliga otras familias cuando existan.</div>
-<div class="creditBox">
-  <h3>Créditos IA estimados</h3>
-  <p class="small">El scan local no gasta IA. El botón “Resumen IA OpenAI” sí gasta poco crédito. El saldo real se revisa en OpenAI Billing.</p>
-  <div class="row">
-    <div><label>Saldo inicial IA ($)</label><input id="aiBudget" type="number" value="10" step="0.01"></div>
-    <div><label>Gastado estimado ($)</label><input id="aiSpent" type="number" value="0" step="0.0001"></div>
-  </div>
-  <div id="aiCreditBox" class="notice">Crédito estimado: calcula después de usar IA.</div>
-  <div class="row">
-    <button onclick="saveAICreditSettings()">Guardar créditos</button>
-    <button onclick="resetAICredits()">Reset estimado</button>
-    <button onclick="refreshAICredits()">Actualizar crédito</button>
-  </div>
-</div>
-
-<div class="ok" style="margin-top:12px">
-<b>Full Audit Fix V30:</b> corregido: el resumen IA ahora recibe los resultados reales del Scan Pro. También agregué prueba de diagnóstico para verificar eventos cargados, scan local, IA y créditos.
-</div>
-
-
-<div class="error" style="margin-top:12px">
-<b>V30 Anti-falsas buenas:</b> el objetivo ahora es reducir picks que parecen “fuertes” y luego no tenían base suficiente.
-Si una jugada tiene alerta seria, queda como <b>NO BET</b>. Puede ganar, pero la app no debe venderla como fuerte.
-</div>
-
-
-<div class="qaClean">
-<b>V30 Production Audit:</b> además del motor anti-falsas buenas, ahora el resumen IA se valida contra el scan local.
-Si la IA propone algo que el motor local no marcó como PAPER FUERTE/OBSERVAR, se mueve a NO BET.
-</div>
-
-<div class="actions">
-  <button class="safe" onclick="scanDay()">Escanear V30.4</button>
-  <button onclick="runDailyAIScan()">Resumen IA OpenAI del scan</button>
-  <button onclick="testAI()">Probar IA</button>
-  <button onclick="runAuditCheck()">Diagnóstico V30.4</button>
-  <button onclick="showTab('calendar')">Volver al calendario</button>
-</div>
-
-<div class="error"><b>Modo seguridad:</b> esta versión NO deja pedir resumen IA si primero no corriste el Scan Pro. Eso evita que la IA invente picks sin datos.</div>
-
-<div id="aiStatus" class="notice">Primero toca “Escanear V29”. Después corre “Diagnóstico V30.4”. Si todo sale ✅, puedes pedir “Resumen IA OpenAI”.</div>
-<div id="scanBox" class="loading">Carga el calendario y toca “Escanear V30.4”.</div>
-<div id="aiScanBox"></div>
-</div></section>
-<section id="best" class="screen"><div class="card"><h2>Jugadas recomendadas</h2><div id="bestBox" class="loading">Escoge un juego y analiza.</div></div></section>
-<section id="team" class="screen"><div class="card"><h2>Análisis de equipos</h2><div id="teamBox" class="notice">Analiza un juego para ver fuerza de equipos.</div></div></section>
-<section id="context" class="screen"><div class="card"><h2>Contexto analizado</h2><div id="contextBox" class="loading">Escoge un juego y analiza.</div></div></section>
-<section id="markets" class="screen"><div class="card"><h2>Mercados encontrados</h2><div id="marketsBox" class="loading">Escoge un juego y analiza.</div></div></section>
-<section id="manual" class="screen"><div class="card"><h2>Checklist</h2><div id="manualBox"></div></div></section>
-<section id="pro" class="screen"><div class="card"><h2>Panel Pro</h2><div id="proBox" class="notice">Analiza un juego para ver EV Feed, line movement y Hard Rock Check.</div></div></section>
-<section id="diag" class="screen"><div class="card"><h2>Diagnóstico</h2><div id="diagBox" class="loading">Toca diagnóstico.</div></div></section>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-let MODE="mlb", EVENTS=[], SELECTED=null, LASTMETA={remaining:"?",used:"?",last:"?"};
-const SPORT_MLB="baseball_mlb";
-const MLB_MARKETS_CORE=["h2h","spreads","totals","team_totals"];
-const MLB_MARKETS_F5=["h2h_1st_5_innings","spreads_1st_5_innings","totals_1st_5_innings"];
-const MLB_MARKETS_PLAYERS=["batter_hits","batter_home_runs","batter_total_bases","batter_rbis","batter_runs_scored","batter_hits_runs_rbis","batter_walks","batter_strikeouts","batter_stolen_bases","pitcher_strikeouts","pitcher_outs","pitcher_hits_allowed","pitcher_walks","pitcher_earned_runs","pitcher_to_record_a_win"];
-const MLB_MARKETS_SAFE_PLAYERS=["pitcher_strikeouts","pitcher_outs","pitcher_hits_allowed","pitcher_walks","pitcher_earned_runs","pitcher_to_record_a_win","batter_home_runs","batter_walks","batter_strikeouts","batter_stolen_bases"];
-const SOCCER_MARKETS_CORE=[
- "h2h","h2h_3_way","spreads","totals","btts","draw_no_bet","double_chance","team_totals"
-];
-// Mercados de soccer tipo Hard Rock. Se prueban uno por uno. Se excluyen tiros y tiros a puerta de jugadores.
-const SOCCER_MARKETS_MORE=[
- "alternate_totals","alternate_spreads",
- "totals_h1","totals_h2","spreads_h1","spreads_h2","h2h_h1","h2h_h2","h2h_3_way_h1","h2h_3_way_h2",
- "alternate_totals_h1","alternate_totals_h2","alternate_spreads_h1","alternate_spreads_h2",
- "btts_h1","double_chance_h1","halftime_fulltime",
- "alternate_totals_corners","alternate_team_totals_corners","alternate_spreads_corners",
- "alternate_totals_cards","alternate_spreads_cards",
- "player_goal_scorer_anytime","player_first_goal_scorer","player_last_goal_scorer","player_assists","player_to_receive_card"
-];
-const SOCCER_BLOCKED=["player_shots","player_shots_on_target"];
-const SOCCER_MANUAL_ONLY=[
- "To Advance","Correct Score","Match Result - 2 Up","Winning Method","To Score OR Assist exacto","First Shot Outcome"
-];
-const SOCCER_HR_MENU=[
- ["Game Result (90 Minutes + Stoppage Time)",["h2h","h2h_3_way"]],
- ["To Advance",[]],
- ["Total Goals",["totals","alternate_totals"]],
- ["Both Teams to Score",["btts"]],
- ["Total Corners",["alternate_totals_corners","alternate_team_totals_corners","alternate_spreads_corners"]],
- ["Double Chance",["double_chance","double_chance_h1"]],
- ["Goalscorers",["player_goal_scorer_anytime","player_first_goal_scorer","player_last_goal_scorer"]],
- ["Team Total Goals",["team_totals"]],
- ["Spread",["spreads","alternate_spreads"]],
- ["1st Half Total Goals",["totals_h1","alternate_totals_h1"]],
- ["2nd Half Total Goals",["totals_h2","alternate_totals_h2"]],
- ["1st Half Result",["h2h_h1","h2h_3_way_h1"]],
- ["2nd Half Result",["h2h_h2","h2h_3_way_h2"]],
- ["Halftime / Fulltime",["halftime_fulltime"]],
- ["Winner (Push if Tied)",["draw_no_bet"]],
- ["Cards",["alternate_totals_cards","alternate_spreads_cards","player_to_receive_card"]],
- ["Correct Score",[]],
- ["Match Result - 2 Up",[]],
- ["Winning Method",[]],
- ["First Shot Outcome",[]]
-];
-const EXPERIMENTAL=["alternate_totals","alternate_spreads"];
-const LABELS={
-h2h:"Game Result / Ganador",h2h_3_way:"1X2",spreads:"Spread / Handicap",alternate_spreads:"Spread alterno",totals:"Total Goals",alternate_totals:"Total Goals alterno",team_totals:"Team Total Goals",
-btts:"Both Teams to Score",draw_no_bet:"Winner Push if Tied / DNB",double_chance:"Double Chance",
-totals_h1:"1st Half Total Goals",totals_h2:"2nd Half Total Goals",spreads_h1:"1st Half Spread",spreads_h2:"2nd Half Spread",h2h_h1:"1st Half Result",h2h_h2:"2nd Half Result",h2h_3_way_h1:"1st Half Result 1X2",h2h_3_way_h2:"2nd Half Result 1X2",
-alternate_totals_h1:"1st Half Total Goals alterno",alternate_totals_h2:"2nd Half Total Goals alterno",alternate_spreads_h1:"1st Half Spread alterno",alternate_spreads_h2:"2nd Half Spread alterno",
-btts_h1:"BTTS 1st Half",double_chance_h1:"Double Chance 1st Half",halftime_fulltime:"Halftime / Fulltime",
-alternate_totals_corners:"Total Corners",alternate_team_totals_corners:"Team Corners",alternate_spreads_corners:"Corners Handicap",
-alternate_totals_cards:"Total Cards",alternate_spreads_cards:"Cards Handicap",
-player_goal_scorer_anytime:"Goalscorer Anytime",player_first_goal_scorer:"Score 1st Goal",player_last_goal_scorer:"Last Goalscorer",player_assists:"Player Assists",player_to_receive_card:"Player Card",
-player_shots:"BLOQUEADO · Tiros jugador",player_shots_on_target:"BLOQUEADO · Tiros a puerta jugador",
-batter_hits:"Hit bateador",batter_home_runs:"Home run",batter_total_bases:"Bases totales",batter_rbis:"RBI",batter_runs_scored:"Carreras anotadas",batter_hits_runs_rbis:"Hits+Runs+RBI",batter_walks:"Walks bateador",batter_strikeouts:"Ponches bateador",batter_stolen_bases:"Robos",
-pitcher_strikeouts:"Ponches pitcher",pitcher_outs:"Outs pitcher",pitcher_hits_allowed:"Hits permitidos",pitcher_walks:"Walks pitcher",pitcher_earned_runs:"Carreras limpias",pitcher_to_record_a_win:"Pitcher gana",
-h2h_1st_5_innings:"Ganador primeras 5",spreads_1st_5_innings:"Run Line primeras 5",totals_1st_5_innings:"Total primeras 5"
-};
-
-
-const APP_VERSION="V30";
-let SERVER_HEALTH=null;
-const API_TIMEOUT_MS=25000;
-function safeStorageGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
-function safeStorageSet(k,v){try{localStorage.setItem(k,String(v));return true}catch(e){return false}}
-function safeStorageRemove(k){try{localStorage.removeItem(k);return true}catch(e){return false}}
-async function fetchWithTimeout(url, options={}, timeout=API_TIMEOUT_MS){
-  const controller=new AbortController();
-  const id=setTimeout(()=>controller.abort(), timeout);
-  try{return await fetch(url,{...options,signal:controller.signal,cache:options.cache||"no-store"});}
-  catch(e){if(e?.name==="AbortError") throw new Error("Timeout conectando con el servidor. Intenta de nuevo."); throw e;}
-  finally{clearTimeout(id)}
-}
-async function readJsonSafe(response){
-  const raw=await response.text().catch(()=>"");
-  if(!raw) return {};
-  try{return JSON.parse(raw)}catch(e){return {error:raw.slice(0,500),raw:raw.slice(0,500)}}
-}
-function apiErrorMessage(prefix,response,data){return (data&&data.error)?data.error:`${prefix} HTTP ${response.status}`}
-function isClientKeyFallbackAllowed(){return SERVER_HEALTH?.clientKeyFallback===true}
-function markBusy(btn,on=true){try{if(btn){btn.setAttribute("aria-busy",on?"true":"false");btn.disabled=!!on}}catch(e){}}
-window.addEventListener("unhandledrejection",function(e){
-  try{const box=document.querySelector("#status")||document.querySelector("#diagBox");if(box){box.className="error";box.textContent="Error inesperado controlado: "+String(e.reason?.message||e.reason||"desconocido").slice(0,240);}}catch(_){}
-});
-
-
-function setBox(id, html, className=""){
-  const el=$(id);
-  if(!el) return;
-  el.className=className;
-  el.innerHTML=html;
-}
-function showActionToast(message){
-  let el=$("actionToast");
-  if(!el){
-    el=document.createElement("div");
-    el.id="actionToast";
-    el.className="actionToast";
-    const tabs=document.querySelector(".tabs");
-    if(tabs && tabs.parentNode) tabs.parentNode.insertBefore(el,tabs.nextSibling);
-    else document.body.prepend(el);
-  }
-  el.textContent=message;
-  return el;
-}
-function scrollToScreen(id){
-  requestAnimationFrame(()=>{
-    const target=$(id);
-    if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
-  });
-}
-function setButtonBusy(btn,on,label){
-  if(!btn) return;
-  if(on){
-    btn.dataset.oldText=btn.textContent;
-    btn.textContent=label||"Analizando...";
-    btn.classList.add("busyBtn");
-    btn.disabled=true;
-    btn.setAttribute("aria-busy","true");
-  }else{
-    btn.textContent=btn.dataset.oldText||"Analizar este juego";
-    btn.classList.remove("busyBtn");
-    btn.disabled=false;
-    btn.setAttribute("aria-busy","false");
-  }
-}
-
-
-function showScanCenter(message="Abriendo panel Scan / IA..."){
-  showTab("scan");
-  showActionToast(message);
-  scrollToScreen("scan");
-}
+let MODE="mlb", EVENTS=[], SELECTED=null;
 
 function today(){
  const n=new Date();
  const y=n.getFullYear(), m=String(n.getMonth()+1).padStart(2,"0"), d=String(n.getDate()).padStart(2,"0");
  return `${y}-${m}-${d}`;
 }
-function init(){
- $("date").value=today();
- loadKeys();
- status("Usando fecha/hora del teléfono: "+today()+" · "+phoneTZ());
-}
-function getLocalOddsKey(){return safeStorageGet("ps_odds_key")}
-function getLocalSdioKey(){return safeStorageGet("ps_sdio_key")}
-function saveKeys(){
-  const ok1=$("oddsKey").value.trim()?safeStorageSet("ps_odds_key",$("oddsKey").value.trim()):true;
-  const ok2=$("sdioKey").value.trim()?safeStorageSet("ps_sdio_key",$("sdioKey").value.trim()):true;
-  $("oddsKey").value=""; $("sdioKey").value="";
-  loadKeys();
-  if(!ok1||!ok2) status("No pude guardar llaves locales. Usa Environment Variables en Vercel.", true);
-}
-function clearKeys(){safeStorageRemove("ps_odds_key"); safeStorageRemove("ps_sdio_key"); loadKeys();}
-async function loadKeys(){
-  let health=null;
-  try{const r=await fetchWithTimeout("/api/health",{},10000); health=await readJsonSafe(r); SERVER_HEALTH=health;}catch(e){SERVER_HEALTH=null}
-  let msg=[];
-  if(health?.oddsEnv) msg.push("ODDS_API_KEY en Vercel ✅");
-  else if(getLocalOddsKey() && health?.clientKeyFallback) msg.push("Odds API local habilitada ⚠️");
-  else if(getLocalOddsKey()) msg.push("Odds local guardada, pero servidor no permite fallback");
-  else msg.push("Falta Odds API");
-  if(health?.sdioEnv) msg.push("SPORTSDATAIO_KEY en Vercel ✅");
-  else if(getLocalSdioKey() && health?.clientKeyFallback) msg.push("SportsDataIO local habilitada ⚠️");
-  else if(getLocalSdioKey()) msg.push("SportsDataIO local guardada, pero servidor no permite fallback");
-  else msg.push("Falta SportsDataIO");
-  if(health?.openaiEnv) msg.push("OPENAI_API_KEY en Vercel ✅"); else msg.push("Falta OpenAI");
-  $("keyBox").className=(msg.join(" ").includes("Falta")?"notice":"ok");
-  $("keyBox").textContent=msg.join(" · ");
-}
+$("date").value=today();
+
 function setMode(m){MODE=m;$("modeMLB").classList.toggle("active",m==="mlb");$("modeSOC").classList.toggle("active",m==="soccer");}
 function showTab(id){
- ["calendar","scan","best","team","context","markets","manual","pro","diag"].forEach(x=>{
+ ["calendar","scan","best","pro"].forEach(x=>{
    if($(x)) $(x).classList.toggle("active",x===id);
    if($("tab"+cap(x))) $("tab"+cap(x)).classList.toggle("active",x===id);
  });
 }
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
-function status(msg,bad=false){$("status").className=bad?"error":"notice";$("status").textContent=msg}
+function status(msg,bad=false){$("status").className=bad?"error":"notice";$("status").textContent=msg; $("status").classList.remove("hidden");}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function pct(x){return (Number(x)*100).toFixed(2)+"%"}
 function fmtOdds(o){o=Number(o);if(!isFinite(o))return"N/A";return o>0?`+${Math.round(o)}`:`${Math.round(o)}`}
 function implied(o){o=Number(o);return o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)}
 function dec(o){o=Number(o);return o>0?1+o/100:1+100/Math.abs(o)}
-function pct(x){return (Number(x)*100).toFixed(2)+"%"}
-function marketLabel(k){return LABELS[k]||k.replaceAll("_"," ")}
-function lineName(m,o){let n=o.name||"";let d=o.description?o.description+" · ":"";let p=(o.point!==undefined&&o.point!==null)?(Number(o.point)>0?` +${o.point}`:` ${o.point}`):"";if(["h2h","h2h_3_way","draw_no_bet","double_chance","btts","pitcher_to_record_a_win","player_to_score"].includes(m))return d+n+p;return d+n+p;}
-function oddsHeaders(){let h={}; if(isClientKeyFallbackAllowed() && getLocalOddsKey()) h["x-odds-key"]=getLocalOddsKey(); return h}
-function sdioHeaders(){let h={}; if(isClientKeyFallbackAllowed() && getLocalSdioKey()) h["x-sdio-key"]=getLocalSdioKey(); return h}
+
+function getLocalOddsKey(){return localStorage.getItem("ps_odds_key")||""}
+function getLocalSdioKey(){return localStorage.getItem("ps_sdio_key")||""}
+function saveKeys(){
+  localStorage.setItem("ps_odds_key",$("oddsKey").value.trim());
+  localStorage.setItem("ps_sdio_key",$("sdioKey").value.trim());
+  $("keyBox").className="ok"; $("keyBox").textContent="Llaves guardadas localmente.";
+}
+
 async function oddsAPI(path,params={}){
   let q=new URLSearchParams(params);
-  let r=await fetchWithTimeout(`/api/odds?path=${encodeURIComponent(path)}&${q.toString()}`,{headers:oddsHeaders()},30000);
-  let data=await readJsonSafe(r);
-  if(!r.ok) throw new Error(apiErrorMessage("Odds API",r,data));
-  LASTMETA=data.meta||LASTMETA;
-  if($("stCredits")) $("stCredits").textContent=LASTMETA.remaining||"?";
+  let headers={}; if(getLocalOddsKey()) headers["x-odds-key"]=getLocalOddsKey();
+  let r=await fetch(`/api/odds?path=${encodeURIComponent(path)}&${q.toString()}`,{headers});
+  let data=await r.json();
+  if(!r.ok) throw new Error(data.error||`Error HTTP ${r.status}`);
   return data.data;
 }
-async function sdioAPI(path,params={}){
-  let q=new URLSearchParams(params);
-  let r=await fetchWithTimeout(`/api/sdio?path=${encodeURIComponent(path)}&${q.toString()}`,{headers:sdioHeaders()},30000);
-  let data=await readJsonSafe(r);
-  if(!r.ok) throw new Error(apiErrorMessage("SportsDataIO",r,data));
+
+async function sdioAPI(path){
+  let headers={}; if(getLocalSdioKey()) headers["x-sdio-key"]=getLocalSdioKey();
+  let r=await fetch(`/api/sdio?path=${encodeURIComponent(path)}`,{headers});
+  let data=await r.json();
+  if(!r.ok) throw new Error(data.error||`Error HTTP ${r.status}`);
   return data.data;
-}
-function sportKey(){return MODE==="mlb"?SPORT_MLB:$("soccerSport").value}
-
-
-function phoneTZ(){
- try{return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local"}catch(e){return "Local"}
-}
-function phoneNowText(){
- const n=new Date();
- return n.toLocaleString(undefined,{weekday:"short",year:"numeric",month:"2-digit",day:"2-digit",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-}
-function usarFechaTelefono(){
- $("date").value=today();
- status("Fecha actualizada usando tu teléfono: "+today()+" · "+phoneTZ());
-}
-function sameLocalDay(iso,dateKey){
- return localDateKey(iso)===dateKey;
-}
-function isUpcomingByPhone(iso){
- let t=new Date(iso).getTime();
- return isFinite(t) && t >= Date.now() - 15*60*1000; // margen 15 min para juegos empezando ahora
-}
-function timeDistanceText(iso){
- let diff=new Date(iso).getTime()-Date.now();
- if(!isFinite(diff)) return "";
- let min=Math.round(diff/60000);
- if(min>=0){
-   if(min<60) return `en ${min} min`;
-   let h=Math.floor(min/60), m=min%60;
-   return `en ${h}h ${m}m`;
- }
- min=Math.abs(min);
- if(min<60) return `empezó hace ${min} min`;
- let h=Math.floor(min/60), m=min%60;
- return `empezó hace ${h}h ${m}m`;
-}
-function phoneTimeBox(){
- return `<div class="tzbox"><div><b>Hora teléfono</b>${esc(phoneNowText())}</div><div><b>Zona horaria</b>${esc(phoneTZ())}</div><div><b>Fecha usada</b>${esc($("date").value||today())}</div></div>`;
-}
-
-function localDateKey(iso){
- let dt=new Date(iso);
- if(isNaN(dt)) return String(iso||"").slice(0,10);
- let y=dt.getFullYear(), m=String(dt.getMonth()+1).padStart(2,"0"), d=String(dt.getDate()).padStart(2,"0");
- return `${y}-${m}-${d}`;
-}
-function teamMatches(e,q){
- q=String(q||"").trim().toLowerCase();
- if(!q) return true;
- let s=`${e.away_team||""} ${e.home_team||""}`.toLowerCase();
- return q.split(/\s+/).every(part=>s.includes(part));
-}
-function sortEventsByTime(arr){
- return [...arr].sort((a,b)=>new Date(a.commence_time)-new Date(b.commence_time));
 }
 
 async function loadCalendar(){
  showTab("calendar");
- setBox("calendarBox",'<div class="loading">Cargando calendario con hora local del teléfono...</div>');
- EVENTS=[];SELECTED=null;
+ $("calendarBox").innerHTML='<div class="loading">Cargando juegos...</div>';
+ EVENTS=[];
  try{
-   let all=await oddsAPI(`/v4/sports/${sportKey()}/events`,{});
+   let all=await oddsAPI(`/v4/sports/${MODE==="mlb"?"baseball_mlb":"soccer_epl"}/events`,{});
    all=Array.isArray(all)?all:[];
-   let d=$("date").value || today();
-   let q=$("teamSearch")?.value||"";
-   let mode=$("timeFilter")?.value||"upcoming";
-   let limitVal=$("eventLimit").value||"99";
-   let limit=limitVal==="99"?999:Number(limitVal||999);
-
-   let base=all.filter(e=>teamMatches(e,q));
-   let exact=base.filter(e=>sameLocalDay(e.commence_time,d));
-
-   let filtered;
-   if(mode==="all"){
-     filtered=base;
-   }else if(mode==="today"){
-     filtered=exact;
-   }else{
-     filtered=exact.filter(e=>isUpcomingByPhone(e.commence_time));
-     if(!filtered.length) filtered=base.filter(e=>isUpcomingByPhone(e.commence_time));
-   }
-
-   filtered=sortEventsByTime(filtered);
-   EVENTS=filtered.slice(0,limit);
-
+   let d=$("date").value;
+   let exact=all.filter(e=>String(e.commence_time).startsWith(d));
+   EVENTS=exact.sort((a,b)=>new Date(a.commence_time)-new Date(b.commence_time));
    $("stGames").textContent=EVENTS.length;
-   $("stSel").textContent=0;
-   $("stPicks").textContent=0;
-   $("stWatch").textContent=0;
-
-   let msg=phoneTimeBox();
-   msg+=`<div class="caltools"><span>Filtro: ${esc(mode)}</span><span>Eventos API total: ${all.length}</span><span>Coinciden fecha local: ${exact.length}</span><span>Mostrando: ${EVENTS.length}</span>${q?`<span>Búsqueda: ${esc(q)}</span>`:""}</div>`;
-   if(!EVENTS.length && all.length){
-     msg+=`<div class="notice">No encontré juegos con ese filtro. Cambia “Filtro tiempo” a “Todos los de esta fecha” o “Todo lo que traiga API”.</div>`;
-   }
-   setBox("calendarBox", EVENTS.length?msg+EVENTS.map((e,i)=>gameCard(e,i)).join(""):msg+'<div class="notice">No encontré juegos para esa fecha/equipo en The Odds API.</div>');
-   status("Calendario cargado usando fecha/hora del teléfono. Verifica la hora local que sale arriba.");
+   if(EVENTS.length===0) $("calendarBox").innerHTML='<div class="notice">No hay juegos para esta fecha.</div>';
+   else $("calendarBox").innerHTML=EVENTS.map((e,i)=>`<div class="game"><div class="title">${e.away_team} @ ${e.home_team}</div><div class="small">${new Date(e.commence_time).toLocaleTimeString()}</div><button class="safe" onclick="selectGame(${i})">Analizar</button></div>`).join("");
+   status("Calendario listo.");
  }catch(e){
-   let msg=e.message;
-   if(msg.includes("HTTP 404")) msg+=" · Puede ser sport key no activo/no disponible en The Odds API o proxy /api faltante.";
-   setBox("calendarBox",'<div class="error">'+esc(msg)+'</div>');
-   status(msg,true);
+   $("calendarBox").innerHTML=`<div class="error">${e.message}</div>`;
  }
-}
-function gameCard(e,i){
- let name=`${e.away_team||"Away"} @ ${e.home_team||"Home"}`;
- let dt=new Date(e.commence_time);
- let local=dt.toLocaleString(undefined,{weekday:"short",month:"2-digit",day:"2-digit",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
- let dist=timeDistanceText(e.commence_time);
- return `<div id="game_${i}" class="game"><div class="top"><div><div class="title">${esc(name)}</div><div class="sub">${esc(local)} · ${esc(dist)} · fecha local ${localDateKey(e.commence_time)} · ID ${esc(e.id)}</div></div><span class="badge MED">${MODE.toUpperCase()}</span></div><button type="button" class="safe" onclick="selectGame(${i}, this)">Analizar este juego</button></div>`;
 }
 
-
-
-function eventStateForScan(e){
- const t=new Date(e?.commence_time||e?.commence||0).getTime();
- const now=Date.now();
- if(!t || isNaN(t)) return {state:"UNKNOWN",started:false,minutes:0};
- const diffMin=(now-t)/60000;
- if(diffMin>=0) return {state:"LIVE_OR_STARTED",started:true,minutes:diffMin};
- if(diffMin>-45) return {state:"TOO_CLOSE",started:false,minutes:diffMin};
- return {state:"PREGAME",started:false,minutes:diffMin};
-}
-function absPriceTooHigh(price, limit){ 
-  let p = Number(price||0);
-  let lim = Number(limit||220);
-  return (p < 0 && Math.abs(p) > lim) || (p > 0 && p > 160); 
-}
-function ctxHas(ctx,k){ return !!ctx && Object.prototype.hasOwnProperty.call(ctx,k); }
-function v29PriceBand(price){
- price=Number(price||0);
- if(!isFinite(price)) return "sin precio";
- if(price<0 && Math.abs(price)>220) return "favorito demasiado caro";
- if(price>0 && price>160) return "underdog volátil";
- return "precio aceptable";
-}
-function v29FalsePositiveAlerts(p,ctx,e,te,eg){
- const prob=p.fairCtx||0, ps=p.proScore||0, books=p.bookCount||0, ev=p.ev||0;
- const price=Number(p.best?.price||p.price||0);
- const safety=eg?.safety?.score||marketSafety(p).score||50;
- const st=eventStateForScan(e||SELECTED||{});
- const alerts=[];
- if(st.started) alerts.push("partido en vivo/iniciado: no usar como pregame");
- else if(st.state==="TOO_CLOSE") alerts.push("muy cerca de empezar: línea puede estar movida");
- if(prob<0.72) alerts.push("probabilidad no alcanza 72%");
- if(ps<70) alerts.push("Pro Score menor de 70");
- if(books<7) alerts.push("menos de 7 casas comparando");
- if(ev<0.005) alerts.push("EV no llega a +0.5%");
- if((te?.score||50)<62) alerts.push("equipo/matchup menor de 62");
- if(safety<65) alerts.push("mercado poco protegido");
- if(absPriceTooHigh(price,220)) alerts.push(v29PriceBand(price));
- if(ctx?.pitcherMismatch) alerts.push("pitcher mismatch");
- if(MODE==="mlb" && ctxHas(ctx,"pitchersConfirmed") && !ctx.pitchersConfirmed) alerts.push("pitchers no confirmados");
- if(isRiskyMarket(p)) alerts.push("mercado riesgoso/prop volátil");
- if(String(p.qText||"").toLowerCase().includes("baja")) alerts.push("calidad baja");
- return [...new Set(alerts)];
-}
-function capScoreByReality(score,p,ctx,e,te,eg){
- const prob=p.fairCtx||0, ps=p.proScore||0, books=p.bookCount||0, ev=p.ev||0;
- const price=Number(p.best?.price||p.price||0);
- const safety=eg?.safety?.score||marketSafety(p).score||50;
- const st=eventStateForScan(e||SELECTED||{});
- let caps=[];
- if(st.started) caps.push(25);
- if(st.state==="TOO_CLOSE") caps.push(50);
- if(prob<0.60) caps.push(42);
- else if(prob<0.64) caps.push(50);
- else if(prob<0.68) caps.push(58);
- else if(prob<0.72) caps.push(66);
- else if(prob<0.74) caps.push(74);
- if(ps<60) caps.push(48);
- else if(ps<65) caps.push(56);
- else if(ps<70) caps.push(64);
- if(books<5) caps.push(48);
- else if(books<7) caps.push(62);
- else if(books<8) caps.push(70);
- if(ev<-0.02) caps.push(48);
- else if(ev<0) caps.push(58);
- else if(ev<0.005) caps.push(68);
- if(safety<50) caps.push(48);
- else if(safety<65) caps.push(63);
- if(absPriceTooHigh(price,250)) caps.push(58);
- else if(absPriceTooHigh(price,220)) caps.push(68);
- if(te && te.score<55) caps.push(58);
- else if(te && te.score<62) caps.push(68);
- if(ctx?.pitcherMismatch) caps.push(35);
- if(MODE==="mlb" && ctxHas(ctx,"pitchersConfirmed") && !ctx.pitchersConfirmed) caps.push(70);
- if(isRiskyMarket(p)) caps.push(42);
- if(String(p.qText||"").toLowerCase().includes("baja")) caps.push(45);
- const cap = caps.length ? Math.min(...caps) : 99;
- return Math.round(Math.max(0, Math.min(score, cap, 99)));
-}
-function v29Grade(score,p,ctx,e,te,eg){
- const prob=p.fairCtx||0, ps=p.proScore||0, books=p.bookCount||0, ev=p.ev||0;
- const price=Number(p.best?.price||p.price||0);
- const safety=eg?.safety?.score||marketSafety(p).score||50;
- const st=eventStateForScan(e||SELECTED||{});
- const alerts=v29FalsePositiveAlerts(p,ctx,e,te,eg);
- if(st.started) return {grade:"EN VIVO / NO BET",bettable:false,alerts};
- const superStrict = score>=86 && prob>=0.76 && ps>=76 && books>=9 && ev>=0.015 && (te?.score||0)>=68 && safety>=70 && !absPriceTooHigh(price,200) && !ctx?.pitcherMismatch && !isRiskyMarket(p) && !(MODE==="mlb" && ctxHas(ctx,"pitchersConfirmed") && !ctx.pitchersConfirmed);
- const paperStrong = score>=78 && prob>=0.74 && ps>=72 && books>=8 && ev>=0.008 && (te?.score||0)>=64 && safety>=68 && !absPriceTooHigh(price,220) && !ctx?.pitcherMismatch && !isRiskyMarket(p) && alerts.length<=1;
- const observe = score>=68 && prob>=0.70 && ps>=68 && books>=7 && ev>=0 && (te?.score||0)>=60 && safety>=62 && !ctx?.pitcherMismatch && !isRiskyMarket(p);
- if(superStrict) return {grade:"PAPER FUERTE SUPER ESTRICTO",bettable:false,alerts};
- if(paperStrong) return {grade:"PAPER FUERTE",bettable:false,alerts};
- if(observe) return {grade:"OBSERVAR PAPER",bettable:false,alerts};
- return {grade:"NO BET / PUEDE GANAR PERO NO VALOR",bettable:false,alerts};
-}
-function v29Label(grade){
- grade=String(grade||"");
- if(grade.includes("EN VIVO")) return "Bloqueado";
- if(grade.includes("PAPER FUERTE")) return "Solo papel";
- if(grade.includes("OBSERVAR")) return "Solo observar";
- return "No apostar";
-}
-function aiDeepGrade(p,ctx,e){
- const eg=edgeGrade(p), rr=realisticReasons(p), te=teamEdgeForPick(p);
- let score=eg.score;
- // V30: motor anti-falsas buenas. Prefiere dejar pasar antes que vender picks flojos como fuertes.
- score += Math.max(-12, Math.min(12, (te.score-50)*0.30));
- score += Math.max(-8, Math.min(8, ((eg.safety?.score||50)-50)*0.22));
- if((p.fairCtx||0)>=0.76) score+=8; else if((p.fairCtx||0)>=0.74) score+=5; else if((p.fairCtx||0)<0.70) score-=14;
- if((p.proScore||0)>=76) score+=6; else if((p.proScore||0)<70) score-=12;
- if((p.bookCount||0)>=9) score+=6; else if((p.bookCount||0)<7) score-=12;
- if((p.ev||0)>=0.015) score+=5; else if((p.ev||0)<0.005) score-=9; else if((p.ev||0)<0) score-=14;
- if(isRiskyMarket(p)) score-=24;
- if(p.qText==="Baja" || String(p.qText||"").toLowerCase().includes("baja")) score-=18;
- if(ctx?.pitcherMismatch) score-=35;
- if(MODE==="mlb" && ctxHas(ctx,"pitchersConfirmed") && !ctx.pitchersConfirmed) score-=7;
- if(Math.abs(Number(p.best?.price||0))>220) score-=10;
- score=capScoreByReality(score,p,ctx,e,te,eg);
- const gr=v29Grade(score,p,ctx,e,te,eg);
- let good=[...((rr&&rr.good)||[])]; let bad=[...((rr&&rr.bad)||[])];
- if(te.score>=64) good.unshift("matchup/equipo aceptable "+te.score+"/99");
- if(te.score<62) bad.unshift("equipo/matchup no alcanza 62: "+te.score+"/99");
- if(gr.alerts?.length) bad.unshift(...gr.alerts);
- if(score<78) bad.unshift("no alcanza filtro fuerte V30.4: "+score+"/99");
- if(eventStateForScan(e).started) bad.unshift("bloqueado: juego en vivo/iniciado");
- return {score,grade:gr.grade,bettable:false,good:[...new Set(good)].slice(0,6),bad:[...new Set(bad)].slice(0,9),teamScore:te.score,marketSafety:eg.safety?.score||50,state:eventStateForScan(e).state,falsePositiveAlerts:gr.alerts};
-}
-
-function resultKey(r){return [r.eventId,r.market,r.selection,r.point||""].join("|").toLowerCase()}
-function uniqueDailyResults(list){
- const best=new Map();
- for(const r of list){
-   const k=[r.eventId,r.market,r.point||"",r.label].join("|").toLowerCase();
-   const cur=best.get(k);
-   if(!cur || r.ai.score>cur.ai.score) best.set(k,r);
- }
- return [...best.values()];
-}
-function scanResultCard(r,cls){
- let ai=r.ai;
- let tag=String(ai.grade||"").includes("PAPER FUERTE")?"exclusive":String(ai.grade||"").includes("OBSERVAR")?"possible":"bad";
- let when=new Date(r.commence).toLocaleString(undefined,{month:"2-digit",day:"2-digit",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
- return `<div class="scanPick ${tag}"><div class="scanHead"><div><span class="scanTag ${tag}">${esc(r.title||ai.grade)}</span><span class="v29Gate">${esc(v29Label(ai.grade))}</span><h3>${esc(r.selection)}</h3><p class="small">${esc(r.game)} · ${esc(when)} · ${esc(r.label)}</p></div><div class="scanScore ${tag==='bad'?'bad':tag==='exclusive'?'warnTxt':'good'}">${ai.score}/99</div></div>
- <div class="grid"><div class="metric"><small>Prob contexto</small><b>${pct(r.fairCtx)}</b></div><div class="metric"><small>EV</small><b class="${r.ev>=0?'good':'warnTxt'}">${(r.ev*100).toFixed(2)}%</b></div><div class="metric"><small>Cuota</small><b>${fmtOdds(r.price)}</b></div><div class="metric"><small>Casas</small><b>${r.books}</b></div><div class="metric"><small>Pro Score</small><b>${Math.round(r.proScore||0)}/99</b></div><div class="metric"><small>Equipo</small><b>${ai.teamScore}/99</b></div></div>
- <p class="aiNote"><b>Señales:</b> ${esc(ai.good.join(" · ")||"sin señales fuertes")}</p><p class="aiNote"><b>Alertas:</b> ${esc(ai.bad.join(" · ")||"sin alertas")}</p><p class="small"><b>Hard Rock:</b> verificar mismo partido, mercado exacto, línea exacta y que la cuota no esté peor. Si no coincide, NO BET.</p></div>`;
-}
-function scanMarketFamily(r){
- const m=String(r.market||"").toLowerCase();
- const pt=Number(r.point);
- const label=String(r.label||"").toLowerCase();
- if(MODE==="mlb"){
-   if(m==="spreads" && Math.abs(pt)===1.5) return "MLB +1.5 juego completo";
-   if((m.includes("1st_5")||label.includes("1st 5")||label.includes("first 5")) && (pt===0.5 || pt===1.5)) return "MLB F5 protegido";
-   if(m==="h2h") return "MLB Moneyline fuerte";
-   if(m==="team_totals") return "MLB Team Total";
-   if(m==="totals") return "MLB Total juego";
-   return "MLB Otros";
- }
- if(m.includes("double_chance")) return "Soccer Double Chance";
- if(m.includes("draw_no_bet")||m.includes("dnb")||label.includes("push if tied")) return "Soccer DNB";
- if(m.includes("team_totals")) return "Soccer Team Total";
- if(m.includes("totals")||label.includes("under")||label.includes("over")) return "Soccer Under/Over";
- if(m.includes("spreads")) return "Soccer Spread protegido";
- if(m==="h2h"||m==="h2h_3_way") return "Soccer Resultado";
- return "Soccer Otros";
-}
-function isPlus15FullGameResult(r){
- return scanMarketFamily(r)==="MLB +1.5 juego completo" || (String(r.selection||"").includes("+1.5") && String(r.market||"").toLowerCase()==="spreads");
-}
-function rotateScanResults(results){
- results=(results||[]).map(r=>({...r,_used:false})).sort((a,b)=>(b.ai?.score||0)-(a.ai?.score||0));
- let usedFamilies=new Set(), usedPlus15=false;
- let strong=[], observe=[], noBet=[], live=[];
- function pregame(r){ return r.ai?.state!=="LIVE_OR_STARTED"; }
- function eligible(r,min,gradeNeed){
-   if(!r || !r.ai || !pregame(r)) return false;
-   if((r.ai.score||0)<min) return false;
-   if(gradeNeed && !String(r.ai.grade||"").includes(gradeNeed)) return false;
-   if(String(r.ai.grade||"").includes("NO BET")) return false;
-   if(isPlus15FullGameResult(r) && usedPlus15) return false;
-   return true;
- }
- function takeBest(min, avoidFamily=true, gradeNeed=""){
-   for(const r of results){
-     if(r._used) continue;
-     const fam=scanMarketFamily(r);
-     if(avoidFamily && usedFamilies.has(fam)) continue;
-     if(!eligible(r,min,gradeNeed)) continue;
-     r._used=true; usedFamilies.add(fam); if(isPlus15FullGameResult(r)) usedPlus15=true;
-     return r;
-   }
-   return null;
- }
- for(let i=0;i<2;i++){
-   let s=takeBest(78,true,"PAPER FUERTE") || takeBest(82,false,"PAPER FUERTE");
-   if(s) strong.push({...s,title:i===0?"CANDIDATO #1 PAPER":"CANDIDATO #2 PAPER"});
- }
- for(let i=0;i<8;i++){
-   let p=takeBest(68,true,"OBSERVAR");
-   if(!p) break;
-   observe.push({...p,title:"OBSERVAR PAPER"});
- }
- for(const r of results){
-   if(r._used) continue;
-   if(!pregame(r)) live.push({...r,title:"EN VIVO / NO BET"});
-   else if(isPlus15FullGameResult(r) && usedPlus15){
-     noBet.push({...r,title:"NO BET / PUEDE GANAR PERO NO VALOR",ai:{...r.ai,grade:"NO BET / PUEDE GANAR PERO NO VALOR",bad:[...(r.ai.bad||[]),"V30 bloqueó +1.5 repetido"]}});
-   }else noBet.push({...r,title:"NO BET / PUEDE GANAR PERO NO VALOR"});
- }
- return {strong,observe,noBet:noBet.slice(0,16),live:live.slice(0,16),families:[...usedFamilies]};
-}
-function scanMarketMixHtml(results){
- const counts={};
- for(const r of results||[]){
-   const fam=scanMarketFamily(r);
-   counts[fam]=(counts[fam]||0)+1;
- }
- const keys=Object.keys(counts);
- return '<div class="marketMix">'+keys.map(k=>`<span class="mixTag ${k.includes("+1.5")?"warn":"good"}">${esc(k)}: ${counts[k]}</span>`).join("")+'</div>';
-}
-
-function renderDailyScan(results,errors){
- results=uniqueDailyResults(results);
- window.LAST_DAILY_SCAN=results;
- const rot=rotateScanResults(results);
- const ranked=(results||[]).filter(r=>r.ai?.state!=="LIVE_OR_STARTED").sort((a,b)=>(b.ai?.score||0)-(a.ai?.score||0)).slice(0,5);
- let html=`<div class="edgeBox"><h3>Resultado del Scan V30.4</h3><p>Escaneados: ${results.length} picks analizados. <b>Modo anti-falsas buenas:</b> si no cumple filtros duros, queda NO BET. Si no hay fuerte, se muestra ranking solo papel.</p>${scanMarketMixHtml(results)}</div>`;
- if(errors?.length) html+=`<div class="error">Errores en ${errors.length} eventos: ${esc(errors.slice(0,4).join(" | "))}</div>`;
- html+=`<div class="noRealMoney">Regla: no jugar dinero real hasta validar mínimo 30 picks en papel.</div>`;
- html+=`<div class="probox"><h3>Candidatos PAPER fuertes</h3>${rot.strong.length?rot.strong.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay candidato fuerte real hoy. Eso puede ser correcto: pasar.</div>'}</div>`;
- html+=`<div class="probox"><h3>Observar en papel</h3>${rot.observe.length?rot.observe.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay observaciones limpias.</div>'}</div>`;
- if(!rot.strong.length && ranked.length){
-   html+=`<div class="probox"><h3>Top ranking del día solo papel</h3><div class="notice">No son apuestas. Sirven para medir el modelo sin dinero cuando no hay PAPER FUERTE.</div>${ranked.map((r,i)=>`<div class="edgeBox"><span class="rankBadge">Ranking #${i+1}</span>${scanResultCard(r)}</div>`).join("")}</div>`;
- }
- html+=`<div class="strictBox"><h3>En vivo / Bloqueado</h3>${rot.live.length?rot.live.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay juegos en vivo bloqueados.</div>'}</div>`;
- html+=`<div class="strictBox"><h3>No bet / Puede ganar pero no valor</h3>${rot.noBet.length?rot.noBet.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay no-bets listados.</div>'}</div>`;
- html+=`<div class="error"><b>Lectura correcta:</b> una jugada en NO BET puede ganar. Eso no la convierte en buena. V30.4 solo llama fuerte a jugadas que pasan filtros completos.</div>`;
- $("scanBox").innerHTML=html;
- clearActionToastSoon();
- refreshAICredits();
-}
-async function scanDay(){
- showTab("scan");
- if(!EVENTS.length){$("scanBox").innerHTML='<div class="loading">Primero cargo calendario...</div>'; await loadCalendar(); showTab("scan");}
- if(!EVENTS.length){$("scanBox").innerHTML='<div class="error">No hay eventos cargados. Cambia fecha/filtro y carga calendario.</div>'; return;}
- let results=[], errors=[];
- let oldSelected=SELECTED;
- $("scanBox").innerHTML=`<div class="loading">Escaneando ${EVENTS.length} eventos de ${MODE.toUpperCase()}... No cierres la página.</div>`;
- const markets=buildMarkets();
- for(let i=0;i<EVENTS.length;i++){
-   const e=EVENTS[i]; SELECTED=e; window._moveCache={};
-   $("scanBox").innerHTML=`<div class="loading">Escaneando ${i+1}/${EVENTS.length}: ${esc((e.away_team||"Away")+" @ "+(e.home_team||"Home"))}</div>`;
-   try{
-     let oddsData=await fetchEventOdds(sportKey(),e.id,markets);
-     let context=MODE==="mlb"?await mlbContext(e):soccerContext(e);
-     let picks=analyzeOdds(oddsData,context);
-     window.TEAM_MODEL=buildTeamModel(picks,context);
-     for(const p of picks){
-       const ai=aiDeepGrade(p,context,e);
-       const game=(e.away_team||"Away")+" @ "+(e.home_team||"Home");
-       results.push({eventId:e.id,game,commence:e.commence_time,market:p.market,label:p.label,selection:p.selection,point:p.best?.point,price:p.best?.price,books:p.bookCount,fairCtx:p.fairCtx,ev:p.ev,proScore:p.proScore,ai});
-     }
-   }catch(err){errors.push(((e.away_team||"Away")+" @ "+(e.home_team||"Home"))+": "+err.message);}
- }
- SELECTED=oldSelected;
- renderDailyScan(results,errors);
- status("Scan V30 terminado. Revisa solo candidatos PAPER fuertes; si no hay, se pasa.");
-}
-
-async function selectGame(i, btn=null){
- const game=EVENTS[i];
- if(!game){
-   status("No encontré ese juego. Recarga calendario.", true);
-   return;
- }
- SELECTED=game;
- window._moveCache={};
+async function selectGame(i){
+ SELECTED=EVENTS[i];
  $("stSel").textContent=1;
- document.querySelectorAll(".game").forEach(x=>x.classList.remove("selected"));
- $("game_"+i)?.classList.add("selected");
-
- const gameName=`${SELECTED.away_team||"Away"} @ ${SELECTED.home_team||"Home"}`;
- setButtonBusy(btn,true,"Abriendo análisis...");
- showActionToast("Analizando: "+gameName);
  showTab("best");
- setBox("bestBox",'<div class="loading">Analizando odds y contexto de '+esc(gameName)+'...</div>');
- setBox("contextBox",'<div class="loading">Buscando contexto...</div>');
- setBox("marketsBox",'<div class="loading">Buscando mercados...</div>');
- scrollToScreen("best");
-
+ $("bestBox").innerHTML='<div class="loading">Analizando cuotas y lanzadores...</div>';
  try{
-   let markets=buildMarkets();
-   if(!markets.length) throw new Error("No hay mercados configurados para este modo.");
-   let oddsData=await fetchEventOdds(sportKey(),SELECTED.id,markets);
-   if(!oddsData || !(oddsData.bookmakers||[]).length){
-     throw new Error("The Odds API no devolvió cuotas para este juego/mercados. Prueba otro juego o cambia mercados.");
-   }
-   let context= MODE==="mlb" ? await mlbContext(SELECTED) : soccerContext(SELECTED);
-   let picks=analyzeOdds(oddsData,context);
-   if(!picks.length){
-     setBox("bestBox",'<div class="notice">No hay picks válidos para este juego con los filtros V30.4 Decisión correcta: pasar.</div>');
-     renderContext(context);
-     renderMarkets([]);
-     status("Sin picks válidos para este juego. No se fuerza jugada."); clearActionToastSoon();
-     return;
-   }
-   window.TEAM_MODEL=buildTeamModel(picks,context);
-   renderTeamModel(window.TEAM_MODEL);
-   renderPicks(picks,context);
-   renderContext(context);
-   renderMarkets(picks);
-   status("Análisis terminado. Si no sale PAPER FUERTE, se pasa. Si aparece ranking, es solo papel."); clearActionToastSoon();
-   scrollToScreen("best");
+   let markets=["h2h","spreads","totals","team_totals"];
+   let oddsData=await oddsAPI(`/v4/sports/${MODE==="mlb"?"baseball_mlb":"soccer_epl"}/events/${SELECTED.id}/odds`,{regions:"us",oddsFormat:"american",markets:markets.join(",")});
+   let ctx=MODE==="mlb"?await mlbContext(SELECTED):{};
+   let picks=analyzeOdds(oddsData,ctx);
+   renderPicks(picks,ctx);
+   status("Análisis completado con filtros relajados.");
  }catch(e){
-   setBox("bestBox",'<div class="error"><b>No pude analizar este juego:</b><br>'+esc(e.message||String(e))+'</div>');
-   status(e.message||String(e),true);
-   scrollToScreen("best");
- }finally{
-   setButtonBusy(btn,false); clearActionToastSoon();
- }
-}
-function buildMarkets(){
- let a=[];
- const playerMode=$("usePlayers")?.value||"no";
- if(MODE==="mlb"){
-   a=[...MLB_MARKETS_CORE,...MLB_MARKETS_F5];
-   if(playerMode==="yes") a.push(...MLB_MARKETS_PLAYERS);
-   if(playerMode==="safe") a.push(...MLB_MARKETS_SAFE_PLAYERS);
-   if($("useExperimental").value==="yes") a.push(...EXPERIMENTAL);
- }else{
-   a=[...SOCCER_MARKETS_CORE,...SOCCER_MARKETS_MORE];
-   a=a.filter(x=>!SOCCER_BLOCKED.includes(x));
-   if(playerMode==="no") a=a.filter(x=>!x.startsWith("player_"));
-   if(playerMode==="safe") a=a.filter(x=>!["player_shots","player_shots_on_target"].includes(x));
-   if($("useExperimental").value==="yes") a.push(...EXPERIMENTAL);
- }
- return [...new Set(a)];
-}
-async function fetchEventOdds(sport,eventId,markets){
- async function call(ms){return await oddsAPI(`/v4/sports/${sport}/events/${eventId}/odds`,{regions:"us",oddsFormat:"american",markets:ms.join(",")})}
- if(MODE==="soccer"){
-   let base={bookmakers:[],_unavailable:[],_availableMarkets:[],_blockedMarkets:[...SOCCER_BLOCKED]};
-   for(const m of markets){
-     try{
-       let d=await call([m]);
-       let has=(d?.bookmakers||[]).some(b=>(b.markets||[]).some(mm=>mm.key===m && (mm.outcomes||[]).length));
-       if(has){base.bookmakers=(base.bookmakers||[]).concat(d.bookmakers||[]);base._availableMarkets.push(m);}
-       else base._unavailable.push(m);
-     }catch(err){base._unavailable.push(m);}
-   }
-   base._availableMarkets=[...new Set(base._availableMarkets)];
-   base._unavailable=[...new Set(base._unavailable)];
-   return base;
- }
- try{return await call(markets)}catch(e){
-   let ok=[],bad=[]; for(const m of markets){try{ok.push(await call([m]))}catch(err){bad.push(m)}}
-   let base=ok[0]||{bookmakers:[]}; base._unavailable=bad; for(let j=1;j<ok.length;j++) base.bookmakers=(base.bookmakers||[]).concat(ok[j].bookmakers||[]); return base;
+   $("bestBox").innerHTML=`<div class="error">${e.message}</div>`;
  }
 }
 
-// ===== DeepScan Pro helpers =====
-function americanToDecimal(o){
-  o = Number(o);
-  if (!isFinite(o) || o === 0) return 1;
-  return o > 0 ? 1 + (o / 100) : 1 + (100 / Math.abs(o));
-}
-function fairAmerican(prob){
-  prob = Math.max(0.01, Math.min(0.99, Number(prob) || 0.01));
-  return prob >= 0.5 ? Math.round(-100 * prob / (1 - prob)) : Math.round(100 * (1 - prob) / prob);
-}
-function minPlayableOdds(prob, minEdge = 0.01){
-  prob = Math.max(0.01, Math.min(0.99, Number(prob) || 0.01));
-  let q = Math.max(0.01, Math.min(0.99, prob - minEdge));
-  return fairAmerican(q);
-}
-function proScore(p){
-  let ev = Math.max(-0.08, Math.min(0.12, Number(p.ev) || 0));
-  let prob = Math.max(0, Math.min(1, Number(p.fairCtx) || 0));
-  let books = Math.min(10, Number(p.bookCount) || 0) / 10;
-  let price = Math.abs(Number(p.best?.price) || 0);
-  let pricePenalty = price > 250 ? 0.10 : price > 200 ? 0.05 : 0;
-  let market = String(p.market || "");
-  let marketPenalty = market.includes("player_") ? 0.08 : (market.includes("corners") || market.includes("cards") ? 0.04 : 0);
-  let s = (prob * 45) + ((ev + 0.08) / 0.20 * 35) + (books * 20) - (pricePenalty * 100) - (marketPenalty * 100);
-  return Math.max(0, Math.min(99, s));
+async function mlbContext(ev){
+  let ctx={pitchersConfirmed:false,awayPitcherName:null,homePitcherName:null,pitcherStats:[]};
+  let date=$("date").value;
+  try{
+    let sdioDate=`${date.split("-")[0]}-${["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][parseInt(date.split("-")[1])-1]}-${date.split("-")[2]}`;
+    let games=await sdioAPI(`/v3/mlb/scores/json/GamesByDate/${sdioDate}`);
+    let gm=(Array.isArray(games)?games:[]).find(g=>g.AwayTeamName?.includes(ev.away_team.split(" ")[0]) || ev.away_team.includes(g.AwayTeamName));
+    if(gm){
+      ctx.awayPitcherName = gm.AwayTeamProbablePitcher || null;
+      ctx.homePitcherName = gm.HomeTeamProbablePitcher || null;
+      if(ctx.awayPitcherName && ctx.homePitcherName) ctx.pitchersConfirmed=true;
+    }
+  }catch(e){}
+
+  try{
+    let season=date.split("-")[0];
+    let stats=await sdioAPI(`/v3/mlb/stats/json/PlayerSeasonStats/${season}`);
+    ctx.pitcherStats = Array.isArray(stats) ? stats : [];
+  }catch(e){}
+  return ctx;
 }
 
 function analyzeOdds(data,ctx){
-const minProb=Number($("minProb").value||60)/100, minBooks=Number($("minBooks").value||5), maxFav=Number($("maxFav").value||-220), maxDog=Number($("maxDog").value||120), minEV=Number($("minEV").value||-3)/100;
-maxDog=Number($("maxDog").value||120), minEV=Number($("minEV").value||-3)/99;
- const groups=new Map();
- for(const b of data.bookmakers||[]){for(const m of b.markets||[]){const outs=(m.outcomes||[]).filter(o=>typeof o.price==="number");if(!outs.length)continue;
-   let buckets={}; for(const o of outs){let lk=m.key+"|"+(o.point??"")+"|"+(o.description??"")+"|"+(m.key.includes("spreads")?Math.abs(Number(o.point)||0):"");(buckets[lk] ||= []).push(o)}
-   for(const outs2 of Object.values(buckets)){const sumImp=outs2.length>1?outs2.reduce((a,o)=>a+implied(o.price),0):0;
-     for(const o of outs2){let name=lineName(m.key,o);let key=m.key+"||"+name+"||"+(o.point??"")+"||"+(o.description??"");
-       if(!groups.has(key))groups.set(key,{market:m.key,name,books:new Set(),prices:[],fairParts:[],complete:0,total:0});
-       let g=groups.get(key);g.books.add(b.title||b.key);g.prices.push({book:b.title||b.key,price:o.price,dec:dec(o.price)});
-       if(sumImp>0 && outs2.length>1){g.fairParts.push(implied(o.price)/sumImp);g.complete++} else {g.fairParts.push(implied(o.price));}
-       g.total++;
-     }
-   }
- }}
- const arr=[];
- for(const g of groups.values()){
-   g.prices.sort((a,b)=>b.dec-a.dec);let best=g.prices[0]; if(!best)continue;
-   let fairMarket=g.fairParts.reduce((a,b)=>a+b,0)/g.fairParts.length; fairMarket=Math.min(0.92,Math.max(0.02,fairMarket));
-   let adj=contextAdjustment(g,ctx); let fairCtx=Math.min(.92,Math.max(.02,fairMarket+adj));
-   let ev=fairCtx*(dec(best.price)-1)-(1-fairCtx);
-   let bookCount=g.books.size; let completeness=g.total?g.complete/g.total:0; let spread=priceDisp(g.prices);
-   let quality="LOW", qText="Baja";
-   if(bookCount>=5 && completeness>=0.55 && spread<0.16) {quality="HIGH";qText="Alta"}
-   else if(bookCount>=3 && spread<0.25){quality="MED";qText="Media"}
-   if(ctx?.pitcherMismatch) {quality="LOW";qText="Baja · pitchers no coinciden"}
-   let priceOk=best.price>=maxFav && best.price<=maxDog;
-   let strongMinEV = MODE==="soccer" ? Math.max(minEV,0.01) : Math.max(minEV,0.005);
-   let fuerte=quality==="HIGH" && fairCtx>=minProb && bookCount>=minBooks && ev>=strongMinEV && priceOk && !ctx?.pitcherMismatch;
-   let revisar=(quality==="MED"||quality==="HIGH") && fairCtx>=Math.max(.52,minProb-.05) && ev>-0.04 && priceOk && !ctx?.pitcherMismatch;
- 
-let verdict=fuerte?"FUERTE":(revisar?"REVISAR":"NO JUGAR");
- let obj={market:g.market,label:marketLabel(g.market),selection:g.name,best,top:g.prices.slice(0,5),fairMarket,fairCtx,ev,bookCount,quality,qText,completeness,spread,adj,verdict};
- obj.proScore=proScore(obj);
+  const groups=new Map();
+  for(const b of data.bookmakers||[]){for(const m of b.markets||[]){const outs=(m.outcomes||[]).filter(o=>typeof o.price==="number");
+    let buckets={}; for(const o of outs){let lk=m.key+"|"+(o.point??"")+"|"+(o.description??"");(buckets[lk] ||= []).push(o)}
+    for(const outs2 of Object.values(buckets)){const sumImp=outs2.reduce((a,o)=>a+implied(o.price),0);
+      for(const o of outs2){let key=m.key+"||"+(o.name||"")+"||"+(o.point??"");
+        if(!groups.has(key))groups.set(key,{market:m.key,name:o.name||"",point:o.point,books:new Set(),prices:[],fairParts:[]});
+        let g=groups.get(key); g.books.add(b.title); g.prices.push({book:b.title,price:o.price,dec:dec(o.price)});
+        g.fairParts.push(sumImp>0&&outs2.length>1 ? implied(o.price)/sumImp : implied(o.price));
+      }
+    }
+  }}
+  const arr=[];
+  for(const g of groups.values()){
+    g.prices.sort((a,b)=>b.dec-a.dec); let best=g.prices[0]; if(!best)continue;
+    let fairMarket=g.fairParts.reduce((a,b)=>a+b,0)/g.fairParts.length; fairMarket=Math.min(0.95,Math.max(0.05,fairMarket));
+    let fairCtx=fairMarket; 
+    let ev=fairCtx*(dec(best.price)-1)-(1-fairCtx);
+    let bookCount=g.books.size;
+    
+    // MATEMÁTICA RELAJADA PROSCORE
+    let prob = fairCtx;
+    let s = (prob * 45) + ((ev + 0.05) / 0.20 * 35) + ((bookCount/10) * 20);
+    let proScore = Math.max(0, Math.min(99, s));
 
- // NUEVO BLOQUE PRO 2: Inteligencia de Lanzadores (Bonus/Castigo matemático)
- if (MODE === "mlb" && ctx && ctx.pitcherStats && (g.market === "h2h" || g.market.includes("spreads"))) {
-     let side = teamNameSide(g.name);
-     let myPitcherName = side === "away" ? ctx.awayPitcherName : side === "home" ? ctx.homePitcherName : null;
-     let oppPitcherName = side === "away" ? ctx.homePitcherName : side === "home" ? ctx.awayPitcherName : null;
+    let obj={market:g.market,selection:g.name,point:g.point,best,top:g.prices.slice(0,3),fairCtx,ev,bookCount,proScore};
 
-     let findP = (name) => {
-         if(!name) return null;
-         let n = String(name).toLowerCase().split(" ").pop(); // Busca por apellido
-         return ctx.pitcherStats.find(p => String(p.Name||"").toLowerCase().includes(n) || String(p.FirstName+" "+p.LastName).toLowerCase().includes(n));
-     };
+    // INTELIGENCIA DE LANZADORES
+    if (MODE === "mlb" && ctx && ctx.pitcherStats && ctx.pitcherStats.length > 0 && (g.market === "h2h" || g.market.includes("spreads"))) {
+        let n=g.name.toLowerCase();
+        let isAway=SELECTED.away_team.toLowerCase().includes(n.split(" ")[0]);
+        let isHome=SELECTED.home_team.toLowerCase().includes(n.split(" ")[0]);
+        let myPitcherName = isAway ? ctx.awayPitcherName : isHome ? ctx.homePitcherName : null;
+        let oppPitcherName = isAway ? ctx.homePitcherName : isHome ? ctx.awayPitcherName : null;
 
-     let myP = findP(myPitcherName);
-     let oppP = findP(oppPitcherName);
+        let findP = (name) => {
+            if(!name) return null;
+            let last = String(name).toLowerCase().split(" ").pop();
+            return ctx.pitcherStats.find(p => String(p.Name||"").toLowerCase().includes(last));
+        };
+        let myP = findP(myPitcherName), oppP = findP(oppPitcherName);
 
-     if (myP) {
-         let whip = myP.WalksAndHitsPerInningPitched;
-         let era = myP.EarnedRunAverage;
-         if (whip > 0 && whip < 1.20) obj.proScore += 15;
-         if (era > 0 && era < 3.50) obj.proScore += 10;
-     }
-     if (oppP) {
-         let whip = oppP.WalksAndHitsPerInningPitched;
-         let era = oppP.EarnedRunAverage;
-         if (whip > 0 && whip < 1.20) obj.proScore -= 15;
-         if (era > 0 && era < 3.50) obj.proScore -= 10;
-     }
-     obj.proScore = Math.max(0, Math.min(99, obj.proScore)); // Limita el score máximo a 99
- }
-
- obj.fairOdds=fairAmerican(fairCtx);
- obj.needOdds=minPlayableOdds(fairCtx,0.01);
-   obj.premium=verdict==="FUERTE" && obj.proScore>=68 && ev>=0.01 && fairCtx>=0.58 && bookCount>=4;
-   arr.push(obj);
- }
- arr.sort((a,b)=>(b.premium?1:0)-(a.premium?1:0) || (b.verdict==="FUERTE")-(a.verdict==="FUERTE") || (b.proScore||0)-(a.proScore||0) || b.ev-a.ev || b.fairCtx-a.fairCtx);
- arr._unavailable=data._unavailable||[];
- arr._availableMarkets=data._availableMarkets||[];
- arr._blockedMarkets=data._blockedMarkets||[];
- return arr;
-}
-function contextAdjustment(g,ctx){
- if(!ctx) return 0;
- if(MODE!=="mlb"){
-   let a=0;
-   if(["h2h","h2h_3_way","draw_no_bet","double_chance","totals","btts","team_totals"].includes(g.market)) a+=0.002;
-   if(g.market.includes("player_")) a-=0.008;
-   if(g.market.includes("cards") || g.market.includes("corners")) a-=0.004;
-   return a;
- }
- let a=0;
- if(ctx.pitchersConfirmed) a+=0.006;
- if(ctx.lineupsConfirmed && (g.market.includes("batter") || g.market.includes("team_totals") || g.market==="totals")) a+=0.01;
- if(ctx.injuriesConcern) a-=0.01;
- if(ctx.weatherLean==="over" && (g.name.toLowerCase().includes("over") || g.market.includes("batter"))) a+=0.008;
- if(ctx.weatherLean==="under" && g.name.toLowerCase().includes("under")) a+=0.008;
- return a;
-}
-function priceDisp(prices){if(prices.length<2)return 0.99;let vals=prices.map(p=>implied(p.price));let avg=vals.reduce((a,b)=>a+b,0)/vals.length;return Math.sqrt(vals.reduce((a,b)=>a+(b-avg)**2,0)/vals.length)}
-
-function sigPick(p){return [SELECTED?.id||"",p.market,p.selection,p.best?.point||"",p.label].join("|").toLowerCase()}
-function isRiskyMarket(p){
- let m=String(p.market||"");
- if(m.includes("h2h_1st_5")||m.includes("inning")||m.includes("player_")) return true;
- if(m.includes("batter_hits")||m.includes("hits_runs")||m.includes("first_goal")) return true;
- return false;
-}
-function lineMove(p){
- try{
-   window._moveCache=window._moveCache||{};
-   let cacheKey=sigPick(p); if(window._moveCache[cacheKey]) return window._moveCache[cacheKey];
-   let key="ps_line_"+sigPick(p);
-   let now=Number(p.best?.price);
-   let prev=localStorage.getItem(key);
-   localStorage.setItem(key,String(now));
-   if(prev===null){let res={txt:"Primera lectura",cls:"yellow",delta:0}; window._moveCache[cacheKey]=res; return res;}
-   prev=Number(prev);
-   let delta=now-prev;
-   if(delta===0){let res={txt:"Sin movimiento",cls:"yellow",delta}; window._moveCache[cacheKey]=res; return res;}
-   // For American odds, higher number is generally better for bettor.
-   let res={txt:(delta>0?"Mejoró ":"Empeoró ")+Math.abs(delta)+" pts",cls:delta>0?"green":"red",delta}; window._moveCache[cacheKey]=res; return res;
- }catch(e){return {txt:"No disponible",cls:"yellow",delta:0}}
-}
-function hrCheck(p){
- let raw=$("hrOdds")?.value;
- if(raw===""||raw===undefined) return {txt:"Falta cuota HR: escríbela arriba y analiza",cls:"yellow",ok:false};
- let hr=Number(raw), need=Number(p.needOdds);
- if(!isFinite(hr)||!isFinite(need)) return {txt:"Cuota HR inválida",cls:"red",ok:false};
- // American odds: higher is better for bettor, e.g. -145 better than -155, +130 better than +120.
- let ok=hr>=need;
- return {txt:ok?`Hard Rock OK (${fmtOdds(hr)} >= ${fmtOdds(need)})`:`Hard Rock malo (${fmtOdds(hr)} < ${fmtOdds(need)})`,cls:ok?"green":"red",ok};
-}
-function proDecision(p){
- let flags=[];
- if(p.ev<0) flags.push({t:"EV negativo",c:"red"});
- else if(p.ev>=0.03) flags.push({t:"EV fuerte",c:"green"});
- else flags.push({t:"EV bajo",c:"yellow"});
- if(p.bookCount>=8) flags.push({t:"Muchas casas",c:"green"});
- else if(p.bookCount>=4) flags.push({t:"Casas OK",c:"yellow"});
- else flags.push({t:"Pocas casas",c:"red"});
- if((p.proScore||0)>=70) flags.push({t:"Pro Score alto",c:"green"});
- else if((p.proScore||0)>=58) flags.push({t:"Pro Score medio",c:"yellow"});
- else flags.push({t:"Pro Score bajo",c:"red"});
- if(isRiskyMarket(p)) flags.push({t:"Mercado riesgoso",c:"red"});
- if(Math.abs(p.best?.price||0)>220) flags.push({t:"Cuota cara",c:"red"});
- return flags;
-}
-function dedupePicks(list){
- if($("dedupe")?.value==="no") return list;
- const seen=new Set(), out=[];
- for(const p of list){
-   const key=[p.market,p.selection,p.best?.point??"",p.label].join("|").toLowerCase();
-   if(seen.has(key)) continue;
-   seen.add(key); out.push(p);
- }
- return out;
-}
-function allowedByProMode(p){
- let mode=$("proMode")?.value||"realistic";
- if(mode==="all") return true;
- if(mode==="realistic") return realisticPickOk(p);
- if(mode==="balanced") return balancedPickOk(p);
- if(mode==="win") return strictPickOk(p);
- if(mode==="safe" && isRiskyMarket(p)) return false;
- return true;
-}
-
-
-function addUnique(list,item,seen){
- let k=sigPick(item);
- if(seen.has(k)) return false;
- seen.add(k); list.push(item); return true;
-}
-function uniqueSections(sections){
- let seen=new Set();
- return sections.map(sec=>{
-   let arr=[];
-   for(const p of sec.items||[]) addUnique(arr,p,seen);
-   return {...sec,items:arr};
- }).filter(sec=>sec.items.length);
-}
-
-
-
-
-
-function teamNameSide(name){
- if(!SELECTED) return null;
- let n=String(name||"").toLowerCase();
- let away=String(SELECTED.away_team||"").toLowerCase();
- let home=String(SELECTED.home_team||"").toLowerCase();
- if(!n) return null;
- if(n.includes(away) || away.includes(n)) return "away";
- if(n.includes(home) || home.includes(n)) return "home";
- let awLast=away.split(" ").filter(Boolean).pop()||"";
- let hmLast=home.split(" ").filter(Boolean).pop()||"";
- if(awLast && n.includes(awLast)) return "away";
- if(hmLast && n.includes(hmLast)) return "home";
- return null;
-}
-function teamFromPick(p){
- let side=teamNameSide(String(p.selection||""));
- if(side) return side;
- return null;
-}
-function initTeamModel(){
- return {
-   away:{name:SELECTED?.away_team||"Away",score:50,signals:[],risk:[]},
-   home:{name:SELECTED?.home_team||"Home",score:50,signals:[],risk:[]}
- };
-}
-function avgImpliedForSelection(groups, team){
- let vals=[];
- for(const p of groups||[]){
-   if(p.market==="h2h" || p.market==="h2h_3_way"){
-     let side=teamNameSide(p.selection);
-     if(side===team) vals.push(p.fairCtx||p.fairMarket||0);
-   }
- }
- return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
-}
-function sideValues(picks, side, fn){
- let vals=[];
- for(const p of picks||[]){
-   if(teamFromPick(p)===side){
-     let v=fn(p);
-     if(v!==null && v!==undefined && isFinite(v)) vals.push(v);
-   }
- }
- return vals;
-}
-function buildTeamModel(picks,ctx){
- let model=initTeamModel();
- for(const side of ["away","home"]){
-   let tm=model[side];
-   let score=50;
-
-   let ml=avgImpliedForSelection(picks,side);
-   if(ml!==null){
-     score += (ml-0.50)*42;
-     tm.signals.push("mercado ganador "+pct(ml));
-     if(ml>=0.58) tm.signals.push("favorito por mercado");
-     if(ml<=0.42) tm.risk.push("underdog claro");
-   }else tm.risk.push("sin moneyline claro");
-let protectedVals=sideValues(picks,side,p=>{
-         let pt=Number(p.best?.point);
-         if(p.market==="spreads" && pt>0) return p.fairCtx||0;
-         if(p.market==="spreads_1st_5_innings" && pt>0) return (p.fairCtx||0)-0.03;
-         return null;
-
-      });
-   if(protectedVals.length){
-     let pp=Math.max(...protectedVals);
-     score += Math.max(-3, Math.min(10, (pp-0.60)*55));
-     tm.signals.push("spread protegido "+pct(pp));
-   }
-
-   let proVals=sideValues(picks,side,p=>p.proScore||0).sort((a,b)=>b-a).slice(0,4);
-   if(proVals.length){
-     let avg=proVals.reduce((a,b)=>a+b,0)/proVals.length;
-     score += Math.max(-7, Math.min(8, (avg-60)*0.35));
-     tm.signals.push("Pro promedio "+Math.round(avg));
-   }
-
-   let evVals=sideValues(picks,side,p=>(p.ev||0)*100);
-   if(evVals.length){
-     let best=Math.max(...evVals);
-     score += Math.max(-5, Math.min(5, best*0.55));
-     if(best>=1) tm.signals.push("EV positivo en mercados");
-     if(best<-3) tm.risk.push("EV malo en mercados");
-   }
-
-   let bookVals=sideValues(picks,side,p=>p.bookCount||0);
-   if(bookVals.length){
-     let maxB=Math.max(...bookVals);
-     if(maxB>=8){score+=4;tm.signals.push("muchas casas");}
-     else if(maxB>=5){score+=2;tm.signals.push("casas suficientes");}
-     else {score-=4;tm.risk.push("poca data de casas");}
-   }
-
-   if(MODE==="mlb" && ctx){
-     if(ctx.pitchersConfirmed){score+=2;tm.signals.push("pitchers confirmados");}
-     if(ctx.lineupsConfirmed){score+=1;tm.signals.push("lineups confirmados");}
-     if(ctx.pitcherMismatch){score-=8;tm.risk.push("pitcher mismatch");}
-     if(ctx.injuriesConcern){score-=4;tm.risk.push("lesiones/alerta contexto");}
-   }
-
-   tm.score=Math.round(Math.max(20,Math.min(85,score)));
-   tm.signals=[...new Set(tm.signals)].slice(0,6);
-   tm.risk=[...new Set(tm.risk)].slice(0,5);
- }
- return model;
-}
-function teamEdgeForPick(p){
- if(!window.TEAM_MODEL) return {score:50,notes:["modelo equipo pendiente"],risks:[]};
- let side=teamFromPick(p);
- if(!side) return {score:50,notes:["equipo no identificado"],risks:["verifica selección exacta"]};
- let tm=window.TEAM_MODEL[side];
- let opp=window.TEAM_MODEL[side==="away"?"home":"away"];
- let diff=(tm.score||50)-(opp.score||50);
- let score=Math.round(Math.max(20,Math.min(85,(tm.score||50)+diff*0.22)));
- let notes=[`${tm.name}: fuerza ${tm.score}/99`, ...tm.signals.slice(0,3)];
- let risks=[...tm.risk.slice(0,3)];
- if(diff<-12) risks.push("equipo bastante más débil que rival");
- if(diff>12) notes.push("ventaja clara vs rival");
- return {score,notes,risks,side};
-}
-function renderTeamModel(model){
- if(!model){$("teamBox").innerHTML='<div class="notice">Modelo de equipo pendiente.</div>';return}
- function card(t){
-   return `<div class="teamCard"><b>${esc(t.name)}</b><div class="teamScore ${t.score>=60?'good':t.score<45?'bad':'warnTxt'}">${t.score}/99</div>
-   <p class="small"><b>Señales:</b> ${esc((t.signals||[]).join(" · ")||"sin señales fuertes")}</p>
-   <p class="small"><b>Riesgos:</b> ${esc((t.risk||[]).join(" · ")||"sin riesgos fuertes")}</p></div>`;
- }
- let diff=Math.abs(model.away.score-model.home.score);
- let leader=model.away.score>model.home.score?model.away:model.home.score>model.away.score?model.home:null;
- let msg=leader&&diff>=6?`Ventaja del modelo: <b>${esc(leader.name)}</b>`:"Modelo parejo o ventaja pequeña";
- $("teamBox").innerHTML=`<div class="teamBox"><h3>Team Strength calibrado</h3><p>${msg}. Ya no castiga underdogs por todos los mercados secundarios; usa señales principales y límites realistas.</p><div class="teamGrid">${card(model.away)}${card(model.home)}</div></div>`;
-}
-
-function marketSafety(p){
- let m=String(p.market||""), label=String(p.label||"").toLowerCase(), sel=String(p.selection||"");
- let pt=Number(p.best?.point);
- let score=50, notes=[];
- if(MODE==="mlb"){
-       if(m==="spreads" && pt>0){score+=22;notes.push("Spread positivo protegido");}
-       else if(m==="spreads" && pt<0){score-=10;notes.push("Spread negativo requiere ventaja");}
-       else if(m==="spreads_1st_5_innings" && pt>0){score+=14;notes.push("primeras 5 protegido");}
-       else if(m==="spreads_1st_5_innings" && pt<0){score-=6;notes.push("F5 negativo riesgoso");}
-       else if(m==="h2h"){score+=5;notes.push("moneyline claro");}
-   else if(m==="team_totals"){score+=4;notes.push("team total");}
-   else if(m.includes("h2h_1st_5")){score-=12;notes.push("F5 winner es más volátil");}
-   else if(m.includes("batter_hits")||m.includes("player")||m.includes("batter_")){score-=28;notes.push("prop de jugador / hits");}
-   else if(m.includes("totals")){score-=2;notes.push("total depende de ritmo/ofensiva");}
- }else{
-   if(m==="draw_no_bet"){score+=24;notes.push("DNB protege empate");}
-   else if(m==="double_chance"){score+=22;notes.push("double chance protegido");}
-   else if(m==="team_totals"){score+=8;notes.push("team total");}
-   else if(m==="btts"){score+=3;notes.push("BTTS claro pero puede girar rápido");}
-   else if(m==="h2h_3_way"||m==="h2h"){score-=6;notes.push("Game Result no protege empate");}
-   else if(m.includes("player")){score-=18;notes.push("prop de jugador");}
- }
- return {score:Math.max(0,Math.min(99,score)),notes};
-}
-function edgeGrade(p){
- let safety=marketSafety(p);
- let prob=(p.fairCtx||0)*100;
- let ev=(p.ev||0)*100;
- let books=p.bookCount||0;
- let ps=p.proScore||0;
- let score=0;
- score += Math.max(0, Math.min(30, (prob-55)*2));       // probability
- score += Math.max(0, Math.min(20, (ps-45)*0.8));       // pro score
- score += Math.max(0, Math.min(15, books*1.7));         // books
- score += Math.max(-15, Math.min(15, ev*2.2));          // EV
- score += Math.max(-15, Math.min(20, (safety.score-50)*0.55)); // market safety
- if(p.qText==="Alta") score+=6;
- if(p.qText==="Baja") score-=16;
- let te=teamEdgeForPick(p);
- score += Math.max(-10, Math.min(12, (te.score-50)*0.32));
- if(isRiskyMarket(p)) score-=22;
- if(Math.abs(Number(p.best?.price||0))>300) score-=10;
- score=Math.round(Math.max(0,Math.min(99,score)));
- return {score,safety};
-}
-function realisticReasons(p){
- let g=edgeGrade(p), r=[], bad=[];
- let te=teamEdgeForPick(p);
- if(te.score>=60) r.push("equipo/matchup favorable "+te.score+"/99");
- else if(te.score<42) bad.push("equipo/matchup débil "+te.score+"/99");
- for(const n of (te.notes||[]).slice(0,2)){ if(!r.includes(n)) r.push(n); }
- for(const n of (te.risks||[]).slice(0,2)){ if(!bad.includes(n)) bad.push(n); }
- if((p.fairCtx||0)>=0.66) r.push("probabilidad aceptable "+pct(p.fairCtx));
- else bad.push("probabilidad baja para buscar ganar");
- if((p.proScore||0)>=62) r.push("Pro Score decente "+Math.round(p.proScore||0)+"/99");
- else bad.push("Pro Score bajo");
- if((p.bookCount||0)>=6) r.push("suficientes casas: "+p.bookCount);
- else bad.push("pocas casas comparando");
- if((p.ev||0)>=0) r.push("EV positivo");
- else if((p.ev||0)>=-0.025) r.push("EV negativo leve");
- else bad.push("EV demasiado negativo");
- if(g.safety.score>=65) r.push("mercado protegido");
- else if(g.safety.score<45) bad.push("mercado riesgoso");
- for(const n of g.safety.notes){ if(!r.includes(n) && !bad.includes(n)) r.push(n); }
- if(p.qText==="Baja") bad.push("calidad baja");
- if(isRiskyMarket(p)) bad.push("mercado bloqueado/riesgoso");
- return {good:r,bad,edge:g.score,safety:g.safety.score};
-}
-function realisticStatus(p){
- let rr=realisticReasons(p), eg=edgeGrade(p), te=teamEdgeForPick(p);
- let alerts=v29FalsePositiveAlerts(p, {}, SELECTED||{}, te, eg);
- if(eventStateForScan(SELECTED||{}).started) return "EN VIVO / NO BET";
- if(alerts.length===0 && eg.score>=78 && (p.fairCtx||0)>=0.74 && (p.proScore||0)>=72 && (p.bookCount||0)>=8 && (p.ev||0)>=0.008 && te.score>=64) return "PAPER FUERTE";
- if(alerts.length<=1 && eg.score>=68 && (p.fairCtx||0)>=0.70 && (p.proScore||0)>=68 && (p.bookCount||0)>=7 && (p.ev||0)>=0 && te.score>=60) return "OBSERVAR";
- return "NO BET";
-}
-function realisticPickOk(p){
- let mode=$("proMode")?.value||"realistic";
- if(mode!=="realistic") return true;
- let st=realisticStatus(p);
- return st==="PAPER FUERTE" || st==="OBSERVAR";
-}
-function bestOnePerGame(list){
- // evita escoger dos lados similares del mismo partido; para una vista por juego, deja las mejores por market+point
- const seen=new Map();
- for(const p of list){
-   const k=[p.market,p.best?.point??"",p.label].join("|").toLowerCase();
-   const curr=seen.get(k);
-   const pScore=edgeGrade(p).score;
-   const cScore=curr?edgeGrade(curr).score:-1;
-   if(!curr || pScore>cScore) seen.set(k,p);
- }
- return [...seen.values()];
-}
-
-function balancedPickOk(p){
- let mode=$("proMode")?.value||"balanced";
- if(mode!=="balanced") return true;
- if(isRiskyMarket(p)) return false;
- if(p.verdict==="NO JUGAR") return false;
- if(p.qText==="Baja") return false;
- if((p.fairCtx||0)<0.66) return false;
- if((p.proScore||0)<62) return false;
- if((p.bookCount||0)<6) return false;
- if((p.ev||0)<-0.02) return false;
- if(Math.abs(Number(p.best?.price||0))>300) return false;
- return true;
-}
-function balancedReason(p){
- let r=[];
- if((p.fairCtx||0)<0.66) r.push("prob menor 66%");
- if((p.proScore||0)<62) r.push("Pro Score menor 62");
- if((p.bookCount||0)<6) r.push("menos de 6 casas");
- if((p.ev||0)<-0.02) r.push("EV demasiado negativo");
- if(p.qText==="Baja") r.push("calidad baja");
- if(isRiskyMarket(p)) r.push("mercado riesgoso");
- if(Math.abs(Number(p.best?.price||0))>300) r.push("cuota demasiado cara");
- return r.join(", ")||"no pasó filtro realista";
-}
-
-function strictMinPro(){
- let v=Number($("minProScore")?.value||70);
- return isFinite(v)?v:70;
-}
-function strictPickOk(p){
- let mode=$("proMode")?.value||"balanced";
- if(mode!=="win") return true;
- if(isRiskyMarket(p)) return false;
- if(p.verdict==="NO JUGAR") return false;
- if((p.fairCtx||0)<0.70) return false;
- if((p.proScore||0)<strictMinPro()) return false;
- if((p.bookCount||0)<8) return false;
- if((p.ev||0)<-0.01) return false;
- if(Math.abs(Number(p.best?.price||0))>300) return false;
- return true;
-}
-function strictReason(p){
- let r=[];
- if((p.fairCtx||0)<0.70) r.push("probabilidad menor de 70%");
- if((p.proScore||0)<strictMinPro()) r.push("Pro Score bajo");
- if((p.bookCount||0)<8) r.push("menos de 8 casas");
- if((p.ev||0)<-0.01) r.push("EV muy negativo");
- if(isRiskyMarket(p)) r.push("mercado riesgoso");
- if(Math.abs(Number(p.best?.price||0))>300) r.push("cuota demasiado cara");
- return r.join(", ")||"no pasó filtro estricto";
-}
-
-
-function topPaperRanked(picks, limit=3){
-  return (picks||[])
-    .filter(p=>!String(p.realStatus||"").includes("EN VIVO"))
-    .map(p=>{
-      const eg=edgeGrade(p);
-      const te=teamEdgeForPick(p);
-      const composite =
-        (Number(p.fairCtx||0)*100)*0.34 +
-        (Number(p.proScore||0))*0.24 +
-        (Number(eg.score||0))*0.22 +
-        (Number(te.score||0))*0.12 +
-        (Number(p.ev||0)*100)*0.08;
-      return {...p, paperRank:Math.round(composite), paperTeam:te.score, paperEdge:eg.score};
-    })
-    .sort((a,b)=>(b.paperRank||0)-(a.paperRank||0))
-    .slice(0,limit);
-}
-function finalDecisionBox(type,title,body){
-  const cls=type==="no"?"finalDecision no":"finalDecision paper";
-  return `<div class="${cls}"><div class="big">${esc(title)}</div><p>${esc(body)}</p></div>`;
-}
-function clearActionToastSoon(){
-  const el=$("actionToast");
-  if(el){
-    setTimeout(()=>{ if($("actionToast")) $("actionToast").remove(); }, 900);
+        if (myP) {
+            if (myP.WalksAndHitsPerInningPitched > 0 && myP.WalksAndHitsPerInningPitched < 1.25) obj.proScore += 12;
+            if (myP.EarnedRunAverage > 0 && myP.EarnedRunAverage < 3.80) obj.proScore += 8;
+        }
+        if (oppP) {
+            if (oppP.WalksAndHitsPerInningPitched > 0 && oppP.WalksAndHitsPerInningPitched < 1.25) obj.proScore -= 12;
+            if (oppP.EarnedRunAverage > 0 && oppP.EarnedRunAverage < 3.80) obj.proScore -= 8;
+        }
+        obj.proScore = Math.max(0, Math.min(99, obj.proScore));
+    }
+    arr.push(obj);
   }
+  return arr.sort((a,b)=>b.proScore-a.proScore);
+}
+
+function edgeGrade(p){
+  // Relajado para no matar los picks
+  let prob=p.fairCtx*100, ev=p.ev*100, books=p.bookCount, ps=p.proScore;
+  let score = ((prob-50)*2) + ((ps-40)*0.8) + (books*2) + (ev*2.5);
+  return Math.round(Math.max(0,Math.min(99,score)));
 }
 
 function renderPicks(picks,ctx){
- let original=dedupePicks(picks);
- for(const p of original){
-   const eg=edgeGrade(p), rr=realisticReasons(p);
-   p.edgeScore=eg.score; p.marketSafety=eg.safety.score; p.realGood=rr.good; p.realBad=rr.bad; p.realStatus=realisticStatus(p);
- }
- let strong=bestOnePerGame(original.filter(p=>p.realStatus==="PAPER FUERTE")).sort((a,b)=>(b.edgeScore||0)-(a.edgeScore||0)).slice(0,4);
- let observe=bestOnePerGame(original.filter(p=>p.realStatus==="OBSERVAR")).sort((a,b)=>(b.edgeScore||0)-(a.edgeScore||0)).slice(0,8);
- let ranked=topPaperRanked(original,3);
- let nobet=original.filter(p=>String(p.realStatus||"").includes("NO BET")).sort((a,b)=>(b.edgeScore||0)-(a.edgeScore||0)).slice(0,14);
- $("stPicks").textContent=strong.length;
- $("stWatch").textContent=observe.length;
+  let html="";
+  let countFuerte=0;
+  for(const p of picks){
+    let edge = edgeGrade(p);
+    let isFuerte = edge >= 62 && p.fairCtx >= 0.55 && p.proScore >= 55 && p.bookCount >= 3;
+    let isObserve = !isFuerte && edge >= 50 && p.fairCtx >= 0.50 && p.proScore >= 45;
+    
+    let status = isFuerte ? "PAPER FUERTE" : isObserve ? "OBSERVAR" : "NO BET";
+    let cls = isFuerte ? "HIGH" : isObserve ? "MED" : "LOW";
+    if(isFuerte) countFuerte++;
 
- let html=`<div class="edgeBox"><h3>V30.4 Lectura profesional</h3><p>La app no fuerza jugadas. Si no hay PAPER FUERTE, muestra un ranking para estudiar en papel, pero no dinero real.</p></div>`;
- if(strong.length){
-   html+=finalDecisionBox("paper","DECISIÓN FINAL: HAY CANDIDATO PAPER FUERTE","Aun así se valida en papel. No dinero real hasta completar 30 picks registrados.");
- }else{
-   html+=finalDecisionBox("no","DECISIÓN FINAL: NO JUGAR ESTE PARTIDO","No encontró candidato fuerte. El ranking de abajo es solo para medir el modelo en papel.");
- }
- html+=`<div class="noRealMoney">No usar dinero real. Primero 30 picks en papel con resultado registrado. Si NO BET gana, no se persigue.</div>`;
- html+=`<div class="probox"><h3>Candidatos PAPER fuertes</h3>${strong.length?strong.map(pickCard).join(""):'<div class="notice">No hay candidato fuerte. La decisión profesional es pasar.</div>'}</div>`;
- html+=`<div class="probox"><h3>Observar</h3>${observe.length?observe.map(pickCard).join(""):'<div class="notice">No hay observaciones limpias.</div>'}</div>`;
- if(!strong.length && ranked.length){
-   html+=`<div class="probox"><h3>Top ranking solo papel</h3><div class="notice">Esto NO es jugada. Es para registrar y calibrar cuando la app no encuentra fuerte.</div>${ranked.map((p,idx)=>`<div class="edgeBox"><span class="rankBadge">Ranking #${idx+1}</span><span class="rankBadge">Paper Rank ${p.paperRank}/99</span>${pickCard(p)}</div>`).join("")}</div>`;
- }
- html+=`<div class="strictBox"><h3>No bet / puede ganar pero no valor</h3>${nobet.length?nobet.map(pickCard).join(""):'<div class="notice">No hay bloqueadas.</div>'}</div>`;
- $("bestBox").innerHTML=html;
- clearActionToastSoon();
- renderProPanel(original,ctx);
-}
-function pickCard(p){
- let move=lineMove(p), hr=hrCheck(p), flags=proDecision(p);
- let st=p.realStatus||realisticStatus(p);
- let cls=st==="PAPER FUERTE"?"HIGH":st==="OBSERVAR"?"MED":"LOW";
- let badge=st;
- let te=teamEdgeForPick(p);
- let alerts=v29FalsePositiveAlerts(p,{},SELECTED||{},te,edgeGrade(p));
- return `<div class="pick"><div class="top"><div><div class="title">${esc(p.selection)}</div><div class="sub">${esc(p.label)} · ${esc(SELECTED.away_team)} @ ${esc(SELECTED.home_team)}</div></div><span class="badge ${cls}">${badge} · ${esc(p.qText)}</span></div>
- <div class="metrics">
- <div class="metric"><small>Prob mercado</small><b>${pct(p.fairMarket)}</b></div>
- <div class="metric"><small>Prob contexto</small><b class="${p.fairCtx>=.7?'good':'warnTxt'}">${pct(p.fairCtx)}</b></div>
- <div class="metric"><small>EV</small><b class="${p.ev>=0.005?'good':p.ev>=0?'warnTxt':'bad'}">${pct(p.ev)}</b></div>
- <div class="metric"><small>Cuota</small><b>${fmtOdds(p.best.price)}</b></div>
- <div class="metric"><small>Casas</small><b>${p.bookCount}</b></div>
- <div class="metric"><small>Pro Score</small><b class="${(p.proScore||0)>=72?'good':'warnTxt'}">${Math.round(p.proScore||0)}/99</b></div>
- <div class="metric"><small>Line Move</small><b class="${move.cls==='green'?'good':move.cls==='red'?'bad':'warnTxt'}">${esc(move.txt)}</b></div>
- <div class="metric"><small>Edge Real</small><b class="${(p.edgeScore||edgeGrade(p).score)>=78?'good':(p.edgeScore||edgeGrade(p).score)>=68?'warnTxt':'bad'}">${p.edgeScore||edgeGrade(p).score}/99</b></div>
- <div class="metric"><small>Market Safety</small><b>${p.marketSafety||edgeGrade(p).safety.score}/99</b></div>
- <div class="metric"><small>Equipo</small><b class="${te.score>=64?'good':te.score<55?'bad':'warnTxt'}">${te.score}/99</b></div>
- <div class="metric"><small>Paper Track</small><b>$0 real</b></div>
- </div>
- <div class="proFlags">${flags.map(f=>`<span class="flag ${f.c}">${esc(f.t)}</span>`).join("")}<span class="flag ${hr.cls}">${esc(hr.txt)}</span><span class="flag ${st==="PAPER FUERTE"?"green":st==="NO BET"?"red":"yellow"}">V30: ${esc(st)}</span></div>
- ${alerts.length?`<ul class="reasonList">${alerts.slice(0,6).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
- ${((p.realGood&&p.realGood.length)||(p.realBad&&p.realBad.length))?`<ul class="reasonList">${(p.realGood||[]).slice(0,3).map(x=>`<li class="good">${esc(x)}</li>`).join("")}${(p.realBad||[]).slice(0,3).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
- <p class="small">Mejor casa: ${esc(p.best.book)} · Cuota justa aprox: ${fmtOdds(p.fairOdds)} · Para valor +1%, buscar ${fmtOdds(p.needOdds)} o mejor. Verifica Hard Rock: mismo partido, mercado exacto y línea exacta. Top: ${esc(p.top.map(x=>x.book+" "+fmtOdds(x.price)).join(" · "))}</p></div>`;
-}
-function renderProPanel(picks,ctx){
- let original=dedupePicks(picks);
- for(const p of original){
-   const eg=edgeGrade(p), rr=realisticReasons(p);
-   p.edgeScore=eg.score; p.marketSafety=eg.safety.score; p.realGood=rr.good; p.realBad=rr.bad; p.realStatus=realisticStatus(p);
- }
- let strong=bestOnePerGame(original.filter(p=>p.realStatus==="PAPER FUERTE")).sort((a,b)=>(b.edgeScore||0)-(a.edgeScore||0)).slice(0,6);
- let observe=bestOnePerGame(original.filter(p=>p.realStatus==="OBSERVAR")).sort((a,b)=>(b.edgeScore||0)-(a.edgeScore||0)).slice(0,8);
- let nobet=original.filter(p=>String(p.realStatus||"").includes("NO BET")).sort((a,b)=>(b.edgeScore||0)-(a.edgeScore||0)).slice(0,10);
- let html=`<div class="ok"><b>V30 Feed:</b> Paper fuertes ${strong.length} · Observar ${observe.length} · No bet ${nobet.length}. Regla: $0 real hasta 30 picks validados.</div>`;
- html+=`<div class="probox"><h3>Paper fuertes</h3>${strong.length?strong.map(pickCard).join(""):'<div class="notice">No hay paper fuerte.</div>'}</div>`;
- html+=`<div class="probox"><h3>Observar</h3>${observe.length?observe.map(pickCard).join(""):'<div class="notice">No hay observar.</div>'}</div>`;
- html+=`<div class="strictBox"><h3>No bet / puede ganar pero no valor</h3>${nobet.length?nobet.map(pickCard).join(""):'<div class="notice">No hay no-bets.</div>'}</div>`;
- $("proBox").innerHTML=html;
-}
-function renderMarkets(picks){
- let unavailable=[...new Set((picks._unavailable||[]).map(x=>String(x).split(":")[0]))];
- let available=[...new Set(picks._availableMarkets||[])];
- let blocked=[...new Set(picks._blockedMarkets||[])];
- let html="";
- if(MODE==="soccer"){
-   html+=`<div class="ok"><b>Hard Rock Soccer Scan:</b> analiza mercados disponibles y bloquea tiros/tiros a puerta de jugadores.</div>`;
-   html+=`<div class="ctx"><h3>Menú Hard Rock revisado</h3>`+
-     SOCCER_HR_MENU.map(([hr,keys])=>{
-       let ok=(keys||[]).some(k=>available.includes(k));
-       let tried=(keys||[]).some(k=>unavailable.includes(k));
-       let status=(!keys||!keys.length)?"Manual Hard Rock":(ok?"API OK":(tried?"No disponible ahora":"Pendiente"));
-       let cls=ok?"good":((!keys||!keys.length)?"warnTxt":"bad");
-       let note=keys&&keys.length?` · ${esc(keys.map(marketLabel).join(", "))}`:" · Hard Rock lo tiene, pero The Odds API no trae esa key exacta.";
-       return `<div class="check"><b>${esc(hr)}:</b> <span class="${cls}">${status}</span>${note}</div>`;
-     }).join("")+
-     `</div>`;
-   if(available.length) html+=`<div class="notice"><b>Mercados API disponibles:</b> ${esc(available.map(marketLabel).join(", "))}</div>`;
-   if(blocked.length) html+=`<div class="notice"><b>Bloqueados por tu regla:</b> ${esc(blocked.map(marketLabel).join(", "))}</div>`;
- }
- if(unavailable.length) html+=`<div class="notice"><b>Mercados no disponibles en este evento/API:</b> ${esc(unavailable.map(marketLabel).slice(0,30).join(", "))}</div>`;
- $("marketsBox").innerHTML=html+dedupePicks(picks).slice(0,150).map(pickCard).join("");
-}
-async function mlbContext(ev){
- let ctx={title:"MLB API Restore HR Soccer Context",items:[],raw:[],pitchersConfirmed:false,lineupsConfirmed:false,injuriesConcern:false,weatherLean:"neutral",pitcherMismatch:false,awayPitcherName:null,homePitcherName:null,pitcherStats:[]};
- let date=$("date").value || String(ev.commence_time||today()).slice(0,10);
- ctx.items.push(["Fecha usada",date+" (fecha seleccionada, no UTC)"]);
-
- // SportsDataIO professional context
- try{
-   let sdioDate=toSdioDate(date);
-   let games=await trySdio([`/v3/mlb/scores/json/GamesByDate/${sdioDate}`,`/v3/mlb/scores/json/GamesByDate/${date}`]);
-   let gm=matchSdioGame(Array.isArray(games)?games:[],ev);
-   if(gm){
-     ctx.items.push(["SportsDataIO game",`${gm.AwayTeam||gm.AwayTeamKey||ev.away_team} @ ${gm.HomeTeam||gm.HomeTeamKey||ev.home_team}`]);
-     ctx.items.push(["Pitchers SDIO",`Away: ${gm.AwayTeamProbablePitcher||gm.AwayStartingPitcher||gm.AwayStartingPitcherID||"pendiente"} | Home: ${gm.HomeTeamProbablePitcher||gm.HomeStartingPitcher||gm.HomeStartingPitcherID||"pendiente"}`]);
-     ctx.items.push(["Estadio/clima SDIO",`${gm.StadiumDetails?.Name||gm.Stadium||gm.StadiumID||"pendiente"} · ${weatherText(gm)}`]);
-     if((gm.AwayTeamProbablePitcher||gm.AwayStartingPitcher||gm.AwayStartingPitcherID) && (gm.HomeTeamProbablePitcher||gm.HomeStartingPitcher||gm.HomeStartingPitcherID)) ctx.pitchersConfirmed=true;
-     if(weatherText(gm).toLowerCase().includes("wind")) ctx.weatherLean="neutral";
-     
-     // Guardamos los nombres para el motor de probabilidad
-     ctx.awayPitcherName = gm.AwayTeamProbablePitcher || gm.AwayStartingPitcher || null;
-     ctx.homePitcherName = gm.HomeTeamProbablePitcher || gm.HomeStartingPitcher || null;
-     
-     ctx.raw.push(JSON.stringify(gm,null,2).slice(0,4000));
-   } else ctx.items.push(["SportsDataIO game","No pude empatar juego exacto en GamesByDate."]);
- }catch(e){ctx.items.push(["SportsDataIO GamesByDate","No disponible en tu trial/feed o error: "+e.message])}
-
- try{
-   let sdioDate=toSdioDate(date);
-   let proj=await trySdio([`/v3/mlb/projections/json/PlayerGameProjectionStatsByDate/${sdioDate}`,`/v3/mlb/projections/json/ProjectedPlayerGameStatsByDate/${sdioDate}`,`/v3/mlb/stats/json/PlayerGameStatsByDate/${sdioDate}`]);
-   let count=Array.isArray(proj)?proj.length:0;
-   let confirmed=Array.isArray(proj)&&proj.some(x=>x.BattingOrderConfirmed===true || x.LineupConfirmed===true || x.Starting===true);
-   ctx.items.push(["Lineups/Projected stats SDIO",`${count} registros · confirmados: ${confirmed?"sí":"no/pendiente"}`]);
-   ctx.lineupsConfirmed=confirmed;
- }catch(e){ctx.items.push(["Lineups SDIO","No disponible en tu trial/feed: "+e.message])}
-
- try{
-   let season=new Date(date).getFullYear();
-   let injuries=await trySdio([`/v3/mlb/scores/json/Injuries/${season}`,`/v3/mlb/scores/json/Injuries`]);
-   let count=Array.isArray(injuries)?injuries.length:0;
-   ctx.items.push(["Lesiones SDIO",`${count} registros devueltos. Revisa si afectan jugadores clave.`]);
-   ctx.injuriesConcern=false;
- }catch(e){ctx.items.push(["Lesiones SDIO","No disponible o no incluido en trial: "+e.message])}
-
- // NUEVO BLOQUE PRO 1: Descargar estadísticas completas de los pitchers
- try{
-   let season=new Date(date).getFullYear();
-   let stats=await trySdio([`/v3/mlb/stats/json/PlayerSeasonStats/${season}`]);
-   ctx.pitcherStats = Array.isArray(stats) ? stats : [];
-   ctx.items.push(["Pitcher Stats PRO", `${ctx.pitcherStats.length} jugadores cargados para análisis de élite.`]);
- }catch(e){ctx.items.push(["Pitcher Stats PRO","No disponible: "+e.message])}
-
- // MLB public fallback
- try{
-   let schedResp=await fetchWithTimeout(`https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${date}&hydrate=probablePitcher,team,venue`,{},30000); let sched=await readJsonSafe(schedResp);
-   let games=((sched.dates||[])[0]?.games)||[]; let m=matchMLB(games,ev);
-   if(m){
-     ctx.items.push(["MLB StatsAPI pitchers",`${m.teams.away.team.name}: ${m.teams.away.probablePitcher?.fullName||"pendiente"} | ${m.teams.home.team.name}: ${m.teams.home.probablePitcher?.fullName||"pendiente"}`]);
-     ctx.items.push(["MLB StatsAPI estadio",m.venue?.name||"pendiente"]);
-     if(m.teams.away.probablePitcher&&m.teams.home.probablePitcher)ctx.pitchersConfirmed=true;
-     
-     // Respaldo de nombres
-     if(!ctx.awayPitcherName) ctx.awayPitcherName = m.teams.away.probablePitcher?.fullName;
-     if(!ctx.homePitcherName) ctx.homePitcherName = m.teams.home.probablePitcher?.fullName;
-   } else ctx.items.push(["MLB StatsAPI","No encontró match exacto visitante/local."]);
- }catch(e){ctx.items.push(["MLB StatsAPI","Error: "+e.message])}
-
- ctx.items.push(["Bullpen","SportsDataIO puede ayudar si tu feed incluye boxscores/player game stats; si no, revisar uso de relevistas últimas 2 noches."]);
- ctx.items.push(["Bateador vs pitcher","No se inventa. Si tu feed no lo incluye, queda pendiente manual."]);
- return ctx;
+    let flags = [];
+    if(p.ev>0) flags.push(`<span class="flag green">+ EV</span>`); else flags.push(`<span class="flag red">- EV</span>`);
+    if(p.bookCount>=5) flags.push(`<span class="flag green">Casas OK</span>`); else flags.push(`<span class="flag yellow">Pocas casas</span>`);
+    
+    html+=`<div class="pick"><div class="top"><div><div class="title">${p.selection} ${p.point??""}</div><div class="small">${p.market}</div></div><span class="badge ${cls}">${status}</span></div>
+    <div class="metrics">
+      <div class="metric"><small>Prob Contexto</small><b class="${p.fairCtx>=0.6?'good':'warnTxt'}">${pct(p.fairCtx)}</b></div>
+      <div class="metric"><small>EV</small><b class="${p.ev>0?'good':'bad'}">${pct(p.ev)}</b></div>
+      <div class="metric"><small>Cuota Best</small><b>${fmtOdds(p.best.price)}</b></div>
+      <div class="metric"><small>Pro Score</small><b class="${p.proScore>=60?'good':'warnTxt'}">${Math.round(p.proScore)}/99</b></div>
+    </div>
+    <div class="proFlags">${flags.join("")}</div>
+    <p class="small">Mejor en: ${p.best.book}. Top: ${p.top.map(x=>x.book+" "+fmtOdds(x.price)).join(", ")}</p>
+    </div>`;
+  }
+  
+  if(countFuerte>0){
+    $("bestBox").innerHTML = `<div class="ok">¡Encontramos ${countFuerte} jugadas fuertes con los filtros relajados!</div>` + html;
+  } else {
+    $("bestBox").innerHTML = `<div class="notice">Aún con filtros relajados, no hay PAPER FUERTE. Muestra ranking:</div>` + html;
+  }
 }
 
-
+async function scanDay(){
+  showTab("scan");
+  if(EVENTS.length===0){ $("scanBox").innerHTML='<div class="error">Carga el calendario primero.</div>'; return; }
+  $("scanBox").innerHTML='<div class="loading">Escaneando todos los juegos del día...</div>';
+  let html="";
+  for(let i=0; i<EVENTS.length; i++){
+    SELECTED=EVENTS[i];
+    try{
+      let oddsData=await oddsAPI(`/v4/sports/${MODE==="mlb"?"baseball_mlb":"soccer_epl"}/events/${SELECTED.id}/odds`,{regions:"us",oddsFormat:"american",markets:"h2h,spreads,totals"});
+      let ctx=MODE==="mlb"?await mlbContext(SELECTED):{};
+      let picks=analyzeOdds(oddsData,ctx);
+      let best = picks.find(p=>edgeGrade(p)>=62 && p.fairCtx>=0.55 && p.proScore>=55);
+      if(best) {
+         html+=`<div class="card"><div class="title">${SELECTED.away_team} @ ${SELECTED.home_team}</div><div class="ok" style="margin-top:8px"><b>CANDIDATO FUERTE:</b> ${best.selection} ${best.point??""} (${best.market}) | Pro Score: ${Math.round(best.proScore)}/99 | EV: ${pct(best.ev)}</div></div>`;
+      }
+    }catch(e){}
+  }
+  $("scanBox").innerHTML = html || '<div class="notice">No se encontraron jugadas fuertes en todo el día, incluso con filtros relajados.</div>';
 }
-async function loadCalendar(){
- showTab("calendar");
- setBox("calendarBox",'<div class="loading">Cargando calendario con hora local del teléfono...</div>');
- EVENTS=[];SELECTED=null;
- try{
-   let all=await oddsAPI(`/v4/sports/${sportKey()}/events`,{});
-   all=Array.isArray(all)?all:[];
-   let d=$("date").value || today();
-   let q=$("teamSearch")?.value||"";
-   let mode=$("timeFilter")?.value||"upcoming";
-   let limitVal=$("eventLimit").value||"99";
-   let limit=limitVal==="99"?999:Number(limitVal||999);
-
-   let base=all.filter(e=>teamMatches(e,q));
-   let exact=base.filter(e=>sameLocalDay(e.commence_time,d));
-
-   let filtered;
-   if(mode==="all"){
-     filtered=base;
-   }else if(mode==="today"){
-     filtered=exact;
-   }else{
-     filtered=exact.filter(e=>isUpcomingByPhone(e.commence_time));
-     if(!filtered.length) filtered=base.filter(e=>isUpcomingByPhone(e.commence_time));
-   }
-
-   filtered=sortEventsByTime(filtered);
-   EVENTS=filtered.slice(0,limit);
-
-   $("stGames").textContent=EVENTS.length;
-   $("stSel").textContent=0;
-   $("stPicks").textContent=0;
-   $("stWatch").textContent=0;
-
-   let msg=phoneTimeBox();
-   msg+=`<div class="caltools"><span>Filtro: ${esc(mode)}</span><span>Eventos API total: ${all.length}</span><span>Coinciden fecha local: ${exact.length}</span><span>Mostrando: ${EVENTS.length}</span>${q?`<span>Búsqueda: ${esc(q)}</span>`:""}</div>`;
-   if(!EVENTS.length && all.length){
-     msg+=`<div class="notice">No encontré juegos con ese filtro. Cambia “Filtro tiempo” a “Todos los de esta fecha” o “Todo lo que traiga API”.</div>`;
-   }
-   setBox("calendarBox", EVENTS.length?msg+EVENTS.map((e,i)=>gameCard(e,i)).join(""):msg+'<div class="notice">No encontré juegos para esa fecha/equipo en The Odds API.</div>');
-   status("Calendario cargado usando fecha/hora del teléfono. Verifica la hora local que sale arriba.");
- }catch(e){
-   let msg=e.message;
-   if(msg.includes("HTTP 404")) msg+=" · Puede ser sport key no activo/no disponible en The Odds API o proxy /api faltante.";
-   setBox("calendarBox",'<div class="error">'+esc(msg)+'</div>');
-   status(msg,true);
- }
-}
-
-
-function weatherText(g){let parts=[];["ForecastTempLow","ForecastTempHigh","ForecastDescription","ForecastWindChill","ForecastWindSpeed","ForecastWindDirection","Weather","Temperature","Humidity"].forEach(k=>{if(g[k]!==undefined&&g[k]!==null)parts.push(k+":"+g[k])});return parts.join(" · ")||"clima pendiente"}
-async function trySdio(paths){let last; for(const p of paths){try{return await sdioAPI(p)}catch(e){last=e}} throw last}
-function toSdioDate(iso){let d=new Date(iso+"T12:00:00");let months=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];return `${d.getFullYear()}-${months[d.getMonth()]}-${String(d.getDate()).padStart(2,"0")}`}
-function norm(s){return String(s||"").toLowerCase().replace(/[^a-z0-9 ]/g,"").replace(/\b(the|fc|cf|club|de|la|los|new|york|bay|city|rays|rockies|dodgers|diamondbacks)\b/g,"").trim()}
-function matchMLB(games,ev){let a=norm(ev.away_team),h=norm(ev.home_team);return games.find(g=>{let ga=norm(g.teams?.away?.team?.name),gh=norm(g.teams?.home?.team?.name);return (ga.includes(a)||a.includes(ga))&&(gh.includes(h)||h.includes(gh))})}
-function matchSdioGame(games,ev){let a1=norm(ev.away_team),h1=norm(ev.home_team);return games.find(g=>{let a=norm(g.AwayTeamName||g.AwayTeam||g.AwayTeamKey),h=norm(g.HomeTeamName||g.HomeTeam||g.HomeTeamKey);return (a.includes(a1)||a1.includes(a)||String(ev.away_team).toUpperCase().includes(String(g.AwayTeam||""))) && (h.includes(h1)||h1.includes(h)||String(ev.home_team).toUpperCase().includes(String(g.HomeTeam||"")))})}
-function soccerContext(ev){return {title:"Soccer Hard Rock Menu Context",items:[
-["Mercados incluidos","Game Result, Total Goals, BTTS, Corners, Double Chance, Goalscorers, Team Totals, Spread, 1T/2T, Halftime/Fulltime, Cards y DNB si la API los trae."],
-["Bloqueo aplicado","No se escanean Player Shots ni Player Shots on Target."],
-["Manual Hard Rock","To Advance, Correct Score, Match Result - 2 Up, Winning Method, To Score OR Assist exacto y First Shot Outcome quedan manual si The Odds API no trae una key oficial."],
-["Regla","Solo jugar si la línea y mercado coinciden exactamente en Hard Rock."],
-["Localía",`${ev.home_team||"Home"} local`]
-],raw:[]}}
-function renderContext(ctx){$("contextBox").innerHTML=`<div class="ctx"><h3>${esc(ctx.title)}</h3>${ctx.items.map(([k,v])=>`<div class="check"><b>${esc(k)}:</b> ${esc(v)}</div>`).join("")}</div>${ctx.raw?.length?`<h3>Datos crudos</h3><div class="code">${esc(ctx.raw.join("\n\n"))}</div>`:""}`}
-function renderManual(){
- $("manualBox").innerHTML=`<div class="ctx"><h3>Reglas obligatorias antes de apostar</h3><div class="checks"><div class="check">Pitchers de app deben coincidir con Hard Rock.</div><div class="check">Lineup confirmado si es prop de bateador.</div><div class="check">Calidad Baja = no jugar.</div><div class="check">Soccer: no jugar tiros/tiros a puerta de jugadores.</div><div class="check">No parlays mientras se prueba.</div><div class="check">Paper track $0 real.</div><div class="check">Misma línea en Hard Rock.</div></div></div><div class="notice">Esta app no garantiza ganancias. En V30 solo filtra candidatos para validación en papel.</div>`;
-}
-async function diagnose(){
- showTab("diag");setBox("diagBox",'<div class="loading">Probando llaves...</div>');let lines=[];
- try{let sports=await oddsAPI("/v4/sports",{});lines.push("The Odds API: OK");lines.push("Créditos restantes: "+LASTMETA.remaining);lines.push("MLB activo: "+(sports||[]).some(s=>s.key===SPORT_MLB));}catch(e){lines.push("The Odds API ERROR: "+e.message)}
- try{let d=toSdioDate($("date").value||today());let games=await sdioAPI(`/v3/mlb/scores/json/GamesByDate/${d}`);lines.push("SportsDataIO MLB GamesByDate: OK ("+(Array.isArray(games)?games.length:"?")+" juegos)");}catch(e){lines.push("SportsDataIO ERROR o feed no incluido: "+e.message)}
- try{let r=await fetchWithTimeout("/api/health",{},10000);let h=await readJsonSafe(r);lines.push("Vercel env ODDS_API_KEY: "+(h.oddsEnv?"sí":"no"));lines.push("Vercel env SPORTSDATAIO_KEY: "+(h.sdioEnv?"sí":"no"));lines.push("Vercel env OPENAI_API_KEY: "+(h.openaiEnv?"sí":"no"));}catch(e){}
- $("diagBox").innerHTML='<div class="code">'+esc(lines.join("\n"))+'</div>';
-}
-init();
-
-window.addEventListener("error", function(e){
-  try {
-    const box = document.querySelector("#bestBox") || document.body;
-    if (String(e.message || "").includes("proScore")) {
-      box.insertAdjacentHTML("afterbegin", '<div class="error">Error interno corregible: proScore no cargó. Usa V19.1 o recarga la página.</div>');
-    }
-  } catch(_){}
-});
-
-
-
-async function testAI(){
- showActionToast("Probando conexión IA OpenAI...");
- const box=$("aiStatus")||$("aiScanBox");
- if(box) box.innerHTML='<div class="notice">Probando IA...</div>';
- try{
-  const r=await fetch("/api/ai-scan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"test"})});
-  const j=await r.json(); if(!r.ok) throw new Error(j.error||"Error IA");
-  if(box) box.innerHTML='<div class="ok"><b>IA conectada:</b> '+esc(j.message||"OK")+'</div>';
- }catch(e){ if(box) box.innerHTML='<div class="error"><b>IA no conectada:</b> '+esc(e.message)+'</div>'; }
-}
-function collectGameCardsForAI(){
- let arr=[]; try{ for(const ev of ((typeof EVENTS!=="undefined"&&EVENTS.length?EVENTS:window.EVENTS)||[]).slice(0,40)){arr.push({id:ev.id,sport:MODE,home_team:ev.home_team,away_team:ev.away_team,commence_time:ev.commence_time});} }catch(e){}
- return arr;
-}
-function summarizeCurrentPicksForAI(){
- let cards=[]; try{ for(const n of [...document.querySelectorAll(".pick")].slice(0,30)){cards.push(n.innerText.slice(0,1200));} }catch(e){}
- return cards;
-}
-async function runDailyAIScan(){
- showScanCenter("Corriendo Resumen IA Lite V30.4...");
- const box=$("aiScanBox")||$("scanBox")||$("bestBox");
- if(!Array.isArray(window.LAST_DAILY_SCAN) || !window.LAST_DAILY_SCAN.length){
-   const html='<div class="error"><b>Primero toca “2) Scan día local”.</b> Después usa “3) Resumen IA OpenAI”. La IA necesita datos reales para no inventar.</div>';
-   if(box) box.innerHTML=html;
-   status("Primero corre el scan local.", true);
-   return;
- }
- try{
-   if(box) box.innerHTML='<div class="loading">IA Lite analizando top picks del scan local. Puede tardar 20-60 segundos...</div><div class="aiTimeoutBox">Si tarda, no significa que las keys estén mal. Significa que OpenAI está demorando o el servidor está frío.</div>';
-   const payload={mode:"daily-scan-lite",version:"V30.4",sport:MODE,date:$("date")?.value||today(),rules:{money_real:"NO",stake:"$0 real / solo papel"},scan_results:compactScanForAIClient(window.LAST_DAILY_SCAN,22)};
-   const r=await fetchWithTimeout("/api/ai-scan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)},95000);
-   const j=await readJsonSafe(r);
-   if(!r.ok) throw new Error(j.error||"Error IA");
-   renderAIScan(j);
-   status("Resumen IA Lite terminado.");
- }catch(e){
-   const msg=String(e.message||e);
-   let html='<div class="error"><b>Error IA:</b> '+esc(msg)+'</div>';
-   if(msg.toLowerCase().includes("timeout")){
-     html+='<div class="aiTimeoutBox"><b>Qué significa:</b> las keys pueden estar bien, pero OpenAI tardó más que el límite. Usa el scan local y vuelve a intentar. V30.4 manda menos datos para reducir este problema.</div>';
-   }else{
-     html+='<div class="notice">Si “Probar IA” funciona, fue demora temporal del resumen. Si “Probar IA” falla, revisa billing/créditos de OpenAI.</div>';
-   }
-   if(box) box.innerHTML=html;
-   status("Error IA: "+msg,true);
- }
-}
-
-function normPickText(x){
- return String(x||"").toLowerCase()
-  .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-  .replace(/[^a-z0-9+.\- ]/g," ")
-  .replace(/\s+/g," ").trim();
-}
-function aiPickToText(p){
- if(!p) return "";
- if(typeof p==="string") return p;
- return [p.pick,p.jugada,p.selection,p.market,p.mercado,p.game,p.partido].filter(Boolean).join(" ");
-}
-function tokenOverlap(a,b){
- const A=new Set(normPickText(a).split(" ").filter(x=>x.length>2));
- const B=new Set(normPickText(b).split(" ").filter(x=>x.length>2));
- let n=0; for(const x of A){if(B.has(x)) n++}
- return n;
-}
-function localScanMatchForAI(p, allowedGrades){
- const txt=normPickText(aiPickToText(p));
- if(!txt) return null;
- const rows=Array.isArray(window.LAST_DAILY_SCAN)?window.LAST_DAILY_SCAN:[];
- for(const r of rows){
-   const grade=String(r.ai?.grade||"");
-   if(!allowedGrades.some(g=>grade.includes(g))) continue;
-   const sel=normPickText(r.selection);
-   const game=normPickText(r.game);
-   const market=normPickText([r.market,r.label].filter(Boolean).join(" "));
-   const selectionOk = !!sel && (txt.includes(sel) || sel.includes(txt) || tokenOverlap(txt,sel)>=2);
-   const gameOk = !!game && (txt.includes(game) || game.includes(txt) || tokenOverlap(txt,game)>=2);
-   const marketOk = !!market && (txt.includes(market) || tokenOverlap(txt,market)>=1);
-   if(selectionOk && (gameOk || marketOk || tokenOverlap(txt,sel)>=2)) return r;
- }
- return null;
-}
-function enforceAIAgainstLocalScan(data){
- data=data||{};
- let noBet=data.malas||data.bad||data.no_tocar||data.no_bet||[];
- if(!Array.isArray(noBet)) noBet=[noBet].filter(Boolean);
- function demote(fieldNames, allowedGrades, reason){
-   for(const f of fieldNames){
-     const p=data[f];
-     if(!p) continue;
-     if(typeof p==="string" && normPickText(p).includes("no hay")) continue;
-     const match=localScanMatchForAI(p, allowedGrades);
-     if(!match){
-       noBet.unshift({
-         pick: (typeof p==="string"?p:(p.pick||p.jugada||p.selection||"Pick IA no validado")),
-         market: (typeof p==="object"?(p.market||p.mercado||""):""),
-         reason: reason,
-         risk: "La IA no coincidió con un pick validado por el motor local V30.",
-         stake: "$0 real / solo papel",
-         grade: "NO BET"
-       });
-       data[f]=null;
-     }
-   }
- }
- demote(["exclusiva","exclusive"], ["PAPER FUERTE"], "Demovido: no aparece como PAPER FUERTE en el scan local.");
- demote(["vip"], ["PAPER FUERTE"], "Demovido: VIP IA no aparece como PAPER FUERTE en el scan local.");
- let possible=data.posibles||data.possible||data.jugadas_posibles||[];
- if(!Array.isArray(possible)) possible=[possible].filter(Boolean);
- const cleanPossible=[];
- for(const p of possible){
-   if(localScanMatchForAI(p, ["PAPER FUERTE","OBSERVAR"])){
-     cleanPossible.push(p);
-   }else{
-     noBet.unshift({
-       pick: (typeof p==="string"?p:(p.pick||p.jugada||p.selection||"Observación IA no validada")),
-       market: (typeof p==="object"?(p.market||p.mercado||""):""),
-       reason: "Demovido: no aparece como OBSERVAR/PAPER FUERTE en el scan local.",
-       risk: "Puede ganar, pero V30 no lo valida.",
-       stake: "$0 real / solo papel",
-       grade: "NO BET"
-     });
-   }
- }
- data.posibles=cleanPossible;
- data.possible=cleanPossible;
- data.jugadas_posibles=cleanPossible;
- data.malas=noBet;
- data.bad=noBet;
- data.no_bet=noBet;
- return data;
-}
-
-
-function compactScanForAIClient(rows, maxRows=22){
-  const arr=Array.isArray(rows)?rows:[];
-  return arr.filter(r=>r&&r.ai).sort((a,b)=>(b.ai?.score||0)-(a.ai?.score||0)).slice(0,maxRows).map(r=>({
-    game:r.game, selection:r.selection, market:r.market||r.family||r.label, family:r.family,
-    price:r.price, prob:r.fairCtx, ev:r.ev, books:r.books, proScore:r.proScore,
-    teamScore:r.ai?.teamScore, score:r.ai?.score, grade:r.ai?.grade,
-    alerts:(r.ai?.bad||[]).slice(0,4), signals:(r.ai?.good||[]).slice(0,3)
-  }));
-}
-
-function renderAIScan(j){
- const box=$("aiScanBox")||$("bestBox"), data=enforceAIAgainstLocalScan(enforceNoRepeatPlus15(j.result||j));
- function pickHtml(title,p,cls){
-  if(!p) return `<div class="notice">No hay ${esc(title)}. Mejor no forzar.</div>`;
-  if(typeof p==="string") return `<div class="aiPick ${cls||""}"><h4>${esc(title)}</h4><p>${esc(p)}</p></div>`;
-  return `<div class="aiPick ${cls||""}"><h4>${esc(title)}</h4><span class="aiTag">${esc(p.grade||p.tipo||"IA")}</span>${p.market?`<span class="aiTag">${esc(p.market)}</span>`:""}<p><b>Pick:</b> ${esc(p.pick||p.jugada||p.selection||"Sin pick")}</p><p><b>Razón:</b> ${esc(p.reason||p.razon||p.analysis||"")}</p><p><b>Riesgo:</b> ${esc(p.risk||p.riesgo||"")}</p><p><b>Stake:</b> ${esc(p.stake||"$0 real / solo papel")}</p></div>`;
- }
- let possible=data.posibles||data.possible||data.jugadas_posibles||[]; if(!Array.isArray(possible)) possible=[possible].filter(Boolean);
- let bad=data.malas||data.bad||data.no_tocar||data.no_bet||[]; if(!Array.isArray(bad)) bad=[bad].filter(Boolean);
- let html='<div class="aiProBox"><h3>Resultado IA del día</h3><p>'+esc(data.resumen||data.summary||"IA terminó el análisis.")+'</p><div class="notice"><b>Costo IA de este scan:</b> $'+Number(j.usage_estimated_cost||0).toFixed(5)+' · <b>Saldo estimado:</b> $'+Math.max(0,Number($("aiBudget")?.value||10)-Number($("aiSpent")?.value||0)).toFixed(2)+'</div>'+renderMarketMixFromData(data);
- html+=pickHtml("Candidato IA #1 PAPER",data.exclusiva||data.exclusive,"goodPick");
- html+=pickHtml("Candidato IA #2 PAPER",data.vip,"aiVip");
- html+='<h3>Observar IA</h3>'+(possible.length?possible.map((p,i)=>pickHtml("Posible #"+(i+1),p,"")).join(""):'<div class="notice">No hay observaciones fuertes.</div>');
- html+='<h3>No bet / puede ganar pero no valor</h3>'+(bad.length?bad.map((p,i)=>pickHtml("No bet #"+(i+1),p,"aiBad")).join(""):'<div class="notice">No hay no-bets listados.</div>');
- html+='<div class="notice"><b>Regla:</b> si la IA no coincide con el filtro local V30, no se apuesta.</div></div>';
- box.innerHTML=html;
-}
-
-
-
-function aiPriceForModel(model){
- model=String(model||"gpt-5-mini").toLowerCase();
- if(model.includes("gpt-5.5")) return {in:5.00,out:30.00};
- if(model.includes("gpt-5.4-mini")) return {in:0.75,out:4.50};
- if(model.includes("gpt-5-mini")) return {in:0.25,out:2.00};
- if(model.includes("gpt-5-nano")) return {in:0.05,out:0.40};
- if(model.includes("gpt-4.1-mini")) return {in:0.40,out:1.60};
- if(model.includes("gpt-4o-mini")) return {in:0.15,out:0.60};
- return {in:0.25,out:2.00};
-}
-function loadAICreditSettings(){
- try{
-   const b=localStorage.getItem("ps_ai_budget");
-   const s=localStorage.getItem("ps_ai_spent");
-   if($("aiBudget") && b!==null) $("aiBudget").value=b;
-   if($("aiSpent") && s!==null) $("aiSpent").value=s;
- }catch(e){}
- refreshAICredits();
-}
-function saveAICreditSettings(){
- try{
-   if($("aiBudget")) localStorage.setItem("ps_ai_budget",$("aiBudget").value||"10");
-   if($("aiSpent")) localStorage.setItem("ps_ai_spent",$("aiSpent").value||"0");
- }catch(e){}
- refreshAICredits();
-}
-function addAICost(cost){
- try{
-   const old=Number(localStorage.getItem("ps_ai_spent")||$("aiSpent")?.value||0);
-   const now=old+Number(cost||0);
-   localStorage.setItem("ps_ai_spent",String(now));
-   if($("aiSpent")) $("aiSpent").value=now.toFixed(5);
- }catch(e){}
- refreshAICredits();
-}
-function resetAICredits(){
- try{localStorage.setItem("ps_ai_spent","0"); if($("aiSpent")) $("aiSpent").value="0";}catch(e){}
- refreshAICredits();
-}
-function refreshAICredits(){
- const budget=Number($("aiBudget")?.value||localStorage.getItem("ps_ai_budget")||10);
- const spent=Number($("aiSpent")?.value||localStorage.getItem("ps_ai_spent")||0);
- const left=Math.max(0,budget-spent);
- const el=$("aiCreditBox");
- if(el) el.innerHTML=`<b>Estimado:</b> saldo inicial $${budget.toFixed(2)} · gastado $${spent.toFixed(5)} · queda aprox. <b>$${left.toFixed(2)}</b>. Saldo real: OpenAI Billing.`;
- if($("stAICredits")) $("stAICredits").textContent=left.toFixed(2);
-}
-function marketFamily(p){
- const m=String(p.market||"").toLowerCase();
- const pt=Number(p.best?.point);
- if(MODE==="mlb"){
-   if(m==="spreads" && Math.abs(pt)===1.5) return "MLB +1.5 juego completo";
-   if((m.includes("1st_5")||m.includes("first_5")) && (pt===0.5 || pt===1.5)) return "MLB F5 protegido";
-   if(m==="h2h") return "MLB Moneyline fuerte";
-   if(m==="team_totals") return "MLB Team Total";
-   if(m==="totals") return "MLB Total juego";
-   return "MLB Otros";
- }else{
-   if(m.includes("double_chance")) return "Soccer Double Chance";
-   if(m.includes("draw_no_bet")||m.includes("dnb")) return "Soccer DNB";
-   if(m.includes("team_totals")) return "Soccer Team Total";
-   if(m.includes("totals")||m.includes("under")||m.includes("over")) return "Soccer Under/Over";
-   if(m.includes("spreads")) return "Soccer Spread protegido";
-   if(m==="h2h"||m==="h2h_3_way") return "Soccer Resultado";
-   return "Soccer Otros";
- }
-}
-function diversityScore(p){
- const fam=marketFamily(p);
- let bonus=0;
- if(fam.includes("+1.5")) bonus=4;
- else if(fam.includes("F5")) bonus=8;
- else if(fam.includes("Moneyline")) bonus=(p.fairCtx||0)>=0.66?10:-10;
- else if(fam.includes("Team Total")) bonus=7;
- else if(fam.includes("Total juego")||fam.includes("Under/Over")) bonus=4;
- else if(fam.includes("Double Chance")||fam.includes("DNB")) bonus=10;
- else if(fam.includes("Resultado")) bonus=(p.fairCtx||0)>=0.68?4:-12;
- return (p.edgeScore||p.score||0)+bonus;
-}
-function diverseBuckets(list){
- const buckets={};
- for(const p of list||[]){
-   const fam=marketFamily(p);
-   if(!buckets[fam]) buckets[fam]=[];
-   buckets[fam].push(p);
- }
- for(const k of Object.keys(buckets)){
-   buckets[k]=buckets[k].sort((a,b)=>diversityScore(b)-diversityScore(a)).slice(0,3);
- }
- return buckets;
-}
-function renderMarketMixFromData(data){
- const possible=data.posibles||data.possible||data.jugadas_posibles||[];
- const arr=Array.isArray(possible)?possible:[possible].filter(Boolean);
- const counts={};
- for(const p of arr){
-   const fam=p.market_family||p.marketFamily||p.market||"Otro";
-   counts[fam]=(counts[fam]||0)+1;
- }
- const keys=Object.keys(counts);
- if(!keys.length) return "";
- return '<div class="marketMix">'+keys.map(k=>`<span class="mixTag good">${esc(k)}: ${counts[k]}</span>`).join("")+'</div>';
-}
-try{document.addEventListener("DOMContentLoaded",()=>{loadAICreditSettings();});}catch(e){}
-
-
-
-function isFullGamePlus15PickObj(p){
- const s=JSON.stringify(p||{}).toLowerCase();
- return (s.includes("+1.5") || s.includes("+ 1.5")) && (s.includes("spread") || s.includes("run line") || s.includes("handicap") || s.includes("full game") || s.includes("juego completo"));
-}
-function enforceNoRepeatPlus15(data){
- if(!data) return data;
- let usedPlus15=false;
- function cleanList(arr){
-   if(!Array.isArray(arr)) arr=[arr].filter(Boolean);
-   let out=[], removed=[];
-   for(const p of arr){
-     if(isFullGamePlus15PickObj(p)){
-       if(usedPlus15){
-         removed.push(p);
-         continue;
-       }
-       usedPlus15=true;
-     }
-     out.push(p);
-   }
-   if(removed.length){
-     data.malas = [...(Array.isArray(data.malas)?data.malas:[]), ...removed.map(x=>({
-       pick:x.pick||x.jugada||x.selection||"Pick +1.5 repetido",
-       market:x.market||"Spread +1.5",
-       grade:"NO TOCAR",
-       reason:"Ocultada por V30: ya había un +1.5 full game. La app no puede repetir el mismo tipo de mercado.",
-       risk:"No jugar por repetición de mercado"
-     }))];
-   }
-   return out;
- }
- for(const key of ["exclusiva","exclusive","vip"]){
-   if(data[key] && isFullGamePlus15PickObj(data[key])){
-     if(usedPlus15){
-       data.malas=[...(Array.isArray(data.malas)?data.malas:[]), data[key]];
-       data[key]={pick:"NO HAY",market:"No repetir +1.5",grade:"NO HAY",reason:"V30 bloqueó esta jugada porque ya existe un +1.5 full game mejor.",risk:"No forzar otro +1.5"};
-     }else usedPlus15=true;
-   }
- }
- data.posibles=cleanList(data.posibles||data.possible||data.jugadas_posibles||[]);
- return data;
-}
-
-
-
-async function runAuditCheck(){
- const box=$("aiStatus")||$("scanBox");
- if(box) box.innerHTML='<div class="notice">Corriendo diagnóstico V30...</div>';
- const checks=[];
- checks.push({name:"Eventos cargados",ok:typeof EVENTS!=="undefined" && EVENTS.length>0,detail:(typeof EVENTS!=="undefined"?EVENTS.length:0)+" juegos"});
- checks.push({name:"Último scan local",ok:Array.isArray(window.LAST_DAILY_SCAN)&&window.LAST_DAILY_SCAN.length>0,detail:(window.LAST_DAILY_SCAN?.length||0)+" picks"});
- checks.push({name:"Bloqueo +1.5 repetido",ok:typeof rotateScanResults==="function" && typeof isPlus15FullGameResult==="function",detail:"funciones activas"});
- checks.push({name:"Rotación de mercados",ok:typeof scanMarketFamily==="function" && typeof scanMarketMixHtml==="function",detail:"familias de mercado activas"});
- checks.push({name:"Créditos IA estimados",ok:!!$("aiCreditBox") && !!$("stAICredits"),detail:"panel y stat IA visibles"});
- let aiOK=false, aiDetail="no probado";
- try{
-   const r=await fetchWithTimeout("/api/ai-scan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"test"})},30000);
-   const j=await readJsonSafe(r);
-   aiOK=!!r.ok;
-   aiDetail=aiOK?(j.message||"OK"):(j.error||("HTTP "+r.status));
- }catch(e){aiDetail=e.message}
- checks.push({name:"OpenAI endpoint",ok:aiOK,detail:aiDetail});
- let healthDetail="no probado", healthOK=false;
- try{
-   const r=await fetchWithTimeout("/api/health",{},10000);
-   const h=await readJsonSafe(r);
-   healthOK=!!r.ok;
-   healthDetail=`Odds:${h.oddsEnv?"✅":"❌"} SDIO:${h.sdioEnv?"✅":"❌"} OpenAI:${h.openaiEnv?"✅":"❌"}`;
- }catch(e){healthDetail=e.message}
- checks.push({name:"Vercel env",ok:healthOK,detail:healthDetail});
- let html='<div class="edgeBox"><h3>Diagnóstico V30.4</h3>';
- for(const c of checks){
-   html+=`<p class="${c.ok?'good':'bad'}"><b>${c.ok?'✅':'❌'} ${esc(c.name)}:</b> ${esc(c.detail)}</p>`;
- }
- html+='<p class="small">Orden correcto: Cargar calendario → Escanear V30.4 → Diagnóstico V30.4 → Resumen IA OpenAI solo si hace falta.</p></div>';
- if(box) box.innerHTML=html;
-}
-
-Object.assign(window,{loadCalendar,selectGame,setMode,usePhoneDate,runAuditCheck,runDailyAIScan,testAI,saveKeys,clearKeys,showTab,showScanCenter,scanDay});
 </script>
 </body>
 </html>
