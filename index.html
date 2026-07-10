@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070714">
-<meta name="description" content="PickSharp Pro V30.6: panel profesional de análisis deportivo en modo paper-only con control de riesgo, QA y validación IA/local.">
-<title>PickSharp Pro V30.6 Full QA Fix</title>
+<meta name="description" content="PickSharp Pro V30.7: panel profesional de análisis deportivo en modo paper-only con control de riesgo, QA y validación IA/local.">
+<title>PickSharp Pro V30.7 MLB Simple + Pitcher Stats</title>
 <style>
 :root{
   color-scheme: dark;
@@ -504,7 +504,7 @@ button[aria-busy="true"]{cursor:progress;opacity:.78}
 @media(max-width:680px){.tzbox{grid-template-columns:1fr}}
 
 
-/* V30.6 button/action fix */
+/* V30.7 button/action fix */
 .actionToast{
   position:sticky;
   top:72px;
@@ -537,7 +537,7 @@ button.busyBtn:after{
 }
 
 
-/* V30.6 balanced paper ranking */
+/* V30.7 balanced paper ranking */
 .finalDecision{
   border:1px solid rgba(56,189,248,.38);
   background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(15,23,42,.72));
@@ -568,7 +568,7 @@ button.busyBtn:after{
 }
 
 
-/* V30.6 Full QA Fix */
+/* V30.7 MLB Simple + Pitcher Stats */
 .aiCenter{
   border:1px solid rgba(139,92,246,.38);
   background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(56,189,248,.12));
@@ -598,15 +598,56 @@ button.busyBtn:after{
 @media(max-width:760px){.aiSteps{grid-template-columns:1fr}}
 
 .aiTimeoutBox{border:1px solid rgba(245,158,11,.36);background:rgba(245,158,11,.13);color:#fde68a;border-radius:18px;padding:12px 14px;margin:12px 0;font-weight:900;line-height:1.45}
+
+/* V30.7 MLB Simple + Pitcher Stats */
+.mlbSimplePanel,.pitcherPanel{
+  border:1px solid rgba(56,189,248,.34);
+  background:linear-gradient(135deg,rgba(56,189,248,.13),rgba(15,23,42,.70));
+  border-radius:22px;
+  padding:15px;
+  margin:14px 0;
+}
+.pitcherPanel{border-color:rgba(34,197,94,.30);background:linear-gradient(135deg,rgba(34,197,94,.11),rgba(15,23,42,.70))}
+.probBig{
+  font-size:clamp(22px,4vw,34px);
+  font-weight:950;
+  letter-spacing:-.04em;
+  color:#fff;
+}
+.miniTable{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 8px;
+  margin-top:10px;
+}
+.miniTable td,.miniTable th{
+  text-align:left;
+  padding:9px 10px;
+  background:rgba(2,6,23,.34);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+.miniTable th{color:#BAE6FD;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.miniTable td:first-child,.miniTable th:first-child{border-left:1px solid var(--line);border-radius:12px 0 0 12px}
+.miniTable td:last-child,.miniTable th:last-child{border-right:1px solid var(--line);border-radius:0 12px 12px 0}
+
 </style>
 </head>
 <body>
 <div class="app">
-<div class="header"><div><h1>PickSharp Pro V30.6</h1><p style="margin:5px 0 0">EV Feed · Line Movement · Hard Rock Check · Paper Mode</p></div><div class="pill">FULL QA FIX V30.6</div></div>
+<div class="header"><div><h1>PickSharp Pro V30.7</h1><p style="margin:5px 0 0">EV Feed · Line Movement · Hard Rock Check · Paper Mode</p></div><div class="pill">MLB SIMPLE + PITCHER STATS V30.7</div></div>
 
 <div class="card hero">
 <h2>Panel profesional de análisis y control de riesgo</h2>
 <p>V30 castiga fuerte las falsas buenas: si hay dudas serias, la jugada queda NO BET aunque después pueda ganar.</p>
+</div>
+
+
+<div class="ok">
+<b>Modo prueba MLB V30.7:</b> por ahora la app solo escanea 3 tipos de jugadas para probar: 
+<b>ganador del juego</b>, <b>total de carreras entre los dos equipos</b> y <b>carreras individuales por equipo</b>. 
+También compara abridor vs abridor con W-L, ERA, WHIP, K, BB, K/BB, IP y Quality Starts cuando SportsDataIO/MLB StatsAPI lo devuelvan.
 </div>
 
 <div class="qaClean">
@@ -659,8 +700,8 @@ button.busyBtn:after{
 </div>
 <div class="row3">
 <div><label>EV mínimo %</label><input id="minEV" type="number" value="-3"></div>
-<div><label>Jugadores/props</label><select id="usePlayers"><option value="no" selected>No, solo equipos</option><option value="safe">Solo pitchers/goles sin hits</option><option value="yes">Sí, todos</option></select></div>
-<div><label>Experimental</label><select id="useExperimental"><option value="no" selected>No</option><option value="yes">Sí</option></select></div>
+<div><label>Jugadores/props</label><select id="usePlayers"><option value="no" selected>No, solo equipos</option></select></div>
+<div><label>Experimental</label><select id="useExperimental"><option value="no" selected>No</option></select></div>
 </div>
 <div class="row3">
 <div><label>Modo Pro</label><select id="proMode"><option value="realistic" selected>Producción Paper Lock</option></select></div>
@@ -671,10 +712,10 @@ button.busyBtn:after{
 <b>Soccer Hard Rock:</b> analiza mercados principales que puedan venir por The Odds API y NO escanea tiros/tiros a puerta de jugadores. 
 Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Rock.
 </div>
-<div class="notice" style="margin-top:12px"><b>Comandos Pro V30.6:</b> Scan auditado, rotación de mercados, máximo 1 +1.5, IA segura, diagnóstico completo y créditos IA estimados.</div>
+<div class="notice" style="margin-top:12px"><b>Comandos Pro V30.7:</b> Solo MLB MVP: ganador, total carreras y team totals.  Scan auditado, rotación de mercados, máximo 1 +1.5, IA segura, diagnóstico completo y créditos IA estimados.</div>
 <button class="secondary" onclick="usarFechaTelefono()">Usar fecha/hora de mi teléfono</button>
 <div class="error" style="margin-top:12px"><b>Regla anti-pérdida:</b> si hoy vas perdiendo, la app debe usarse solo para revisar, no para perseguir. Modo Ganar Primero Realista muestra jugadas pequeñas y bloquea lo flojo. Si dice “NO HAY JUGADA”, se pasa.</div>
-<div class="ok" style="margin-top:12px"><b>IA segura V30.6:</b> NO pegues tu llave aquí. Guárdala en Vercel como <b>OPENAI_API_KEY</b>. La app usa <b>/api/ai-scan</b> para que la llave no se vea. Ahora diversifica mercados y estima créditos IA usados.</div>
+<div class="ok" style="margin-top:12px"><b>IA segura V30.7:</b> NO pegues tu llave aquí. Guárdala en Vercel como <b>OPENAI_API_KEY</b>. La app usa <b>/api/ai-scan</b> para que la llave no se vea. Ahora diversifica mercados y estima créditos IA usados.</div>
 <button class="safe" onclick="loadCalendar()">1) Cargar calendario</button>
 <button class="secondary" onclick="diagnose()">Diagnóstico</button>
 </div>
@@ -682,8 +723,8 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
 <div id="status" class="notice hidden"></div>
 
 <div class="aiCenter">
-  <h3>Centro IA V30.6</h3>
-  <p>La IA no reemplaza el motor local. V30.6 usa Resumen IA Lite: envía menos datos, responde más rápido y evita timeout.</p>
+  <h3>Centro IA V30.7</h3>
+  <p>La IA no reemplaza el motor local. V30.7 usa Resumen IA Lite: envía menos datos, responde más rápido y evita timeout.</p>
   <div class="aiSteps">
     <button type="button" class="safe" onclick="loadCalendar()">1) Cargar calendario</button>
     <button type="button" onclick="scanDay()">2) Scan día local</button>
@@ -691,10 +732,10 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
   </div>
   <div class="aiSteps" style="margin-top:10px">
     <button type="button" class="secondary" onclick="testAI()">Probar IA</button>
-    <button type="button" class="secondary" onclick="runAuditCheck()">Diagnóstico V30.6</button>
+    <button type="button" class="secondary" onclick="runAuditCheck()">Diagnóstico V30.7</button>
     <button type="button" class="secondary" onclick="showTab('scan')">Ver Scan / IA</button>
   </div>
-  <div class="aiExplain"><b>Orden correcto:</b> cargar calendario → scan día local → resumen IA. Si no hay PAPER FUERTE, no se juega. El ranking es solo papel.<br><b>IA Lite V30.6:</b> reduce el payload para evitar “Timeout conectando con el servidor”.</div>
+  <div class="aiExplain"><b>Orden correcto:</b> cargar calendario → scan día local → resumen IA. Si no hay PAPER FUERTE, no se juega. El ranking es solo papel.<br><b>IA Lite V30.7:</b> reduce el payload para evitar “Timeout conectando con el servidor”.</div>
 </div>
 
 <div class="stats">
@@ -720,8 +761,8 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
 
 <section id="calendar" class="screen active"><div class="card"><h2>Calendario</h2><div id="calendarBox" class="loading">Carga el calendario y escoge 1 partido, o usa Scan Día para escanear todos.</div></div></section>
 
-<section id="scan" class="screen"><div class="card"><h2>Scan Día Pro V30.6</h2>
-<div class="error"><b>Auditoría V30.6:</b> antes el botón de Scan Día seguía usando el motor local viejo y por eso repetía +1.5. Ahora este botón usa rotación real de mercados: máximo 1 +1.5 y obliga otras familias cuando existan.</div>
+<section id="scan" class="screen"><div class="card"><h2>Scan Día Pro V30.7</h2>
+<div class="error"><b>Auditoría V30.7:</b> antes el botón de Scan Día seguía usando el motor local viejo y por eso repetía +1.5. Ahora este botón usa rotación real de mercados: máximo 1 +1.5 y obliga otras familias cuando existan.</div>
 <div class="creditBox">
   <h3>Créditos IA estimados</h3>
   <p class="small">El scan local no gasta IA. El botón “Resumen IA OpenAI” sí gasta poco crédito. El saldo real se revisa en OpenAI Billing.</p>
@@ -738,7 +779,7 @@ Si Hard Rock tiene un mercado que la API no trae, aparecerá como Manual Hard Ro
 </div>
 
 <div class="ok" style="margin-top:12px">
-<b>Full Audit Fix V30.6:</b> corregido: el resumen IA ahora recibe los resultados reales del Scan Pro. También agregué prueba de diagnóstico para verificar eventos cargados, scan local, IA y créditos.
+<b>Full Audit Fix V30.7:</b> corregido: el resumen IA ahora recibe los resultados reales del Scan Pro. También agregué prueba de diagnóstico para verificar eventos cargados, scan local, IA y créditos.
 </div>
 
 
@@ -749,22 +790,22 @@ Si una jugada tiene alerta seria, queda como <b>NO BET</b>. Puede ganar, pero la
 
 
 <div class="qaClean">
-<b>V30.6 Full QA Fix:</b> además del motor anti-falsas buenas, ahora el resumen IA se valida contra el scan local.
+<b>V30.7 MLB Simple + Pitcher Stats:</b> además del motor anti-falsas buenas, ahora el resumen IA se valida contra el scan local.
 Si la IA propone algo que el motor local no marcó como PAPER FUERTE/OBSERVAR, se mueve a NO BET.
 </div>
 
 <div class="actions">
-  <button class="safe" onclick="scanDay()">Escanear V30.6</button>
+  <button class="safe" onclick="scanDay()">Escanear V30.7</button>
   <button onclick="runDailyAIScan()">Resumen IA OpenAI del scan</button>
   <button onclick="testAI()">Probar IA</button>
-  <button onclick="runAuditCheck()">Diagnóstico V30.6</button>
+  <button onclick="runAuditCheck()">Diagnóstico V30.7</button>
   <button onclick="showTab('calendar')">Volver al calendario</button>
 </div>
 
 <div class="error"><b>Modo seguridad:</b> esta versión NO deja pedir resumen IA si primero no corriste el Scan Pro. Eso evita que la IA invente picks sin datos.</div>
 
-<div id="aiStatus" class="notice">Primero toca “Escanear V30.6”. Después corre “Diagnóstico V30.6”. Si todo sale ✅, puedes pedir “Resumen IA OpenAI”.</div>
-<div id="scanBox" class="loading">Carga el calendario y toca “Escanear V30.6”.</div>
+<div id="aiStatus" class="notice">Primero toca “Escanear V30.7”. Después corre “Diagnóstico V30.7”. Si todo sale ✅, puedes pedir “Resumen IA OpenAI”.</div>
+<div id="scanBox" class="loading">Carga el calendario y toca “Escanear V30.7”.</div>
 <div id="aiScanBox"></div>
 </div></section>
 <section id="best" class="screen"><div class="card"><h2>Jugadas recomendadas</h2><div id="bestBox" class="loading">Escoge un juego y analiza.</div></div></section>
@@ -780,7 +821,7 @@ Si la IA propone algo que el motor local no marcó como PAPER FUERTE/OBSERVAR, s
 const $=id=>document.getElementById(id);
 let MODE="mlb", EVENTS=[], SELECTED=null, LASTMETA={remaining:"?",used:"?",last:"?"};
 const SPORT_MLB="baseball_mlb";
-const MLB_MARKETS_CORE=["h2h","spreads","totals","team_totals"];
+const MLB_MARKETS_CORE=["h2h","totals","team_totals"];
 const MLB_MARKETS_F5=["h2h_1st_5_innings","spreads_1st_5_innings","totals_1st_5_innings"];
 const MLB_MARKETS_PLAYERS=["batter_hits","batter_home_runs","batter_total_bases","batter_rbis","batter_runs_scored","batter_hits_runs_rbis","batter_walks","batter_strikeouts","batter_stolen_bases","pitcher_strikeouts","pitcher_outs","pitcher_hits_allowed","pitcher_walks","pitcher_earned_runs","pitcher_to_record_a_win"];
 const MLB_MARKETS_SAFE_PLAYERS=["pitcher_strikeouts","pitcher_outs","pitcher_hits_allowed","pitcher_walks","pitcher_earned_runs","pitcher_to_record_a_win","batter_home_runs","batter_walks","batter_strikeouts","batter_stolen_bases"];
@@ -840,7 +881,7 @@ h2h_1st_5_innings:"Ganador primeras 5",spreads_1st_5_innings:"Run Line primeras 
 };
 
 
-const APP_VERSION="V30.6";
+const APP_VERSION="V30.7";
 let SERVER_HEALTH=null;
 const API_TIMEOUT_MS=25000;
 function safeStorageGet(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
@@ -1103,6 +1144,181 @@ function gameCard(e,i){
 
 
 
+
+function mlbSimpleMarketAllowed(m){
+  m=String(m||"");
+  return m==="h2h" || m==="totals" || m==="team_totals";
+}
+function pickCategoryV307(p){
+  const m=String(p.market||"");
+  if(m==="h2h") return "Ganador posible";
+  if(m==="totals") return "Carreras entre los dos equipos";
+  if(m==="team_totals") return "Carreras individuales por equipo";
+  return "Otro";
+}
+function teamInitialsFromName(name){
+  const n=String(name||"").toLowerCase();
+  if(!SELECTED) return null;
+  const away=String(SELECTED.away_team||"").toLowerCase();
+  const home=String(SELECTED.home_team||"").toLowerCase();
+  if(n && (away.includes(n)||n.includes(away))) return "away";
+  if(n && (home.includes(n)||n.includes(home))) return "home";
+  const awWords=away.split(/\s+/).filter(Boolean);
+  const hmWords=home.split(/\s+/).filter(Boolean);
+  if(awWords.some(w=>n.includes(w))) return "away";
+  if(hmWords.some(w=>n.includes(w))) return "home";
+  return null;
+}
+function numFirst(obj, keys){
+  for(const k of keys){
+    const v=Number(obj?.[k]);
+    if(Number.isFinite(v)) return v;
+  }
+  return null;
+}
+function pitcherDisplayName(p){
+  if(!p) return "pendiente";
+  return p.Name || p.PlayerName || [p.FirstName,p.LastName].filter(Boolean).join(" ") || p.ShortName || "Pitcher";
+}
+function pitcherIdOf(p){
+  return String(p?.PlayerID || p?.PlayerId || p?.MLBAMID || p?.MlbId || p?.Id || p?.StatID || "");
+}
+function findPitcherStat(ctx, nameOrId, id2=null){
+  if(!ctx || !Array.isArray(ctx.pitcherStats)) return null;
+  const keys=[nameOrId,id2].filter(Boolean).map(x=>String(x).toLowerCase().trim());
+  const idKeys=keys.map(x=>String(x).match(/\d+/)?.[0]).filter(Boolean);
+  const lastNames=keys.map(x=>x.split(/\s+/).pop()).filter(Boolean);
+  return ctx.pitcherStats.find(p=>{
+    const full=String(p.Name || p.PlayerName || [p.FirstName,p.LastName].filter(Boolean).join(" ") || "").toLowerCase();
+    const pid=pitcherIdOf(p);
+    if(idKeys.some(id=>pid && pid===id)) return true;
+    if(keys.some(k=>k && full && (full.includes(k)||k.includes(full)))) return true;
+    if(lastNames.some(last=>last && full.includes(last))) return true;
+    return false;
+  }) || null;
+}
+function pitcherStatObject(p){
+  if(!p) return null;
+  const wins=numFirst(p,["Wins","PitchingWins","Win"]);
+  const losses=numFirst(p,["Losses","PitchingLosses","Loss"]);
+  const whip=numFirst(p,["WalksAndHitsPerInningPitched","WHIP"]);
+  const era=numFirst(p,["EarnedRunAverage","ERA"]);
+  const k=numFirst(p,["Strikeouts","PitchingStrikeouts","PitcherStrikeouts"]);
+  const bb=numFirst(p,["Walks","PitchingWalks","PitcherWalks"]);
+  const ip=numFirst(p,["InningsPitchedDecimal","InningsPitched","PitchingInningsPitched"]);
+  const qs=numFirst(p,["QualityStarts"]);
+  const kbb=(k!==null && bb!==null && bb>0)?k/bb:null;
+  return {name:pitcherDisplayName(p),wins,losses,whip,era,k,bb,ip,qs,kbb};
+}
+function pitcherStatLine(p){
+  const s=pitcherStatObject(p);
+  if(!s) return "Stats pitcher no disponibles";
+  const parts=[s.name];
+  if(s.wins!==null || s.losses!==null) parts.push(`W-L ${s.wins ?? "?"}-${s.losses ?? "?"}`);
+  if(s.era!==null) parts.push(`ERA ${s.era.toFixed(2)}`);
+  if(s.whip!==null) parts.push(`WHIP ${s.whip.toFixed(2)}`);
+  if(s.k!==null) parts.push(`K ${Math.round(s.k)}`);
+  if(s.bb!==null) parts.push(`BB ${Math.round(s.bb)}`);
+  if(s.kbb!==null) parts.push(`K/BB ${s.kbb.toFixed(2)}`);
+  if(s.ip!==null) parts.push(`IP ${Number(s.ip).toFixed(1)}`);
+  if(s.qs!==null) parts.push(`QS ${Math.round(s.qs)}`);
+  return parts.join(" · ");
+}
+function pitcherScoreFromStats(p){
+  const s=pitcherStatObject(p);
+  if(!s) return {score:50, notes:["pitcher stats no disponibles"]};
+  let score=50;
+  const notes=[];
+  if(s.era!==null){
+    if(s.era<2.80){score+=14;notes.push("ERA élite");}
+    else if(s.era<3.50){score+=9;notes.push("ERA buena");}
+    else if(s.era>5.00){score-=12;notes.push("ERA alta");}
+    else if(s.era>4.30){score-=7;notes.push("ERA floja");}
+  }
+  if(s.whip!==null){
+    if(s.whip<1.10){score+=14;notes.push("WHIP élite");}
+    else if(s.whip<1.25){score+=8;notes.push("WHIP bueno");}
+    else if(s.whip>1.45){score-=12;notes.push("WHIP alto");}
+    else if(s.whip>1.35){score-=7;notes.push("WHIP flojo");}
+  }
+  if(s.kbb!==null){
+    if(s.kbb>=4){score+=8;notes.push("K/BB fuerte");}
+    else if(s.kbb>=3){score+=5;notes.push("K/BB bueno");}
+    else if(s.kbb<1.8){score-=8;notes.push("K/BB bajo");}
+  }
+  if(s.wins!==null && s.losses!==null){
+    const diff=s.wins-s.losses;
+    if(diff>=5){score+=5;notes.push("W-L favorable");}
+    else if(diff<=-4){score-=5;notes.push("W-L negativo");}
+  }
+  if(s.ip!==null && s.ip<35){score-=4;notes.push("muestra pequeña IP");}
+  if(s.qs!==null && s.qs>=10){score+=4;notes.push("quality starts");}
+  return {score:Math.max(0,Math.min(99,Math.round(score))),notes};
+}
+function ensurePitcherEdges(ctx){
+  if(!ctx) return ctx;
+  ctx.awayPitcherStat = ctx.awayPitcherStat || findPitcherStat(ctx, ctx.awayPitcherName, ctx.awayPitcherId);
+  ctx.homePitcherStat = ctx.homePitcherStat || findPitcherStat(ctx, ctx.homePitcherName, ctx.homePitcherId);
+  const awayScore=pitcherScoreFromStats(ctx.awayPitcherStat);
+  const homeScore=pitcherScoreFromStats(ctx.homePitcherStat);
+  ctx.pitcherScores={away:awayScore.score,home:homeScore.score,diff:awayScore.score-homeScore.score};
+  ctx.pitcherEdgeText=`Visitante ${awayScore.score}/99 vs Local ${homeScore.score}/99 · Diff ${awayScore.score-homeScore.score}`;
+  return ctx;
+}
+function applyPitcherStatsToPick(obj, myP, oppP){
+  const my=pitcherScoreFromStats(myP);
+  const opp=pitcherScoreFromStats(oppP);
+  const diff=my.score-opp.score;
+  obj.proScore += Math.max(-14, Math.min(14, Math.round(diff*0.25)));
+  obj.pitcherEdge={
+    myScore:my.score,
+    oppScore:opp.score,
+    diff,
+    my:pitcherStatLine(myP),
+    opp:pitcherStatLine(oppP),
+    notes:[...my.notes.map(x=>"mi pitcher: "+x), ...opp.notes.map(x=>"rival: "+x)]
+  };
+  return obj;
+}
+function pitcherPanelHtml(ctx){
+  if(MODE!=="mlb" || !ctx) return "";
+  ensurePitcherEdges(ctx);
+  const away=ctx.awayPitcherStat;
+  const home=ctx.homePitcherStat;
+  const awayScore=pitcherScoreFromStats(away);
+  const homeScore=pitcherScoreFromStats(home);
+  const favorite = awayScore.score>homeScore.score+3 ? (SELECTED?.away_team||"Visitante") : homeScore.score>awayScore.score+3 ? (SELECTED?.home_team||"Local") : "Parejo";
+  return `<div class="pitcherPanel"><h3>Pitcher Stats PRO</h3>
+    <p><b>Ventaja abridor:</b> ${esc(favorite)} · Visitante ${awayScore.score}/99 vs Local ${homeScore.score}/99</p>
+    <table class="miniTable"><tr><th>Equipo</th><th>Abridor</th><th>Score</th><th>Stats</th></tr>
+      <tr><td>${esc(SELECTED?.away_team||"Visitante")}</td><td>${esc(pitcherDisplayName(away)||ctx.awayPitcherName||"pendiente")}</td><td>${awayScore.score}/99</td><td>${esc(pitcherStatLine(away))}</td></tr>
+      <tr><td>${esc(SELECTED?.home_team||"Local")}</td><td>${esc(pitcherDisplayName(home)||ctx.homePitcherName||"pendiente")}</td><td>${homeScore.score}/99</td><td>${esc(pitcherStatLine(home))}</td></tr>
+    </table>
+    <p class="small">Si SportsDataIO no trae stats, la app usa fallback MLB StatsAPI cuando hay ID de pitcher. Si ambos feeds fallan, no inventa datos.</p>
+  </div>`;
+}
+function simpleWinnerSummaryHtml(picks,ctx){
+  const winners=(picks||[]).filter(p=>p.market==="h2h").sort((a,b)=>(b.fairCtx||0)-(a.fairCtx||0));
+  const totals=(picks||[]).filter(p=>p.market==="totals").sort((a,b)=>(b.proScore||0)-(a.proScore||0));
+  const teamTotals=(picks||[]).filter(p=>p.market==="team_totals").sort((a,b)=>(b.proScore||0)-(a.proScore||0));
+  let html=`<div class="mlbSimplePanel"><h3>Resumen MLB simple</h3>`;
+  if(winners[0]){
+    html+=`<div class="probBig">${esc(winners[0].selection)} · ${pct(winners[0].fairCtx)}</div>
+    <p>Favorito calculado por mercado + contexto + pitcher/stat edge. No es garantía; es lectura de probabilidad.</p>`;
+  }else html+=`<p>No hay moneyline/ganador disponible para este juego.</p>`;
+  html+=`<table class="miniTable"><tr><th>Tipo</th><th>Mejor lectura</th><th>Prob.</th><th>Pro</th><th>EV</th></tr>`;
+  const rows=[
+    ["Ganador", winners[0]],
+    ["Carreras juego", totals[0]],
+    ["Carreras equipo", teamTotals[0]]
+  ];
+  for(const [label,p] of rows){
+    html+=`<tr><td>${esc(label)}</td><td>${p?esc(p.selection+" · "+p.label):"No disponible"}</td><td>${p?pct(p.fairCtx):"-"}</td><td>${p?Math.round(p.proScore||0)+"/99":"-"}</td><td>${p?(p.ev*100).toFixed(2)+"%":"-"}</td></tr>`;
+  }
+  html+=`</table></div>`;
+  return html;
+}
+
 function eventStateForScan(e){
  const t=new Date(e?.commence_time||e?.commence||0).getTime();
  const now=Date.now();
@@ -1206,7 +1422,7 @@ function v29Label(grade){
 function aiDeepGrade(p,ctx,e){
  const eg=edgeGrade(p), rr=realisticReasons(p), te=teamEdgeForPick(p);
  let score=eg.score;
- // V30.6: motor anti-falsas buenas. Prefiere dejar pasar antes que vender picks flojos como fuertes.
+ // V30.7: motor anti-falsas buenas. Prefiere dejar pasar antes que vender picks flojos como fuertes.
  score += Math.max(-12, Math.min(12, (te.score-50)*0.30));
  score += Math.max(-8, Math.min(8, ((eg.safety?.score||50)-50)*0.22));
  if((p.fairCtx||0)>=0.76) score+=8; else if((p.fairCtx||0)>=0.74) score+=5; else if((p.fairCtx||0)<0.70) score-=14;
@@ -1224,7 +1440,7 @@ function aiDeepGrade(p,ctx,e){
  if(te.score>=64) good.unshift("matchup/equipo aceptable "+te.score+"/99");
  if(te.score<62) bad.unshift("equipo/matchup no alcanza 62: "+te.score+"/99");
  if(gr.alerts?.length) bad.unshift(...gr.alerts);
- if(score<78) bad.unshift("no alcanza filtro fuerte V30.6: "+score+"/99");
+ if(score<78) bad.unshift("no alcanza filtro fuerte V30.7: "+score+"/99");
  if(eventStateForScan(e).started) bad.unshift("bloqueado: juego en vivo/iniciado");
  return {score,grade:gr.grade,bettable:false,good:[...new Set(good)].slice(0,6),bad:[...new Set(bad)].slice(0,9),teamScore:te.score,marketSafety:eg.safety?.score||50,state:eventStateForScan(e).state,falsePositiveAlerts:gr.alerts};
 }
@@ -1243,9 +1459,9 @@ function scanResultCard(r,cls){
  let ai=r.ai;
  let tag=String(ai.grade||"").includes("PAPER FUERTE")?"exclusive":String(ai.grade||"").includes("OBSERVAR")?"possible":"bad";
  let when=new Date(r.commence).toLocaleString(undefined,{month:"2-digit",day:"2-digit",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
- return `<div class="scanPick ${tag}"><div class="scanHead"><div><span class="scanTag ${tag}">${esc(r.title||ai.grade)}</span><span class="v29Gate">${esc(v29Label(ai.grade))}</span><h3>${esc(r.selection)}</h3><p class="small">${esc(r.game)} · ${esc(when)} · ${esc(r.label)}</p></div><div class="scanScore ${tag==='bad'?'bad':tag==='exclusive'?'warnTxt':'good'}">${ai.score}/99</div></div>
+ return `<div class="scanPick ${tag}"><div class="scanHead"><div><span class="scanTag ${tag}">${esc(r.title||ai.grade)}</span><span class="v29Gate">${esc(v29Label(ai.grade))}</span><h3>${esc(r.selection)}</h3><p class="small">${esc(r.game)} · ${esc(when)} · ${esc(r.label)} · ${esc(r.category||"")}</p></div><div class="scanScore ${tag==='bad'?'bad':tag==='exclusive'?'warnTxt':'good'}">${ai.score}/99</div></div>
  <div class="grid"><div class="metric"><small>Prob contexto</small><b>${pct(r.fairCtx)}</b></div><div class="metric"><small>EV</small><b class="${r.ev>=0?'good':'warnTxt'}">${(r.ev*100).toFixed(2)}%</b></div><div class="metric"><small>Cuota</small><b>${fmtOdds(r.price)}</b></div><div class="metric"><small>Casas</small><b>${r.books}</b></div><div class="metric"><small>Pro Score</small><b>${Math.round(r.proScore||0)}/99</b></div><div class="metric"><small>Equipo</small><b>${ai.teamScore}/99</b></div></div>
- <p class="aiNote"><b>Señales:</b> ${esc(ai.good.join(" · ")||"sin señales fuertes")}</p><p class="aiNote"><b>Alertas:</b> ${esc(ai.bad.join(" · ")||"sin alertas")}</p><p class="small"><b>Hard Rock:</b> verificar mismo partido, mercado exacto, línea exacta y que la cuota no esté peor. Si no coincide, NO BET.</p></div>`;
+ ${r.pitcherEdge?`<p class="aiNote"><b>Pitcher:</b> ${esc(r.pitcherEdge.my)} vs ${esc(r.pitcherEdge.opp)} · Diff ${esc(r.pitcherEdge.diff)}</p>`:(r.pitcherSummary?`<p class="aiNote"><b>Pitcher:</b> ${esc(r.pitcherSummary)}</p>`:"")}<p class="aiNote"><b>Señales:</b> ${esc(ai.good.join(" · ")||"sin señales fuertes")}</p><p class="aiNote"><b>Alertas:</b> ${esc(ai.bad.join(" · ")||"sin alertas")}</p><p class="small"><b>Hard Rock:</b> verificar mismo partido, mercado exacto, línea exacta y que la cuota no esté peor. Si no coincide, NO BET.</p></div>`;
 }
 function scanMarketFamily(r){
  const m=String(r.market||"").toLowerCase();
@@ -1254,9 +1470,9 @@ function scanMarketFamily(r){
  if(MODE==="mlb"){
    if(m==="spreads" && Math.abs(pt)===1.5) return "MLB +1.5 juego completo";
    if((m.includes("1st_5")||label.includes("1st 5")||label.includes("first 5")) && (pt===0.5 || pt===1.5)) return "MLB F5 protegido";
-   if(m==="h2h") return "MLB Moneyline fuerte";
-   if(m==="team_totals") return "MLB Team Total";
-   if(m==="totals") return "MLB Total juego";
+   if(m==="h2h") return "MLB Ganador del juego";
+   if(m==="team_totals") return "MLB Carreras equipo";
+   if(m==="totals") return "MLB Carreras totales";
    return "MLB Otros";
  }
  if(m.includes("double_chance")) return "Soccer Double Chance";
@@ -1327,7 +1543,7 @@ function renderDailyScan(results,errors){
  window.LAST_DAILY_SCAN=results;
  const rot=rotateScanResults(results);
  const ranked=(results||[]).filter(r=>r.ai?.state!=="LIVE_OR_STARTED").sort((a,b)=>(b.ai?.score||0)-(a.ai?.score||0)).slice(0,5);
- let html=`<div class="edgeBox"><h3>Resultado del Scan V30.6</h3><p>Escaneados: ${results.length} picks analizados. <b>Modo anti-falsas buenas:</b> si no cumple filtros duros, queda NO BET. Si no hay fuerte, se muestra ranking solo papel.</p>${scanMarketMixHtml(results)}</div>`;
+ let html=`<div class="edgeBox"><h3>Resultado del Scan V30.7</h3><p>Escaneados: ${results.length} picks analizados. <b>Modo anti-falsas buenas:</b> si no cumple filtros duros, queda NO BET. Si no hay fuerte, se muestra ranking solo papel.</p>${scanMarketMixHtml(results)}</div>`;
  if(errors?.length) html+=`<div class="error">Errores en ${errors.length} eventos: ${esc(errors.slice(0,4).join(" | "))}</div>`;
  html+=`<div class="noRealMoney">Regla: no jugar dinero real hasta validar mínimo 30 picks en papel.</div>`;
  html+=`<div class="probox"><h3>Candidatos PAPER fuertes</h3>${rot.strong.length?rot.strong.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay candidato fuerte real hoy. Eso puede ser correcto: pasar.</div>'}</div>`;
@@ -1337,18 +1553,25 @@ function renderDailyScan(results,errors){
  }
  html+=`<div class="strictBox"><h3>En vivo / Bloqueado</h3>${rot.live.length?rot.live.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay juegos en vivo bloqueados.</div>'}</div>`;
  html+=`<div class="strictBox"><h3>No bet / Puede ganar pero no valor</h3>${rot.noBet.length?rot.noBet.map(r=>scanResultCard(r)).join(""):'<div class="notice">No hay no-bets listados.</div>'}</div>`;
- html+=`<div class="error"><b>Lectura correcta:</b> una jugada en NO BET puede ganar. Eso no la convierte en buena. V30.6 solo llama fuerte a jugadas que pasan filtros completos.</div>`;
+ html+=`<div class="error"><b>Lectura correcta:</b> una jugada en NO BET puede ganar. Eso no la convierte en buena. V30.7 solo llama fuerte a jugadas que pasan filtros completos.</div>`;
  $("scanBox").innerHTML=html;
  clearActionToastSoon();
  refreshAICredits();
 }
 async function scanDay(){
  showTab("scan");
- if(!EVENTS.length){$("scanBox").innerHTML='<div class="loading">Primero cargo calendario...</div>'; await loadCalendar(); showTab("scan");}
- if(!EVENTS.length){$("scanBox").innerHTML='<div class="error">No hay eventos cargados. Cambia fecha/filtro y carga calendario.</div>'; return;}
+ if(!EVENTS.length){
+   $("scanBox").innerHTML='<div class="loading">Primero cargo calendario...</div>';
+   await loadCalendar();
+   showTab("scan");
+ }
+ if(!EVENTS.length){
+   $("scanBox").innerHTML='<div class="error">No hay eventos cargados. Cambia fecha/filtro y carga calendario.</div>';
+   return;
+ }
  let results=[], errors=[];
  let oldSelected=SELECTED;
- $("scanBox").innerHTML=`<div class="loading">Escaneando ${EVENTS.length} eventos de ${MODE.toUpperCase()}... No cierres la página.</div>`;
+ $("scanBox").innerHTML=`<div class="loading">Escaneando ${EVENTS.length} eventos MLB simple: ganador, total carreras y team totals...</div>`;
  const markets=buildMarkets();
  for(let i=0;i<EVENTS.length;i++){
    const e=EVENTS[i]; SELECTED=e; window._moveCache={};
@@ -1356,18 +1579,41 @@ async function scanDay(){
    try{
      let oddsData=await fetchEventOdds(sportKey(),e.id,markets);
      let context=MODE==="mlb"?await mlbContext(e):soccerContext(e);
-     let picks=analyzeOdds(oddsData,context);
+     let picks=analyzeOdds(oddsData,context).filter(p=>MODE!=="mlb" || mlbSimpleMarketAllowed(p.market));
      window.TEAM_MODEL=buildTeamModel(picks,context);
-     for(const p of picks){
-       const ai=aiDeepGrade(p,context,e);
+
+     const categories=["h2h","totals","team_totals"];
+     for(const cat of categories){
+       const best=picks.filter(p=>p.market===cat).sort((a,b)=>(b.proScore||0)-(a.proScore||0) || (b.fairCtx||0)-(a.fairCtx||0))[0];
+       if(!best) continue;
+       const ai=aiDeepGrade(best,context,e);
        const game=(e.away_team||"Away")+" @ "+(e.home_team||"Home");
-       results.push({eventId:e.id,game,commence:e.commence_time,market:p.market,label:p.label,selection:p.selection,point:p.best?.point,price:p.best?.price,books:p.bookCount,fairCtx:p.fairCtx,ev:p.ev,proScore:p.proScore,ai});
+       results.push({
+         eventId:e.id,
+         game,
+         commence:e.commence_time,
+         market:best.market,
+         label:best.label,
+         category:best.category||pickCategoryV307(best),
+         selection:best.selection,
+         point:best.best?.point,
+         price:best.best?.price,
+         books:best.bookCount,
+         fairCtx:best.fairCtx,
+         ev:best.ev,
+         proScore:best.proScore,
+         pitcherEdge:best.pitcherEdge,
+         pitcherSummary:context.pitcherEdgeText,
+         ai
+       });
      }
-   }catch(err){errors.push(((e.away_team||"Away")+" @ "+(e.home_team||"Home"))+": "+err.message);}
+   }catch(err){
+     errors.push(((e.away_team||"Away")+" @ "+(e.home_team||"Home"))+": "+err.message);
+   }
  }
  SELECTED=oldSelected;
  renderDailyScan(results,errors);
- status("Scan V30 terminado. Revisa solo candidatos PAPER fuertes; si no hay, se pasa.");
+ status("Scan V30.7 terminado. Solo ganador, total carreras y carreras por equipo.");
 }
 
 async function selectGame(i, btn=null){
@@ -1401,7 +1647,7 @@ async function selectGame(i, btn=null){
    let context= MODE==="mlb" ? await mlbContext(SELECTED) : soccerContext(SELECTED);
    let picks=analyzeOdds(oddsData,context);
    if(!picks.length){
-     setBox("bestBox",'<div class="notice">No hay picks válidos para este juego con los filtros V30.6 Decisión correcta: pasar.</div>');
+     setBox("bestBox",'<div class="notice">No hay picks válidos para este juego con los filtros V30.7 Decisión correcta: pasar.</div>');
      renderContext(context);
      renderMarkets([]);
      status("Sin picks válidos para este juego. No se fuerza jugada."); clearActionToastSoon();
@@ -1423,21 +1669,11 @@ async function selectGame(i, btn=null){
  }
 }
 function buildMarkets(){
- let a=[];
- const playerMode=$("usePlayers")?.value||"no";
- if(MODE==="mlb"){
-   a=[...MLB_MARKETS_CORE,...MLB_MARKETS_F5];
-   if(playerMode==="yes") a.push(...MLB_MARKETS_PLAYERS);
-   if(playerMode==="safe") a.push(...MLB_MARKETS_SAFE_PLAYERS);
-   if($("useExperimental").value==="yes") a.push(...EXPERIMENTAL);
- }else{
-   a=[...SOCCER_MARKETS_CORE,...SOCCER_MARKETS_MORE];
-   a=a.filter(x=>!SOCCER_BLOCKED.includes(x));
-   if(playerMode==="no") a=a.filter(x=>!x.startsWith("player_"));
-   if(playerMode==="safe") a=a.filter(x=>!["player_shots","player_shots_on_target"].includes(x));
-   if($("useExperimental").value==="yes") a.push(...EXPERIMENTAL);
- }
- return [...new Set(a)];
+ // V30.7 modo prueba: solo mercados principales.
+ // MLB: ganador del juego, carreras totales y carreras por equipo.
+ // Soccer se deja simple también, pero el enfoque de esta versión es MLB.
+ if(MODE==="mlb") return ["h2h","totals","team_totals"];
+ return ["h2h","h2h_3_way","totals","team_totals"];
 }
 async function fetchEventOdds(sport,eventId,markets){
  async function call(ms){return await oddsAPI(`/v4/sports/${sport}/events/${eventId}/odds`,{regions:"us",oddsFormat:"american",markets:ms.join(",")})}
@@ -1489,65 +1725,93 @@ function proScore(p){
 }
 
 function analyzeOdds(data,ctx){
-const minProb=Number($("minProb").value||60)/100, minBooks=Number($("minBooks").value||5), maxFav=Number($("maxFav").value||-220), maxDog=Number($("maxDog").value||120), minEV=Number($("minEV").value||-3)/100;
-maxDog=Number($("maxDog").value||120), minEV=Number($("minEV").value||-3)/99;
+ const minProb=Number($("minProb").value||60)/100;
+ const minBooks=Number($("minBooks").value||5);
+ const maxFav=Number($("maxFav").value||-220);
+ const maxDog=Number($("maxDog").value||120);
+ const minEV=Number($("minEV").value||-3)/100;
+ if(MODE==="mlb") ensurePitcherEdges(ctx);
+
  const groups=new Map();
- for(const b of data.bookmakers||[]){for(const m of b.markets||[]){const outs=(m.outcomes||[]).filter(o=>typeof o.price==="number");if(!outs.length)continue;
-   let buckets={}; for(const o of outs){let lk=m.key+"|"+(o.point??"")+"|"+(o.description??"")+"|"+(m.key.includes("spreads")?Math.abs(Number(o.point)||0):"");(buckets[lk] ||= []).push(o)}
-   for(const outs2 of Object.values(buckets)){const sumImp=outs2.length>1?outs2.reduce((a,o)=>a+implied(o.price),0):0;
-     for(const o of outs2){let name=lineName(m.key,o);let key=m.key+"||"+name+"||"+(o.point??"")+"||"+(o.description??"");
-       if(!groups.has(key))groups.set(key,{market:m.key,name,books:new Set(),prices:[],fairParts:[],complete:0,total:0});
-       let g=groups.get(key);g.books.add(b.title||b.key);g.prices.push({book:b.title||b.key,price:o.price,dec:dec(o.price)});
-       if(sumImp>0 && outs2.length>1){g.fairParts.push(implied(o.price)/sumImp);g.complete++} else {g.fairParts.push(implied(o.price));}
-       g.total++;
+ for(const b of data.bookmakers||[]){
+   for(const m of b.markets||[]){
+     if(MODE==="mlb" && !mlbSimpleMarketAllowed(m.key)) continue;
+     const outs=(m.outcomes||[]).filter(o=>typeof o.price==="number");
+     if(!outs.length) continue;
+     let buckets={};
+     for(const o of outs){
+       let lk=m.key+"|"+(o.point??"")+"|"+(o.description??"");
+       (buckets[lk] ||= []).push(o);
+     }
+     for(const outs2 of Object.values(buckets)){
+       const sumImp=outs2.length>1?outs2.reduce((a,o)=>a+implied(o.price),0):0;
+       for(const o of outs2){
+         let name=lineName(m.key,o);
+         let key=m.key+"||"+name+"||"+(o.point??"")+"||"+(o.description??"");
+         if(!groups.has(key)) groups.set(key,{market:m.key,name,books:new Set(),prices:[],fairParts:[],complete:0,total:0});
+         let g=groups.get(key);
+         g.books.add(b.title||b.key);
+         g.prices.push({book:b.title||b.key,price:o.price,dec:dec(o.price),point:o.point});
+         if(sumImp>0 && outs2.length>1){g.fairParts.push(implied(o.price)/sumImp);g.complete++;}
+         else g.fairParts.push(implied(o.price));
+         g.total++;
+       }
      }
    }
- }}
+ }
+
  const arr=[];
  for(const g of groups.values()){
-   g.prices.sort((a,b)=>b.dec-a.dec);let best=g.prices[0]; if(!best)continue;
-   let fairMarket=g.fairParts.reduce((a,b)=>a+b,0)/g.fairParts.length; fairMarket=Math.min(0.92,Math.max(0.02,fairMarket));
-   let adj=contextAdjustment(g,ctx); let fairCtx=Math.min(.92,Math.max(.02,fairMarket+adj));
+   g.prices.sort((a,b)=>b.dec-a.dec);
+   let best=g.prices[0];
+   if(!best) continue;
+   let fairMarket=g.fairParts.reduce((a,b)=>a+b,0)/g.fairParts.length;
+   fairMarket=Math.min(0.92,Math.max(0.02,fairMarket));
+   let adj=contextAdjustment(g,ctx);
+   let fairCtx=Math.min(.92,Math.max(.02,fairMarket+adj));
    let ev=fairCtx*(dec(best.price)-1)-(1-fairCtx);
-   let bookCount=g.books.size; let completeness=g.total?g.complete/g.total:0; let spread=priceDisp(g.prices);
+   let bookCount=g.books.size;
+   let completeness=g.total?g.complete/g.total:0;
+   let spread=priceDisp(g.prices);
    let quality="LOW", qText="Baja";
-   if(bookCount>=5 && completeness>=0.55 && spread<0.16) {quality="HIGH";qText="Alta"}
-   else if(bookCount>=3 && spread<0.25){quality="MED";qText="Media"}
-   if(ctx?.pitcherMismatch) {quality="LOW";qText="Baja · pitchers no coinciden"}
-   let priceOk=best.price>=maxFav && best.price<=maxDog;
-   let strongMinEV = MODE==="soccer" ? Math.max(minEV,0.01) : Math.max(minEV,0.005);
-   let fuerte=quality==="HIGH" && fairCtx>=minProb && bookCount>=minBooks && ev>=strongMinEV && priceOk && !ctx?.pitcherMismatch;
-   let revisar=(quality==="MED"||quality==="HIGH") && fairCtx>=Math.max(.52,minProb-.05) && ev>-0.04 && priceOk && !ctx?.pitcherMismatch;
- 
-let verdict=fuerte?"FUERTE":(revisar?"REVISAR":"NO JUGAR");
- let obj={market:g.market,label:marketLabel(g.market),selection:g.name,best,top:g.prices.slice(0,5),fairMarket,fairCtx,ev,bookCount,quality,qText,completeness,spread,adj,verdict};
- obj.proScore=proScore(obj);
+   if(bookCount>=5 && completeness>=0.55 && spread<0.16){quality="HIGH";qText="Alta";}
+   else if(bookCount>=3 && spread<0.25){quality="MED";qText="Media";}
 
- // NUEVO BLOQUE PRO 2: Inteligencia de Lanzadores (Bonus/Castigo matemático)
- if (MODE === "mlb" && ctx && ctx.pitcherStats && (g.market === "h2h" || g.market.includes("spreads"))) {
-     let side = teamNameSide(g.name);
-     let myPitcherName = side === "away" ? ctx.awayPitcherName : side === "home" ? ctx.homePitcherName : null;
-     let oppPitcherName = side === "away" ? ctx.homePitcherName : side === "home" ? ctx.awayPitcherName : null;
+   let verdict=(fairCtx>=minProb && bookCount>=minBooks && ev>=minEV && best.price>=maxFav && best.price<=maxDog)?"REVISAR":"NO";
+   let proScore=Math.round((fairCtx*100)*0.52 + Math.min(20,bookCount*2) + Math.max(-10,Math.min(15,ev*100*1.8)) + (quality==="HIGH"?8:quality==="MED"?3:-8));
+   if(g.market==="h2h") proScore+=6;
+   if(g.market==="totals") proScore+=3;
+   if(g.market==="team_totals") proScore+=4;
 
-     let findP = (name) => {
-         if(!name) return null;
-         let n = String(name).toLowerCase().split(" ").pop(); // Busca por apellido
-         return ctx.pitcherStats.find(p => String(p.Name||"").toLowerCase().includes(n) || String(p.FirstName+" "+p.LastName).toLowerCase().includes(n));
-     };
+   let obj={
+     market:g.market,
+     label:marketLabel(g.market),
+     category:pickCategoryV307({market:g.market}),
+     selection:g.name,
+     fairMarket,fairCtx,ev,best,bookCount,quality,qText,verdict,proScore,
+     top:g.prices.slice(0,5),
+     all:g.prices,
+     fairOdds:fairAmerican(fairCtx),
+     needOdds:minPlayableOdds(fairCtx,0.01)
+   };
 
-     let myP = findP(myPitcherName);
-     let oppP = findP(oppPitcherName);
-
-     applyPitcherStatsToPick(obj, myP, oppP);
-     obj.proScore = Math.max(0, Math.min(99, obj.proScore)); // Limita el score máximo a 99
- }
-
- obj.fairOdds=fairAmerican(fairCtx);
- obj.needOdds=minPlayableOdds(fairCtx,0.01);
-   obj.premium=verdict==="FUERTE" && obj.proScore>=68 && ev>=0.01 && fairCtx>=0.58 && bookCount>=4;
+   if(MODE==="mlb" && (g.market==="h2h" || g.market==="team_totals")){
+     let side=teamInitialsFromName(g.name);
+     let myP = side==="away" ? ctx?.awayPitcherStat : side==="home" ? ctx?.homePitcherStat : null;
+     let oppP = side==="away" ? ctx?.homePitcherStat : side==="home" ? ctx?.awayPitcherStat : null;
+     if(myP || oppP) applyPitcherStatsToPick(obj,myP,oppP);
+   }else if(MODE==="mlb" && g.market==="totals" && ctx?.pitcherScores){
+     const avgPitch=(ctx.pitcherScores.away+ctx.pitcherScores.home)/2;
+     if(String(g.name).toLowerCase().includes("under") && avgPitch>=62) obj.proScore+=8;
+     if(String(g.name).toLowerCase().includes("over") && avgPitch<=45) obj.proScore+=6;
+     obj.pitcherEdge={myScore:ctx.pitcherScores.away,oppScore:ctx.pitcherScores.home,diff:ctx.pitcherScores.diff,my:pitcherStatLine(ctx.awayPitcherStat),opp:pitcherStatLine(ctx.homePitcherStat),notes:["total ajustado por calidad de abridores"]};
+   }
+   obj.proScore=Math.max(0,Math.min(99,Math.round(obj.proScore)));
+   obj.premium=verdict==="REVISAR" && obj.proScore>=68 && ev>=0 && fairCtx>=0.58 && bookCount>=4;
    arr.push(obj);
  }
- arr.sort((a,b)=>(b.premium?1:0)-(a.premium?1:0) || (b.verdict==="FUERTE")-(a.verdict==="FUERTE") || (b.proScore||0)-(a.proScore||0) || b.ev-a.ev || b.fairCtx-a.fairCtx);
+
+ arr.sort((a,b)=>(b.proScore||0)-(a.proScore||0) || b.ev-a.ev || b.fairCtx-a.fairCtx);
  arr._unavailable=data._unavailable||[];
  arr._availableMarkets=data._availableMarkets||[];
  arr._blockedMarkets=data._blockedMarkets||[];
@@ -1557,17 +1821,28 @@ function contextAdjustment(g,ctx){
  if(!ctx) return 0;
  if(MODE!=="mlb"){
    let a=0;
-   if(["h2h","h2h_3_way","draw_no_bet","double_chance","totals","btts","team_totals"].includes(g.market)) a+=0.002;
-   if(g.market.includes("player_")) a-=0.008;
-   if(g.market.includes("cards") || g.market.includes("corners")) a-=0.004;
+   if(["h2h","h2h_3_way","totals","team_totals"].includes(g.market)) a+=0.002;
    return a;
  }
+ ensurePitcherEdges(ctx);
  let a=0;
- if(ctx.pitchersConfirmed) a+=0.006;
- if(ctx.lineupsConfirmed && (g.market.includes("batter") || g.market.includes("team_totals") || g.market==="totals")) a+=0.01;
+ if(ctx.pitchersConfirmed) a+=0.004;
+ if(ctx.lineupsConfirmed && (g.market==="team_totals" || g.market==="totals")) a+=0.006;
  if(ctx.injuriesConcern) a-=0.01;
- if(ctx.weatherLean==="over" && (g.name.toLowerCase().includes("over") || g.market.includes("batter"))) a+=0.008;
- if(ctx.weatherLean==="under" && g.name.toLowerCase().includes("under")) a+=0.008;
+ const name=String(g.name||"").toLowerCase();
+ const side=teamInitialsFromName(g.name);
+ if(side && ctx.pitcherScores){
+   const diff = side==="away" ? ctx.pitcherScores.diff : -ctx.pitcherScores.diff;
+   if(g.market==="h2h") a += Math.max(-0.025, Math.min(0.025, diff/99*0.035));
+   if(g.market==="team_totals") a += Math.max(-0.018, Math.min(0.018, diff/99*0.028));
+ }
+ if(g.market==="totals" && ctx.pitcherScores){
+   const avg=(ctx.pitcherScores.away+ctx.pitcherScores.home)/2;
+   if(name.includes("under") && avg>=62) a+=0.012;
+   if(name.includes("over") && avg<=45) a+=0.010;
+ }
+ if(ctx.weatherLean==="over" && name.includes("over")) a+=0.006;
+ if(ctx.weatherLean==="under" && name.includes("under")) a+=0.006;
  return a;
 }
 function priceDisp(prices){if(prices.length<2)return 0.99;let vals=prices.map(p=>implied(p.price));let avg=vals.reduce((a,b)=>a+b,0)/vals.length;return Math.sqrt(vals.reduce((a,b)=>a+(b-avg)**2,0)/vals.length)}
@@ -1982,7 +2257,7 @@ function renderPicks(picks,ctx){
  $("stPicks").textContent=strong.length;
  $("stWatch").textContent=observe.length;
 
- let html=`<div class="edgeBox"><h3>V30.6 Lectura profesional</h3><p>La app no fuerza jugadas. Si no hay PAPER FUERTE, muestra un ranking para estudiar en papel, pero no dinero real.</p></div>`;
+ let html=simpleWinnerSummaryHtml(original,ctx)+pitcherPanelHtml(ctx)+`<div class="edgeBox"><h3>V30.7 Lectura profesional</h3><p>La app no fuerza jugadas. Por ahora solo analiza ganador, total de carreras y carreras por equipo.</p></div>`;
  if(strong.length){
    html+=finalDecisionBox("paper","DECISIÓN FINAL: HAY CANDIDATO PAPER FUERTE","Aun así se valida en papel. No dinero real hasta completar 30 picks registrados.");
  }else{
@@ -2006,6 +2281,7 @@ function pickCard(p){
  let badge=st;
  let te=teamEdgeForPick(p);
  let alerts=v29FalsePositiveAlerts(p,{},SELECTED||{},te,edgeGrade(p));
+ let pitcherHtml=p.pitcherEdge?`<div class="notice"><b>Pitcher Edge:</b> ${esc(p.pitcherEdge.my)}<br><b>Rival:</b> ${esc(p.pitcherEdge.opp)}<br><b>Diferencia:</b> ${esc(p.pitcherEdge.diff)} puntos</div>`:"";
  return `<div class="pick"><div class="top"><div><div class="title">${esc(p.selection)}</div><div class="sub">${esc(p.label)} · ${esc(SELECTED.away_team)} @ ${esc(SELECTED.home_team)}</div></div><span class="badge ${cls}">${badge} · ${esc(p.qText)}</span></div>
  <div class="metrics">
  <div class="metric"><small>Prob mercado</small><b>${pct(p.fairMarket)}</b></div>
@@ -2018,10 +2294,11 @@ function pickCard(p){
  <div class="metric"><small>Edge Real</small><b class="${(p.edgeScore||edgeGrade(p).score)>=78?'good':(p.edgeScore||edgeGrade(p).score)>=68?'warnTxt':'bad'}">${p.edgeScore||edgeGrade(p).score}/99</b></div>
  <div class="metric"><small>Market Safety</small><b>${p.marketSafety||edgeGrade(p).safety.score}/99</b></div>
  <div class="metric"><small>Equipo</small><b class="${te.score>=64?'good':te.score<55?'bad':'warnTxt'}">${te.score}/99</b></div>
+ <div class="metric"><small>Categoría</small><b>${esc(p.category||pickCategoryV307(p))}</b></div>
  <div class="metric"><small>Paper Track</small><b>$0 real</b></div>
  </div>
- <div class="proFlags">${flags.map(f=>`<span class="flag ${f.c}">${esc(f.t)}</span>`).join("")}<span class="flag ${hr.cls}">${esc(hr.txt)}</span><span class="flag ${st==="PAPER FUERTE"?"green":st==="NO BET"?"red":"yellow"}">V30.6: ${esc(st)}</span></div>
- ${alerts.length?`<ul class="reasonList">${alerts.slice(0,6).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
+ <div class="proFlags">${flags.map(f=>`<span class="flag ${f.c}">${esc(f.t)}</span>`).join("")}<span class="flag ${hr.cls}">${esc(hr.txt)}</span><span class="flag ${st==="PAPER FUERTE"?"green":st==="NO BET"?"red":"yellow"}">V30.7: ${esc(st)}</span></div>
+ ${pitcherHtml}${alerts.length?`<ul class="reasonList">${alerts.slice(0,6).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
  ${((p.realGood&&p.realGood.length)||(p.realBad&&p.realBad.length))?`<ul class="reasonList">${(p.realGood||[]).slice(0,3).map(x=>`<li class="good">${esc(x)}</li>`).join("")}${(p.realBad||[]).slice(0,3).map(x=>`<li class="bad">${esc(x)}</li>`).join("")}</ul>`:""}
  <p class="small">Mejor casa: ${esc(p.best.book)} · Cuota justa aprox: ${fmtOdds(p.fairOdds)} · Para valor +1%, buscar ${fmtOdds(p.needOdds)} o mejor. Verifica Hard Rock: mismo partido, mercado exacto y línea exacta. Top: ${esc(p.top.map(x=>x.book+" "+fmtOdds(x.price)).join(" · "))}</p></div>`;
 }
@@ -2064,106 +2341,37 @@ function renderMarkets(picks){
  $("marketsBox").innerHTML=html+dedupePicks(picks).slice(0,150).map(pickCard).join("");
 }
 
-function numFirst(obj, keys){
-  for(const k of keys){
-    const v = Number(obj?.[k]);
-    if(Number.isFinite(v)) return v;
-  }
-  return null;
-}
-function pitcherDisplayName(p){
-  if(!p) return "pendiente";
-  return p.Name || [p.FirstName,p.LastName].filter(Boolean).join(" ") || p.PlayerName || p.ShortName || "Pitcher";
-}
-function findPitcherStat(ctx, name){
-  if(!ctx || !Array.isArray(ctx.pitcherStats) || !name) return null;
-  const raw = String(name).toLowerCase().trim();
-  const last = raw.split(/\s+/).pop();
-  const id = String(name).match(/\d+/)?.[0];
-  return ctx.pitcherStats.find(p=>{
-    const full = String(p.Name || [p.FirstName,p.LastName].filter(Boolean).join(" ") || p.PlayerName || "").toLowerCase();
-    const pid = String(p.PlayerID || p.PlayerId || p.Id || p.StatID || "");
-    return (id && pid === id) || (last && full.includes(last)) || (raw && full.includes(raw));
-  }) || null;
-}
-function pitcherStatLine(p){
-  if(!p) return "Stats pitcher no disponibles";
-  const wins = numFirst(p,["Wins","PitchingWins","Win"]);
-  const losses = numFirst(p,["Losses","PitchingLosses","Loss"]);
-  const whip = numFirst(p,["WalksAndHitsPerInningPitched","WHIP"]);
-  const era = numFirst(p,["EarnedRunAverage","ERA"]);
-  const k = numFirst(p,["Strikeouts","PitchingStrikeouts","PitcherStrikeouts"]);
-  const bb = numFirst(p,["Walks","PitchingWalks","PitcherWalks"]);
-  const ip = numFirst(p,["InningsPitchedDecimal","InningsPitched","PitchingInningsPitched"]);
-  const qs = numFirst(p,["QualityStarts"]);
-  const kbb = (k!==null && bb!==null && bb>0) ? (k/bb) : null;
-  const parts = [];
-  parts.push(pitcherDisplayName(p));
-  if(wins!==null || losses!==null) parts.push(`W-L ${wins ?? "?"}-${losses ?? "?"}`);
-  if(era!==null) parts.push(`ERA ${era.toFixed(2)}`);
-  if(whip!==null) parts.push(`WHIP ${whip.toFixed(2)}`);
-  if(k!==null) parts.push(`K ${Math.round(k)}`);
-  if(bb!==null) parts.push(`BB ${Math.round(bb)}`);
-  if(kbb!==null) parts.push(`K/BB ${kbb.toFixed(2)}`);
-  if(ip!==null) parts.push(`IP ${Number(ip).toFixed(1)}`);
-  if(qs!==null) parts.push(`QS ${Math.round(qs)}`);
-  return parts.join(" · ");
-}
-function pitcherScoreFromStats(p){
-  if(!p) return {score:50, notes:["pitcher stats no disponibles"]};
-  const wins = numFirst(p,["Wins","PitchingWins","Win"]);
-  const losses = numFirst(p,["Losses","PitchingLosses","Loss"]);
-  const whip = numFirst(p,["WalksAndHitsPerInningPitched","WHIP"]);
-  const era = numFirst(p,["EarnedRunAverage","ERA"]);
-  const k = numFirst(p,["Strikeouts","PitchingStrikeouts","PitcherStrikeouts"]);
-  const bb = numFirst(p,["Walks","PitchingWalks","PitcherWalks"]);
-  const ip = numFirst(p,["InningsPitchedDecimal","InningsPitched","PitchingInningsPitched"]);
-  const qs = numFirst(p,["QualityStarts"]);
-  let score = 50;
-  const notes = [];
 
-  if(era!==null){
-    if(era < 2.80){score += 14; notes.push("ERA élite");}
-    else if(era < 3.50){score += 9; notes.push("ERA buena");}
-    else if(era > 5.00){score -= 12; notes.push("ERA alta");}
-    else if(era > 4.30){score -= 7; notes.push("ERA floja");}
-  }
-  if(whip!==null){
-    if(whip < 1.10){score += 14; notes.push("WHIP élite");}
-    else if(whip < 1.25){score += 8; notes.push("WHIP bueno");}
-    else if(whip > 1.45){score -= 12; notes.push("WHIP alto");}
-    else if(whip > 1.35){score -= 7; notes.push("WHIP flojo");}
-  }
-  if(k!==null && bb!==null && bb>0){
-    const kbb = k/bb;
-    if(kbb >= 4.0){score += 8; notes.push("K/BB fuerte");}
-    else if(kbb >= 3.0){score += 5; notes.push("K/BB bueno");}
-    else if(kbb < 1.8){score -= 8; notes.push("K/BB bajo");}
-  }
-  if(wins!==null && losses!==null){
-    const diff = wins - losses;
-    if(diff >= 5){score += 5; notes.push("récord W-L favorable");}
-    else if(diff <= -4){score -= 5; notes.push("récord W-L negativo");}
-  }
-  if(ip!==null && ip < 35){score -= 4; notes.push("muestra pequeña IP");}
-  if(qs!==null && qs >= 10){score += 4; notes.push("quality starts");}
 
-  return {score:Math.max(0, Math.min(99, Math.round(score))), notes};
-}
-function applyPitcherStatsToPick(obj, myP, oppP){
-  const my = pitcherScoreFromStats(myP);
-  const opp = pitcherScoreFromStats(oppP);
-  const diff = my.score - opp.score;
-  obj.proScore += Math.max(-12, Math.min(12, Math.round(diff * 0.22)));
-  obj.pitcherEdge = {
-    myScore: my.score,
-    oppScore: opp.score,
-    diff,
-    my: pitcherStatLine(myP),
-    opp: pitcherStatLine(oppP),
-    notes: [...my.notes.map(x=>"mi pitcher: "+x), ...opp.notes.map(x=>"rival: "+x)]
-  };
-  return obj;
+
+
+
+
+
+
+async function fetchMlbPublicPitcherStats(id){
+  if(!id) return null;
+  try{
+    const url=`https://statsapi.mlb.com/api/v1/people/${id}?hydrate=stats(group=[pitching],type=[season])`;
+    const r=await fetchWithTimeout(url,{},20000);
+    const j=await readJsonSafe(r);
+    const p=(j.people||[])[0];
+    const split=p?.stats?.[0]?.splits?.[0]?.stat||{};
+    if(!p || !split) return null;
+    return {
+      PlayerID:id,
+      MLBAMID:id,
+      Name:p.fullName,
+      Wins:split.wins,
+      Losses:split.losses,
+      EarnedRunAverage:split.era,
+      WalksAndHitsPerInningPitched:split.whip,
+      Strikeouts:split.strikeOuts,
+      Walks:split.baseOnBalls,
+      InningsPitchedDecimal:Number(String(split.inningsPitched||"0").replace(".1",".333").replace(".2",".667")),
+      QualityStarts:split.qualityStarts
+    };
+  }catch(e){return null;}
 }
 
 async function mlbContext(ev){
@@ -2186,6 +2394,8 @@ async function mlbContext(ev){
      // Guardamos los nombres para el motor de probabilidad
      ctx.awayPitcherName = gm.AwayTeamProbablePitcher || gm.AwayStartingPitcher || null;
      ctx.homePitcherName = gm.HomeTeamProbablePitcher || gm.HomeStartingPitcher || null;
+     ctx.awayPitcherId = gm.AwayStartingPitcherID || gm.AwayTeamProbablePitcherID || gm.AwayProbablePitcherID || null;
+     ctx.homePitcherId = gm.HomeStartingPitcherID || gm.HomeTeamProbablePitcherID || gm.HomeProbablePitcherID || null;
      
      ctx.raw.push(JSON.stringify(gm,null,2).slice(0,4000));
    } else ctx.items.push(["SportsDataIO game","No pude empatar juego exacto en GamesByDate."]);
@@ -2232,11 +2442,27 @@ async function mlbContext(ev){
      // Respaldo de nombres
      if(!ctx.awayPitcherName) ctx.awayPitcherName = m.teams.away.probablePitcher?.fullName;
      if(!ctx.homePitcherName) ctx.homePitcherName = m.teams.home.probablePitcher?.fullName;
+     if(!ctx.awayPitcherId) ctx.awayPitcherId = m.teams.away.probablePitcher?.id;
+     if(!ctx.homePitcherId) ctx.homePitcherId = m.teams.home.probablePitcher?.id;
    } else ctx.items.push(["MLB StatsAPI","No encontró match exacto visitante/local."]);
  }catch(e){ctx.items.push(["MLB StatsAPI","Error: "+e.message])}
 
  ctx.items.push(["Bullpen","SportsDataIO puede ayudar si tu feed incluye boxscores/player game stats; si no, revisar uso de relevistas últimas 2 noches."]);
  ctx.items.push(["Bateador vs pitcher","No se inventa. Si tu feed no lo incluye, queda pendiente manual."]);
+
+ // MLB StatsAPI pitcher stats fallback si SportsDataIO no trae stats del abridor
+ try{
+   if(!ctx.awayPitcherStat && ctx.awayPitcherId){
+     const ps=await fetchMlbPublicPitcherStats(ctx.awayPitcherId);
+     if(ps){ctx.pitcherStats.push(ps); ctx.items.push(["MLB StatsAPI pitcher visitante", pitcherStatLine(ps)]);}
+   }
+   if(!ctx.homePitcherStat && ctx.homePitcherId){
+     const ps=await fetchMlbPublicPitcherStats(ctx.homePitcherId);
+     if(ps){ctx.pitcherStats.push(ps); ctx.items.push(["MLB StatsAPI pitcher local", pitcherStatLine(ps)]);}
+   }
+   ensurePitcherEdges(ctx);
+   ctx.items.push(["Conclusión Pitcher Edge", ctx.pitcherEdgeText || "pendiente"]);
+ }catch(e){ctx.items.push(["MLB StatsAPI pitcher stats fallback","No disponible: "+e.message]);}
  return ctx;
 }
 
@@ -2257,7 +2483,9 @@ function soccerContext(ev){return {title:"Soccer Hard Rock Menu Context",items:[
 ["Regla","Solo jugar si la línea y mercado coinciden exactamente en Hard Rock."],
 ["Localía",`${ev.home_team||"Home"} local`]
 ],raw:[]}}
-function renderContext(ctx){$("contextBox").innerHTML=`<div class="ctx"><h3>${esc(ctx.title)}</h3>${ctx.items.map(([k,v])=>`<div class="check"><b>${esc(k)}:</b> ${esc(v)}</div>`).join("")}</div>${ctx.raw?.length?`<h3>Datos crudos</h3><div class="code">${esc(ctx.raw.join("\n\n"))}</div>`:""}`}
+function renderContext(ctx){
+ $("contextBox").innerHTML=`${pitcherPanelHtml(ctx)}<div class="ctx"><h3>${esc(ctx.title)}</h3>${ctx.items.map(([k,v])=>`<div class="check"><b>${esc(k)}:</b> ${esc(v)}</div>`).join("")}</div>${ctx.raw?.length?`<h3>Datos crudos</h3><div class="code">${esc(ctx.raw.join("\n\n"))}</div>`:""}`;
+}
 function renderManual(){
  $("manualBox").innerHTML=`<div class="ctx"><h3>Reglas obligatorias antes de apostar</h3><div class="checks"><div class="check">Pitchers de app deben coincidir con Hard Rock.</div><div class="check">Lineup confirmado si es prop de bateador.</div><div class="check">Calidad Baja = no jugar.</div><div class="check">Soccer: no jugar tiros/tiros a puerta de jugadores.</div><div class="check">No parlays mientras se prueba.</div><div class="check">Paper track $0 real.</div><div class="check">Misma línea en Hard Rock.</div></div></div><div class="notice">Esta app no garantiza ganancias. En V30 solo filtra candidatos para validación en papel.</div>`;
 }
@@ -2274,7 +2502,7 @@ window.addEventListener("error", function(e){
   try {
     const box = document.querySelector("#bestBox") || document.body;
     if (String(e.message || "").includes("proScore")) {
-      box.insertAdjacentHTML("afterbegin", '<div class="error">Error interno corregible: proScore no cargó. Usa V30.6 o recarga la página.</div>');
+      box.insertAdjacentHTML("afterbegin", '<div class="error">Error interno corregible: proScore no cargó. Usa V30.7 o recarga la página.</div>');
     }
   } catch(_){}
 });
@@ -2282,7 +2510,7 @@ window.addEventListener("error", function(e){
 
 
 async function testAI(){
- showActionToast("Probando conexión IA OpenAI V30.6...");
+ showActionToast("Probando conexión IA OpenAI V30.7...");
  const box=$("aiStatus")||$("aiScanBox")||$("scanBox")||$("diagBox");
  try{
    if(box) box.innerHTML='<div class="notice">Probando IA rápida. Esto no usa el scan completo...</div>';
@@ -2311,7 +2539,7 @@ function summarizeCurrentPicksForAI(){
  return cards;
 }
 async function runDailyAIScan(){
- showScanCenter("Corriendo Resumen IA Lite V30.6...");
+ showScanCenter("Corriendo Resumen IA Lite V30.7...");
  const box=$("aiScanBox")||$("scanBox")||$("bestBox");
  if(!Array.isArray(window.LAST_DAILY_SCAN) || !window.LAST_DAILY_SCAN.length){
    const html='<div class="error"><b>Primero toca “2) Scan día local”.</b> Después usa “3) Resumen IA OpenAI”. La IA necesita datos reales para no inventar.</div>';
@@ -2321,7 +2549,7 @@ async function runDailyAIScan(){
  }
  try{
    if(box) box.innerHTML='<div class="loading">IA Lite analizando top picks del scan local. Puede tardar 20-60 segundos...</div><div class="aiTimeoutBox">Si tarda, no significa que las keys estén mal. Significa que OpenAI está demorando o el servidor está frío.</div>';
-   const payload={mode:"daily-scan-lite",version:"V30.6",sport:MODE,date:$("date")?.value||today(),rules:{money_real:"NO",stake:"$0 real / solo papel"},scan_results:compactScanForAIClient(window.LAST_DAILY_SCAN,22)};
+   const payload={mode:"daily-scan-lite",version:"V30.7",sport:MODE,date:$("date")?.value||today(),rules:{money_real:"NO",stake:"$0 real / solo papel"},scan_results:compactScanForAIClient(window.LAST_DAILY_SCAN,22)};
    const r=await fetchWithTimeout("/api/ai-scan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)},95000);
    const j=await readJsonSafe(r);
    if(!r.ok) throw new Error(j.error||"Error IA");
@@ -2331,7 +2559,7 @@ async function runDailyAIScan(){
    const msg=String(e.message||e);
    let html='<div class="error"><b>Error IA:</b> '+esc(msg)+'</div>';
    if(msg.toLowerCase().includes("timeout")){
-     html+='<div class="aiTimeoutBox"><b>Qué significa:</b> las keys pueden estar bien, pero OpenAI tardó más que el límite. Usa el scan local y vuelve a intentar. V30.6 manda menos datos para reducir este problema.</div>';
+     html+='<div class="aiTimeoutBox"><b>Qué significa:</b> las keys pueden estar bien, pero OpenAI tardó más que el límite. Usa el scan local y vuelve a intentar. V30.7 manda menos datos para reducir este problema.</div>';
    }else{
      html+='<div class="notice">Si “Probar IA” funciona, fue demora temporal del resumen. Si “Probar IA” falla, revisa billing/créditos de OpenAI.</div>';
    }
@@ -2509,9 +2737,9 @@ function marketFamily(p){
  if(MODE==="mlb"){
    if(m==="spreads" && Math.abs(pt)===1.5) return "MLB +1.5 juego completo";
    if((m.includes("1st_5")||m.includes("first_5")) && (pt===0.5 || pt===1.5)) return "MLB F5 protegido";
-   if(m==="h2h") return "MLB Moneyline fuerte";
-   if(m==="team_totals") return "MLB Team Total";
-   if(m==="totals") return "MLB Total juego";
+   if(m==="h2h") return "MLB Ganador del juego";
+   if(m==="team_totals") return "MLB Carreras equipo";
+   if(m==="totals") return "MLB Carreras totales";
    return "MLB Otros";
  }else{
    if(m.includes("double_chance")) return "Soccer Double Chance";
@@ -2588,7 +2816,7 @@ function enforceNoRepeatPlus15(data){
        pick:x.pick||x.jugada||x.selection||"Pick +1.5 repetido",
        market:x.market||"Spread +1.5",
        grade:"NO TOCAR",
-       reason:"Ocultada por V30.6: ya había un +1.5 full game. La app no puede repetir el mismo tipo de mercado.",
+       reason:"Ocultada por V30.7: ya había un +1.5 full game. La app no puede repetir el mismo tipo de mercado.",
        risk:"No jugar por repetición de mercado"
      }))];
    }
@@ -2610,7 +2838,7 @@ function enforceNoRepeatPlus15(data){
 
 async function runAuditCheck(){
  const box=$("aiStatus")||$("scanBox");
- if(box) box.innerHTML='<div class="notice">Corriendo diagnóstico V30.6...</div>';
+ if(box) box.innerHTML='<div class="notice">Corriendo diagnóstico V30.7...</div>';
  const checks=[];
  checks.push({name:"Eventos cargados",ok:typeof EVENTS!=="undefined" && EVENTS.length>0,detail:(typeof EVENTS!=="undefined"?EVENTS.length:0)+" juegos"});
  checks.push({name:"Último scan local",ok:Array.isArray(window.LAST_DAILY_SCAN)&&window.LAST_DAILY_SCAN.length>0,detail:(window.LAST_DAILY_SCAN?.length||0)+" picks"});
@@ -2633,11 +2861,11 @@ async function runAuditCheck(){
    healthDetail=`Odds:${h.oddsEnv?"✅":"❌"} SDIO:${h.sdioEnv?"✅":"❌"} OpenAI:${h.openaiEnv?"✅":"❌"}`;
  }catch(e){healthDetail=e.message}
  checks.push({name:"Vercel env",ok:healthOK,detail:healthDetail});
- let html='<div class="edgeBox"><h3>Diagnóstico V30.6</h3>';
+ let html='<div class="edgeBox"><h3>Diagnóstico V30.7</h3>';
  for(const c of checks){
    html+=`<p class="${c.ok?'good':'bad'}"><b>${c.ok?'✅':'❌'} ${esc(c.name)}:</b> ${esc(c.detail)}</p>`;
  }
- html+='<p class="small">Orden correcto: Cargar calendario → Escanear V30.6 → Diagnóstico V30.6 → Resumen IA OpenAI solo si hace falta.</p></div>';
+ html+='<p class="small">Orden correcto: Cargar calendario → Escanear V30.7 → Diagnóstico V30.7 → Resumen IA OpenAI solo si hace falta.</p></div>';
  if(box) box.innerHTML=html;
 }
 
